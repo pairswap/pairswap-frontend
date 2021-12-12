@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Main, Header, Body } from '../components/layout';
+import { Main, Header, Body, Footer } from '../components/layout';
 
 function Home() {
   return (
@@ -11,6 +11,7 @@ function Home() {
       <Main>
         <Header />
         <Body />
+        <Footer />
       </Main>
     </>
   );

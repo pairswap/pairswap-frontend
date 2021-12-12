@@ -5,7 +5,7 @@ import WalletModal from '../modal/walletModal';
 function Body() {
   return (
     <main className="flex-1">
-      <div className="max-w-[420px] m-auto mt-24">
+      <div className="max-w-[420px] mx-auto mt-8 md:mt-24 px-4">
         <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
           <div className="border border-gray-100 rounded-3xl p-4">
             <label className="mx-2">From</label>
@@ -42,7 +42,7 @@ function Body() {
             {({ onClose }) => (
               <button
                 onClick={onClose}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white border  w-full rounded-2xl px-2 py-4 mt-8"
+                className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white border  w-full rounded-2xl px-2 py-4 mt-8"
               >
                 Connect Wallet
               </button>
