@@ -6,12 +6,12 @@ function Body() {
   return (
     <main className="flex-1">
       <div className="max-w-[420px] mx-auto mt-8 md:mt-24 px-4">
-        <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
-          <div className="border border-gray-100 rounded-3xl p-4">
-            <label className="mx-2">From</label>
+        <div className="border border-gray-100 dark:border-gray-800 p-4 rounded-3xl mt-2 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
+            <label className="mx-2 dark:text-gray-300">From</label>
             <div className="flex items-center">
               <input
-                className="flex-1 text-xl text-gray-400 outline-none m-2"
+                className="flex-1 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
                 type="number"
                 defaultValue="0"
                 min="0"
@@ -24,11 +24,11 @@ function Body() {
           <div className="flex justify-center my-4">
             <ArrowDownIcon />
           </div>
-          <div className="border border-gray-100 rounded-3xl p-4">
-            <label className="mx-2">To</label>
+          <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
+            <label className="mx-2 dark:text-gray-300">To</label>
             <div className="flex items-center">
               <input
-                className="flex-1 text-xl text-gray-400 outline-none m-2"
+                className="flex-1 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
                 type="number"
                 defaultValue="0"
                 min="0"
@@ -42,7 +42,7 @@ function Body() {
             {({ onClose }) => (
               <button
                 onClick={onClose}
-                className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white border  w-full rounded-2xl px-2 py-4 mt-8"
+                className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white w-full rounded-2xl px-2 py-4 mt-8"
               >
                 Connect Wallet
               </button>

@@ -12,7 +12,7 @@ function NavItem({ children, href, className }) {
       <a
         className={clsx(
           className,
-          'text-base font-bold text-gray-600 hover:text-black mx-1 md:mx-4'
+          'text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black hover:dark:text-white mx-1 md:mx-4'
         )}
       >
         {children}
@@ -23,11 +23,11 @@ function NavItem({ children, href, className }) {
 
 function Header() {
   return (
-    <nav className="flex items-center justify-between border-b border-gray-300 shadow-sm px-2 md:px-8 py-4 bg-white">
+    <nav className="flex items-center justify-between border-b border-gray-300 dark:border-black shadow-sm px-2 md:px-8 py-4 bg-white dark:bg-gray-900">
       <div className="flex items-center justify-between w-full md:block md:w-max">
         <Logo className="inline" />
         <NavItem href="/">
-          <span className="text-black">Swap</span>
+          <span className="text-black dark:text-white">Swap</span>
         </NavItem>
         <NavItem href="/">Buy</NavItem>
         <NavItem href="/">Pool</NavItem>
@@ -45,19 +45,19 @@ function Header() {
           {({ onClose }) => (
             <button
               onClick={onClose}
-              className="font-bold rounded-2xl px-6 py-2 mx-2 border text-white bg-indigo-600 hover:bg-indigo-700"
+              className="font-bold rounded-2xl px-6 py-2 mx-2 text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Connect to a wallet
             </button>
           )}
         </WalletModal>
-        <button className="hover:bg-gray-200 rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
           <CogIcon />
         </button>
-        <button className="hover:bg-gray-200 rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
           <FlagIcon />
         </button>
-        <button className="hover:bg-gray-200 rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
           <DotsIcon />
         </button>
       </div>

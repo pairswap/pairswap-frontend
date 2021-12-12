@@ -60,7 +60,7 @@ function TokenModal() {
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex justify-center items-center flex-1 bg-indigo-600 hover:bg-indigo-700 text-white border rounded-xl px-2 py-3 m-2"
+          className="flex justify-center items-center flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-2 py-3 m-2"
         >
           <span className="text-xs sm:text-base">
             Select a token <ChevronIcon className="inline ml-1" />
