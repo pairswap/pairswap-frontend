@@ -12,9 +12,9 @@ function Modal({ isOpen, onClose, children }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center"
+          className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-10"
         >
-          <div ref={ref} className="w-[420px] min-h-[24rem] bg-white border rounded-xl">
+          <div ref={ref} className="w-[420px] bg-white border rounded-xl">
             {children}
           </div>
         </motion.div>

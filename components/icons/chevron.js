@@ -7,3 +7,4 @@ const SvgComponent = (props) => (
 );
 
 export default SvgComponent;
+

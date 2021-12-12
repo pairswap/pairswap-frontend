@@ -18,17 +18,17 @@ function Header() {
     <nav className="flex items-center justify-between border-b border-gray-300 shadow-sm px-8 py-4 bg-white">
       <div className="flex items-center">
         <Logo className="inline" />
-        <NavItem href="">
+        <NavItem href="/">
           <span className="text-black">Swap</span>
         </NavItem>
-        <NavItem href="">Buy</NavItem>
-        <NavItem href="">Pool</NavItem>
-        <NavItem href="">Farm</NavItem>
-        <NavItem href="">Stake</NavItem>
-        <NavItem href="">
+        <NavItem href="/">Buy</NavItem>
+        <NavItem href="/">Pool</NavItem>
+        <NavItem href="/">Farm</NavItem>
+        <NavItem href="/">Stake</NavItem>
+        <NavItem href="/">
           Bond<sup className="text-xs">↗</sup>
         </NavItem>
-        <NavItem href="">
+        <NavItem href="/">
           Chart<sup className="w-1 h-1 text-xs">↗</sup>
         </NavItem>
       </div>

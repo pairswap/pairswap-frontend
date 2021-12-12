@@ -9,7 +9,7 @@ function Body() {
         <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
           <div className="border border-gray-100 rounded-3xl p-4">
             <label className="mx-2">From</label>
-            <div className="flex items-center mt-1">
+            <div className="flex items-center">
               <input
                 className="flex-1 text-xl text-gray-400 outline-none m-2"
                 type="number"
@@ -26,7 +26,7 @@ function Body() {
           </div>
           <div className="border border-gray-100 rounded-3xl p-4">
             <label className="mx-2">To</label>
-            <div className="flex items-center mt-1">
+            <div className="flex items-center">
               <input
                 className="flex-1 text-xl text-gray-400 outline-none m-2"
                 type="number"
@@ -44,7 +44,7 @@ function Body() {
                 onClick={onClose}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white border  w-full rounded-2xl px-2 py-4 mt-8"
               >
-                Connect wallet
+                Connect Wallet
               </button>
             )}
           </WalletModal>
