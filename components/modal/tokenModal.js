@@ -79,7 +79,7 @@ function TokenModal() {
             </div>
             <input
               placeholder="Search name or paste address"
-              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700 focus:dark:border-gray-900 dark:text-gray-900"
+              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700 dark:focus:border-gray-900 dark:text-gray-900"
               onChange={(e) => setKeyword(e.target.value)}
             />
             <div className="flex justify-between mx-4 pt-8 pb-4">
@@ -93,7 +93,7 @@ function TokenModal() {
                 onClick={() => select(token)}
                 className={clsx(
                   selectedToken === token && 'bg-gray-100 dark:bg-gray-800',
-                  'flex items-center p-4 hover:bg-gray-200 hover:dark:bg-gray-700'
+                  'flex items-center p-4 hover:bg-gray-200 dark:hover:bg-gray-700'
                 )}
               >
                 <Image src={token.logoURI} alt={token.symbol} width={40} height={40} unoptimized />

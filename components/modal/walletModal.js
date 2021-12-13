@@ -17,7 +17,7 @@ function WalletModal({ children }) {
               <CloseIcon />
             </button>
           </div>
-          <button className="flex justify-between bg-gray-100 hover:bg-gray-200 dark:bg-gray-300 hover:dark:bg-white rounded-lg p-4 m-4">
+          <button className="flex justify-between bg-gray-100 hover:bg-gray-200 dark:bg-gray-300 dark:hover:bg-white rounded-lg p-4 m-4">
             <p className="font-bold dark:text-black">Metamask</p>
             <Image src="/images/metamask.png" alt="metamask" width="24" height="24" />
           </button>

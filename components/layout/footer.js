@@ -17,13 +17,13 @@ function Footer() {
         )}
       </WalletModal>
       <div className="flex">
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-1">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-1">
           <CogIcon />
         </button>
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-1">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-1">
           <FlagIcon />
         </button>
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-1">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-1">
           <DotsIcon />
         </button>
       </div>

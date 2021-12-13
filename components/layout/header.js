@@ -12,7 +12,7 @@ function NavItem({ children, href, className }) {
       <a
         className={clsx(
           className,
-          'text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black hover:dark:text-white mx-1 md:mx-4'
+          'text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white mx-1 md:mx-4'
         )}
       >
         {children}
@@ -51,13 +51,13 @@ function Header() {
             </button>
           )}
         </WalletModal>
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-2">
           <CogIcon />
         </button>
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-2">
           <FlagIcon />
         </button>
-        <button className="dark:bg-gray-300 hover:bg-gray-200 hover:dark:bg-white rounded-xl border p-2 mx-2">
+        <button className="dark:bg-gray-300 hover:bg-gray-200 dark:hover:bg-white rounded-xl border p-2 mx-2">
           <DotsIcon />
         </button>
       </div>
