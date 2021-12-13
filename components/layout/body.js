@@ -15,13 +15,13 @@ function Body() {
                 type="number"
                 defaultValue="0"
                 min="0"
-                max="10"
-                step="0.001"
+                max="10000"
+                step="0.0001"
               />
               <TokenModal />
             </div>
           </div>
-          <div className="flex justify-center my-4">
+          <div className="flex justify-center dark:text-white my-4">
             <ArrowDownIcon />
           </div>
           <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
@@ -32,8 +32,8 @@ function Body() {
                 type="number"
                 defaultValue="0"
                 min="0"
-                max="10"
-                step="0.001"
+                max="10000"
+                step="0.0001"
               />
               <TokenModal />
             </div>

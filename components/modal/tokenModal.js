@@ -43,7 +43,7 @@ function TokenModal() {
       {selectedToken ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex justify-center items-center bg-gray-100 hover:bg-gray-200 border rounded-xl px-4 py-2 m-2"
+          className="flex justify-center items-center bg-gray-300 hover:bg-gray-200 border rounded-xl px-4 py-2 m-2"
         >
           <Image
             src={selectedToken.logoURI}
@@ -69,7 +69,7 @@ function TokenModal() {
       )}
 
       <Modal isOpen={isOpen} onClose={reset}>
-        <div className="flex flex-col">
+        <div className="flex flex-col dark:text-gray-200">
           <div className="flex flex-col border-b">
             <div className="flex justify-between items-center font-bold mx-4 mt-4">
               <p>Select a token</p>
@@ -79,12 +79,11 @@ function TokenModal() {
             </div>
             <input
               placeholder="Search name or paste address"
-              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700"
+              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700 focus:dark:border-gray-900 dark:text-gray-900"
               onChange={(e) => setKeyword(e.target.value)}
             />
-            <div className="flex justify-between mx-4 py-4">
+            <div className="flex justify-between mx-4 pt-8 pb-4">
               <span className="font-bold text-sm">Token name</span>
-              <button className="border px-2 rounded-md">↑</button>
             </div>
           </div>
           <div className="flex flex-col max-h-[450px] overflow-auto">
@@ -93,8 +92,8 @@ function TokenModal() {
                 key={index}
                 onClick={() => select(token)}
                 className={clsx(
-                  selectedToken === token && 'bg-gray-100',
-                  'flex items-center p-4 hover:bg-gray-200'
+                  selectedToken === token && 'bg-gray-100 dark:bg-gray-800',
+                  'flex items-center p-4 hover:bg-gray-200 hover:dark:bg-gray-700'
                 )}
               >
                 <Image src={token.logoURI} alt={token.symbol} width={40} height={40} unoptimized />
@@ -104,7 +103,9 @@ function TokenModal() {
           </div>
         </div>
         <div className="text-center border-t py-4">
-          <button className="text-gray-600 hover:underline">Manage Token List</button>
+          <button className="text-gray-600 dark:text-gray-200 hover:underline">
+            Manage Token List
+          </button>
         </div>
       </Modal>
     </>
