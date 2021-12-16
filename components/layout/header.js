@@ -42,12 +42,12 @@ function Header() {
       </div>
       <div className="hidden lg:flex lg:items-center">
         <WalletModal>
-          {({ onClose }) => (
+          {({ onClick, displayText = 'Connect to a wallet' }) => (
             <button
-              onClick={onClose}
+              onClick={onClick}
               className="font-bold rounded-2xl px-6 py-2 mx-2 text-white bg-indigo-600 hover:bg-indigo-700"
             >
-              Connect to a wallet
+              {displayText}
             </button>
           )}
         </WalletModal>

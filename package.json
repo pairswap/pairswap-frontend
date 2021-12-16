@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@metamask/onboarding": "^1.0.1",
     "clsx": "^1.1.1",
     "ethers": "^5.5.2",
     "framer-motion": "^5.4.3",
