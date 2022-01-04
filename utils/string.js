@@ -5,6 +5,10 @@ function shortenString(str, startLength = 6, endLenth = 4) {
 }
 
 export function shortenAddress(address) {
+  if (!address) {
+    return;
+  }
+
   try {
     const formattedAddress = ethers.utils.getAddress(address);
     return shortenString(formattedAddress);

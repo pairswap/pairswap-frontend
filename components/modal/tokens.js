@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
-import Modal from '.';
-import tokenList from '../../data/tokenlist.json';
-import CloseIcon from '../icons/close';
-import ChevronIcon from '../icons/chevron';
+import tokenList from 'data/tokenlist.json';
+import Modal from 'components/modal';
 
 function TokenModal() {
   const { tokens: defaultTokens } = tokenList;
@@ -53,8 +52,8 @@ function TokenModal() {
             unoptimized
             className="rounded-full"
           />
-          <span className="mx-2">
-            {selectedToken.symbol} <ChevronIcon className="inline ml-1" />
+          <span className="mx-2 flex justify-center items-center">
+            {selectedToken.symbol} <ChevronDownIcon className="w-4 h-4 ml-1" />
           </span>
         </button>
       ) : (
@@ -62,19 +61,18 @@ function TokenModal() {
           onClick={() => setIsOpen(true)}
           className="flex justify-center items-center flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-2 py-3 m-2"
         >
-          <span className="text-xs sm:text-base">
-            Select a token <ChevronIcon className="inline ml-1" />
+          <span className="text-xs sm:text-base flex justify-center items-center">
+            Select a token <ChevronDownIcon className="w-4 h-4 ml-1" />
           </span>
         </button>
       )}
-
-      <Modal isOpen={isOpen} onClose={reset}>
+      <Modal open={isOpen} onClose={reset}>
         <div className="flex flex-col dark:text-gray-200">
           <div className="flex flex-col border-b">
             <div className="flex justify-between items-center font-bold mx-4 mt-4">
               <p>Select a token</p>
               <button onClick={reset}>
-                <CloseIcon />
+                <XIcon className="w-4 h-4" />
               </button>
             </div>
             <input
@@ -101,11 +99,6 @@ function TokenModal() {
               </button>
             ))}
           </div>
-        </div>
-        <div className="text-center border-t py-4">
-          <button className="text-gray-600 dark:text-gray-200 hover:underline">
-            Manage Token List
-          </button>
         </div>
       </Modal>
     </>

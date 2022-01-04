@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import { Main, Header, Body, Footer } from '../components/layout';
+import { Main, Header, Body, Footer } from 'components/layout';
+import { WalletProvier } from 'contexts/wallet';
 
 function Home() {
   return (
@@ -8,11 +9,13 @@ function Home() {
         <title>Pairswap</title>
       </Head>
 
-      <Main>
-        <Header />
-        <Body />
-        <Footer />
-      </Main>
+      <WalletProvier>
+        <Main>
+          <Header />
+          <Body />
+          <Footer />
+        </Main>
+      </WalletProvier>
     </>
   );
 }
