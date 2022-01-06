@@ -16,3 +16,11 @@ export function shortenAddress(address) {
     throw new TypeError('Invalid address');
   }
 }
+
+export function shortenBalance(balance) {
+  if (!balance) {
+    return;
+  }
+
+  return parseFloat(balance).toFixed(4);
+}
