@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['raw.githubusercontent.com'],
+    domains: ['assets.coingecko.com'],
   },
   webpack(config) {
     config.module.rules.push({

@@ -1,14 +1,30 @@
 import { useState } from 'react';
 import { ArrowDownIcon } from '@heroicons/react/solid';
-import TokensModal from 'components/modal/token';
+
+import ChainModal from 'components/modal/chain';
+import TokenModal from 'components/modal/token';
 import WalletModal from 'components/modal/wallet';
-import Select from 'components/select';
-import { useWallet } from 'contexts/wallet';
 import data from 'data';
+import useChain from 'utils/useChain';
+import useToken from 'utils/useToken';
+import useWeb3 from 'utils/useWeb3';
 
 function Body() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isConnected } = useWallet();
+  const [amount, setAmount] = useState(0);
+  const { active } = useWeb3();
+  const {
+    sourceChains,
+    selectedSourceChain,
+    setSelectedSourceChain,
+    destChains,
+    selectedDestChain,
+    setSelectedDestChain,
+  } = useChain(data);
+  const { sourceToken, setSourceToken, destToken, setDestToken } = useToken({
+    sourceChain: selectedSourceChain,
+    destChain: selectedDestChain,
+  });
 
   return (
     <main className="flex-1">
@@ -18,14 +34,24 @@ function Body() {
             <label className="mx-2 dark:text-gray-300">From</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
-                className="col-span-2 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
                 type="number"
-                defaultValue="0"
                 min="0"
                 max="10000"
                 step="0.0001"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="col-span-2 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
               />
-              <Select data={data} />
+              <TokenModal
+                tokens={selectedSourceChain?.tokens}
+                selectedToken={sourceToken}
+                setSelectedToken={setSourceToken}
+              />
+              <ChainModal
+                chains={sourceChains}
+                selectedChain={selectedSourceChain}
+                setSelectedChain={setSelectedSourceChain}
+              />
             </div>
           </div>
 
@@ -37,23 +63,29 @@ function Body() {
             <label className="mx-2 dark:text-gray-300">To</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
+                readOnly
+                value={amount}
                 className="col-span-2 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
-                type="number"
-                defaultValue="0"
-                min="0"
-                max="10000"
-                step="0.0001"
               />
-              <Select data={data} />
+              <TokenModal
+                tokens={selectedDestChain?.tokens}
+                selectedToken={destToken}
+                setSelectedToken={setDestToken}
+              />
+              <ChainModal
+                chains={destChains}
+                selectedChain={selectedDestChain}
+                setSelectedChain={setSelectedDestChain}
+              />
             </div>
           </div>
 
           <div className="text-center">
             <button
-              onClick={() => (isConnected ? console.log('Swap') : setIsOpen(true))}
+              onClick={() => (active ? console.log('Swap') : setIsOpen(true))}
               className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl w-full md:w-80 py-4 mt-12"
             >
-              {isConnected ? 'Swap' : 'Connect Wallet'}
+              {active ? 'Swap' : 'Connect Wallet'}
             </button>
           </div>
           <WalletModal open={isOpen} onClose={() => setIsOpen(false)} />

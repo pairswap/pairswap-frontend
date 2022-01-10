@@ -1,22 +1,15 @@
-import Head from 'next/head';
 import { Main, Header, Body, Footer } from 'components/layout';
-import { WalletProvier } from 'contexts/wallet';
+import Web3Provider from 'contexts/web3';
 
 function Home() {
   return (
-    <>
-      <Head>
-        <title>Pairswap</title>
-      </Head>
-
-      <WalletProvier>
-        <Main>
-          <Header />
-          <Body />
-          <Footer />
-        </Main>
-      </WalletProvier>
-    </>
+    <Web3Provider>
+      <Main>
+        <Header />
+        <Body />
+        <Footer />
+      </Main>
+    </Web3Provider>
   );
 }
 
