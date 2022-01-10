@@ -30,7 +30,7 @@ function useToken({ sourceChain, destChain }) {
   useEffect(() => {
     if (destToken) {
       const _sourceToken = findBySymbol(sourceChain.tokens, destToken.symbol);
-      setDestToken(_sourceToken);
+      setSourceToken(_sourceToken);
     }
   }, [destToken, sourceChain]);
 
