@@ -8,11 +8,13 @@ import data from 'data';
 import useChain from 'utils/useChain';
 import useToken from 'utils/useToken';
 import useWeb3 from 'utils/useWeb3';
+import useSwap from 'utils/useSwap';
 
 function Body() {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState(0);
   const { active } = useWeb3();
+  const { transfer } = useSwap();
   const {
     sourceChains,
     selectedSourceChain,
@@ -82,7 +84,7 @@ function Body() {
 
           <div className="text-center">
             <button
-              onClick={() => (active ? console.log('Swap') : setIsOpen(true))}
+              onClick={() => (active ? transfer({ amount }) : setIsOpen(true))}
               className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl w-full md:w-80 py-4 mt-12"
             >
               {active ? 'Swap' : 'Connect Wallet'}

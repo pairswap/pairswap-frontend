@@ -8,7 +8,7 @@ import { balanceNames, chainNames } from 'config/chains';
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const { account, active, balance, chainId } = useWeb3();
+  const { shortenAccount, active, balance, chainId } = useWeb3();
 
   return (
     <nav className="flex items-center justify-between border-b border-gray-300 dark:border-black shadow-sm px-2 md:px-8 py-4 bg-white dark:bg-gray-900">
@@ -24,7 +24,7 @@ function Header() {
       <div className="hidden sm:flex sm:items-center">
         {chainId ? (
           <div className="w-52 h-10 bg-gray-300 rounded-2xl flex justify-center items-center">
-            {chainNames[chainId]}
+            {chainNames[chainId] ?? 'Wrong network'}
           </div>
         ) : null}
 
@@ -38,7 +38,7 @@ function Header() {
           onClick={() => !active && setIsOpen(true)}
           className="relative w-48 h-10 font-bold rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700"
         >
-          {active ? account : 'Connect to a wallet'}
+          {active ? shortenAccount : 'Connect to a wallet'}
         </button>
 
         <WalletModal open={isOpen} onClose={() => setIsOpen(false)} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { injected } from 'config/connectors';
 import useWeb3 from 'utils/useWeb3';
+import { requestChangeChain } from 'utils/injected';
 
 function filterChains(chains, chainId) {
   return chains.filter((chain) => chain.chainId !== chainId);
@@ -34,24 +34,14 @@ function useChain(data) {
     }
   }, [data, chainId]);
 
+  // useEffect(() => {
+  //   if (selectedSourceChain && chainId && selectedSourceChain.chainId !== chainId) {
+  //     requestChangeChain(selectedSourceChain.chainId);
+  //   }
+  // }, [chainId, selectedSourceChain]);
+
   useEffect(() => {
     if (selectedSourceChain) {
-      const hexString = `0x${selectedSourceChain.chainId.toString(16)}`;
-      injected
-        .getProvider()
-        .then((provider) => {
-          provider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [
-              {
-                chainId: hexString,
-              },
-            ],
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
       const _destChains = filterChains(data, selectedSourceChain.chainId);
       setDestChains(_destChains);
     }

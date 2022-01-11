@@ -28,7 +28,8 @@ function Web3ReactStateProvider({ children }) {
   return (
     <Web3ReactStateContext.Provider
       value={{
-        account: shortenAccount(account),
+        account,
+        shortenAccount: shortenAccount(account),
         activate,
         active,
         balance: shortenBalance(balance),
