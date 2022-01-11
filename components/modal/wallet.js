@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import Image from 'next/image';
 import { XIcon } from '@heroicons/react/solid';
 
@@ -39,5 +40,10 @@ function WalletModal({ open, onClose }) {
     </Modal>
   );
 }
+
+WalletModal.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+};
 
 export default WalletModal;

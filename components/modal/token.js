@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import Image from 'next/image';
 import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
+
 import Modal from 'components/modal';
 
 function TokenModal({ tokens, selectedToken, setSelectedToken }) {
@@ -76,5 +78,14 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
     </div>
   );
 }
+
+TokenModal.propTypes = {
+  tokens: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedToken: PropTypes.shape({
+    symbol: PropTypes.string,
+    logoURL: PropTypes.string,
+  }),
+  setSelectedToken: PropTypes.func,
+};
 
 export default TokenModal;

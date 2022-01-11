@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import PropTypes from 'prop-types';
 import { Web3Provider as EthersWeb3Provider } from '@ethersproject/providers';
 import { Web3ReactProvider, useWeb3React } from '@web3-react/core';
 
@@ -44,6 +45,10 @@ function Web3ReactStateProvider({ children }) {
   );
 }
 
+Web3ReactStateProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 function Web3Provider({ children }) {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
@@ -51,5 +56,9 @@ function Web3Provider({ children }) {
     </Web3ReactProvider>
   );
 }
+
+Web3Provider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default Web3Provider;

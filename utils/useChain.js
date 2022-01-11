@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { hexlify } from '@ethersproject/bytes';
 
 import { injected } from 'config/connectors';
 import useWeb3 from 'utils/useWeb3';

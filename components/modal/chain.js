@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import Image from 'next/image';
 import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
+
 import Modal from 'components/modal';
 
 function ChainModal({ chains, selectedChain, setSelectedChain }) {
@@ -84,5 +86,15 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
     </div>
   );
 }
+
+ChainModal.propTypes = {
+  chains: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedChain: PropTypes.shape({
+    chainName: PropTypes.string,
+    chainLogoURL: PropTypes.string,
+    chainId: PropTypes.number,
+  }),
+  setSelectedChain: PropTypes.func,
+};
 
 export default ChainModal;

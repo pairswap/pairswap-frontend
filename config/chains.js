@@ -8,7 +8,7 @@ export const chainNames = {
   5: Chains.GOERLI,
   42: Chains.KOVAN,
   56: Chains.BSC,
-  189985: Chains.TEST,
+  189985: Chains.SRC,
 };
 
 export const balanceNames = {

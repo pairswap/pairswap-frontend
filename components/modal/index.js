@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Dialog, Transition } from '@headlessui/react';
 
 function Modal({ open, onClose, children }) {
@@ -37,5 +38,11 @@ function Modal({ open, onClose, children }) {
     </Transition.Root>
   );
 }
+
+Modal.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  children: PropTypes.node.isRequired,
+};
 
 export default Modal;
