@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import { SISU_SRC_GW, SISU_SRC_TOKEN, SISU_DEST_TOKEN } from 'config/addresses';
 import useWeb3 from 'utils/useWeb3';
-import { convertDecimalsToBigNumber } from 'utils/string';
+import { convertDecimalsToBigNumber } from 'utils/transform';
 
 function useSwap() {
   const { account, library } = useWeb3();

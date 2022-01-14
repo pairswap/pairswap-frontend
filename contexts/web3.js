@@ -4,7 +4,7 @@ import { Web3Provider as EthersWeb3Provider } from '@ethersproject/providers';
 import { Web3ReactProvider, useWeb3React } from '@web3-react/core';
 
 import connectors from 'config/connectors';
-import { shortenAccount, shortenBalance } from 'utils/string';
+import { shortenAccount, shortenBalance } from 'utils/transform';
 import useAuthorize from 'utils/useAuthorize';
 import useBalance from 'utils/useBalance';
 import useListener from 'utils/useListener';
