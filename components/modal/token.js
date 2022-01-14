@@ -5,16 +5,29 @@ import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 
 import Modal from 'components/modal';
+import useSearching from 'utils/useSearching';
+
+const conditions = {
+  keys: ['name', 'address'],
+  exact: ['address'],
+};
 
 function TokenModal({ tokens, selectedToken, setSelectedToken }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [keyword, setKeyword] = useState('');
+  const filteredTokens = useSearching(tokens, keyword, conditions);
 
-  function selectToken(token) {
-    setSelectedToken(token);
+  function handleClose() {
     setIsOpen(false);
+    setKeyword('');
   }
 
-  if (!tokens || !selectedToken) {
+  function handleSelect(token) {
+    setSelectedToken(token);
+    handleClose();
+  }
+
+  if (!selectedToken) {
     return (
       <div className="flex justify-center items-center flex-1 bg-gray-300 border rounded-xl px-4 py-4 m-2">
         <div className="animate-spin rounded-full w-8 h-8 border-4 border-b-indigo-600"></div>
@@ -40,38 +53,48 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
           {selectedToken.symbol} <ChevronDownIcon className="w-4 h-4 ml-1" />
         </span>
       </button>
-      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal open={isOpen} onClose={handleClose}>
         <div className="flex flex-col dark:text-gray-200">
           <div className="flex flex-col border-b">
             <div className="flex justify-between items-center font-bold mx-4 mt-4">
               <p>Select a token</p>
-              <button onClick={() => setIsOpen(false)}>
+              <button onClick={handleClose}>
                 <XIcon className="w-4 h-4" />
               </button>
             </div>
             <input
               placeholder="Search name or paste address"
               className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700 dark:focus:border-gray-900 dark:text-gray-900"
-              onChange={(e) => console.log(e.target.value)}
+              onChange={(e) => setKeyword(e.target.value)}
             />
             <div className="flex justify-between mx-4 pt-8 pb-4">
               <span className="font-bold text-sm">Token name</span>
             </div>
           </div>
-          <div className="flex flex-col max-h-[450px] overflow-auto">
-            {tokens.map((token, index) => (
-              <button
-                key={index}
-                onClick={() => selectToken(token)}
-                className={clsx(
-                  token.symbol === selectedToken.symbol && 'bg-gray-100 dark:bg-gray-800',
-                  'flex items-center p-4 hover:bg-gray-200 dark:hover:bg-gray-700'
-                )}
-              >
-                <Image src={token.logoURL} alt={token.symbol} width={40} height={40} unoptimized />
-                <span className="mx-4">{token.symbol}</span>
-              </button>
-            ))}
+          <div className="flex flex-col h-[450px] overflow-auto">
+            {filteredTokens.length > 0 ? (
+              filteredTokens.map((token, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSelect(token)}
+                  className={clsx(
+                    token.symbol === selectedToken.symbol && 'bg-gray-100 dark:bg-gray-800',
+                    'flex items-center p-4 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  )}
+                >
+                  <Image
+                    src={token.logoURL}
+                    alt={token.symbol}
+                    width={40}
+                    height={40}
+                    unoptimized
+                  />
+                  <span className="mx-4">{token.symbol}</span>
+                </button>
+              ))
+            ) : (
+              <p className="text-center text-gray-400 mt-32">No tokens found</p>
+            )}
           </div>
         </div>
       </Modal>
@@ -86,6 +109,10 @@ TokenModal.propTypes = {
     logoURL: PropTypes.string,
   }),
   setSelectedToken: PropTypes.func,
+};
+
+TokenModal.defaultProps = {
+  tokens: [],
 };
 
 export default TokenModal;

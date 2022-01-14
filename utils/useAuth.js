@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 
 import { injected } from 'config/connectors';
 
-function useAuthorize() {
+function useAuth() {
   const { activate } = useWeb3React();
 
   useEffect(() => {
@@ -15,4 +15,4 @@ function useAuthorize() {
   }, [activate]);
 }
 
-export default useAuthorize;
+export default useAuth;
