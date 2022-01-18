@@ -1,9 +1,9 @@
 import Header from 'components/header';
 import Container from 'components/container';
 import Footer from 'components/footer';
-import Body from 'components/body/home';
+import Body from 'components/body/pool';
 
-function Home() {
+function Poll() {
   return (
     <Container>
       <Header />
@@ -13,4 +13,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Poll;

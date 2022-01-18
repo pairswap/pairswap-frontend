@@ -12,11 +12,16 @@ function Header() {
 
   return (
     <nav className="flex items-center justify-between border-b border-gray-300 dark:border-black shadow-sm px-2 md:px-8 py-4 bg-white dark:bg-gray-900">
-      <div className="flex items-center">
+      <div className="flex items-center space-x-8">
         <Logo className="inline" />
         <Link href="/">
-          <a className="text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white mx-1 md:mx-2">
+          <a className="text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
             <span className="text-black dark:text-white">Swap</span>
+          </a>
+        </Link>
+        <Link href="/pool">
+          <a className="text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <span className="text-black dark:text-white">Pool</span>
           </a>
         </Link>
       </div>
