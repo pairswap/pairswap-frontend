@@ -19,11 +19,6 @@ function Header() {
             <span className="text-black dark:text-white">Swap</span>
           </a>
         </Link>
-        <Link href="/pool">
-          <a className="text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
-            <span className="text-black dark:text-white">Pool</span>
-          </a>
-        </Link>
       </div>
 
       <div className="hidden sm:flex sm:items-center">
