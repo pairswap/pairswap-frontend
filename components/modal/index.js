@@ -30,7 +30,7 @@ function Modal({ open, onClose, children }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="inline-block bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl shadow-xl transform transition-all max-w-sm w-full mx-4 sm:mx-0">
+          <div className="inline-block bg-white border rounded-xl shadow-xl transform transition-all max-w-sm w-full mx-4 sm:mx-0">
             {children}
           </div>
         </Transition.Child>

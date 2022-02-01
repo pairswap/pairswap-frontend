@@ -31,9 +31,9 @@ function Body() {
   return (
     <main className="flex-1">
       <div className="max-w-4xl mx-auto mt-8 px-4">
-        <div className="border border-gray-100 dark:border-gray-800 p-4 rounded-3xl mt-2 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
-            <label className="mx-2 dark:text-gray-300">From</label>
+        <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
+          <div className="border border-gray-100 rounded-3xl p-4">
+            <label className="mx-2">From</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
                 type="number"
@@ -42,7 +42,7 @@ function Body() {
                 step="0.0001"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="col-span-2 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
+                className="col-span-2 text-xl text-gray-400 outline-none m-2"
               />
               <TokenModal
                 tokens={selectedSourceChain?.tokens}
@@ -57,17 +57,17 @@ function Body() {
             </div>
           </div>
 
-          <div className="flex justify-center dark:text-white my-4">
+          <div className="flex justify-center my-4">
             <ArrowDownIcon className="w-4 h-4" />
           </div>
 
-          <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
-            <label className="mx-2 dark:text-gray-300">To</label>
+          <div className="border border-gray-100 rounded-3xl p-4">
+            <label className="mx-2">To</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
                 readOnly
                 value={amount}
-                className="col-span-2 text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
+                className="col-span-2 text-xl text-gray-400 outline-none m-2"
               />
               <TokenModal
                 tokens={selectedDestChain?.tokens}

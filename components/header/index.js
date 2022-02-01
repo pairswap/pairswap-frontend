@@ -11,12 +11,12 @@ function Header() {
   const { shortenAccount, active, balance, chainId } = useWeb3();
 
   return (
-    <nav className="flex items-center justify-between border-b border-gray-300 dark:border-black shadow-sm px-2 md:px-8 py-4 bg-white dark:bg-gray-900">
+    <nav className="flex items-center justify-between border-b border-gray-300 shadow-sm px-2 md:px-8 py-4 bg-white">
       <div className="flex items-center space-x-8">
         <Logo className="inline" />
         <Link href="/">
-          <a className="text-base font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
-            <span className="text-black dark:text-white">Swap</span>
+          <a className="text-base font-bold text-gray-600 hover:text-black">
+            <span className="text-black">Swap</span>
           </a>
         </Link>
       </div>

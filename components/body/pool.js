@@ -12,10 +12,10 @@ function Body() {
   return (
     <main className="flex-1">
       <div className="max-w-lg mx-auto mt-8 md:mt-24 px-4">
-        <div className="border border-gray-100 dark:border-gray-800 p-4 rounded-3xl mt-2 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
           <h4 className="text-xl text-center font-bold my-4">Add Liquidity</h4>
-          <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
-            <label className="mx-2 dark:text-gray-300">Input</label>
+          <div className="border border-gray-100 rounded-3xl p-4">
+            <label className="mx-2">Input</label>
             <div className="grid grid-cols-2">
               <input
                 type="number"
@@ -23,7 +23,7 @@ function Body() {
                 max="10000"
                 step="0.0001"
                 placeholder="0"
-                className="text-xl dark:bg-gray-900 text-gray-400 outline-none m-2"
+                className="text-xl text-gray-400 outline-none m-2"
               />
               <TokenModal
                 tokens={tokens}
@@ -35,7 +35,7 @@ function Body() {
 
           <div>
             <p className="mt-8 mb-4">Prices and pool share</p>
-            <div className="grid grid-cols-3 text-center border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
+            <div className="grid grid-cols-3 text-center border border-gray-100 rounded-3xl p-4">
               <div>
                 <p>Your amount</p>
                 <p className="text-xl font-bold">{userAmount}</p>

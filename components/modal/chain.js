@@ -56,7 +56,7 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
       </button>
 
       <Modal open={isOpen} onClose={handleClose}>
-        <div className="flex flex-col dark:text-gray-200">
+        <div className="flex flex-col">
           <div className="flex flex-col border-b">
             <div className="flex justify-between items-center font-bold mx-4 mt-4">
               <p>Select a network</p>
@@ -66,7 +66,7 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
             </div>
             <input
               placeholder="Search name or paste ID"
-              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700 dark:focus:border-gray-900 dark:text-gray-900"
+              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700"
               onChange={(e) => setKeyword(e.target.value)}
             />
             <div className="flex justify-between mx-4 pt-8 pb-4">
@@ -80,8 +80,8 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
                   key={index}
                   onClick={() => handleSelect(chain)}
                   className={clsx(
-                    chain.chainId === selectedChain.chainId && 'bg-gray-100 dark:bg-gray-800',
-                    'flex items-center p-4 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    chain.chainId === selectedChain.chainId && 'bg-gray-100',
+                    'flex items-center p-4 hover:bg-gray-200'
                   )}
                 >
                   <Image
