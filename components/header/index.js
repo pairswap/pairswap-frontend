@@ -22,16 +22,15 @@ function Header() {
       </div>
 
       <div className="hidden sm:flex sm:items-center">
-        {chainId ? (
-          <div className="flex h-10 w-52 items-center justify-center rounded-2xl bg-gray-300">
-            {chainNames[chainId] ?? 'Wrong network'}
-          </div>
-        ) : null}
-
-        {balance ? (
-          <div className="relative -right-7 h-10 rounded-2xl border border-indigo-600 px-8 py-2">
-            {balance} {balanceNames[chainId]}
-          </div>
+        {active ? (
+          <>
+            <div className="flex h-10 w-52 items-center justify-center rounded-2xl bg-gray-300">
+              {chainNames[chainId] ?? 'Wrong network'}
+            </div>
+            <div className="relative -right-7 h-10 rounded-2xl border border-indigo-600 px-8 py-2">
+              {balance} {balanceNames[chainId]}
+            </div>
+          </>
         ) : null}
 
         <button
