@@ -11,10 +11,10 @@ function Body() {
 
   return (
     <main className="flex-1">
-      <div className="max-w-lg mx-auto mt-8 md:mt-24 px-4">
-        <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
-          <h4 className="text-xl text-center font-bold my-4">Add Liquidity</h4>
-          <div className="border border-gray-100 rounded-3xl p-4">
+      <div className="mx-auto mt-8 max-w-lg px-4 md:mt-24">
+        <div className="mt-2 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm">
+          <h4 className="my-4 text-center text-xl font-bold">Add Liquidity</h4>
+          <div className="rounded-3xl border border-gray-100 p-4">
             <label className="mx-2">Input</label>
             <div className="grid grid-cols-2">
               <input
@@ -23,7 +23,7 @@ function Body() {
                 max="10000"
                 step="0.0001"
                 placeholder="0"
-                className="text-xl text-gray-400 outline-none m-2"
+                className="m-2 text-xl text-gray-400 outline-none"
               />
               <TokenModal
                 tokens={tokens}
@@ -35,7 +35,7 @@ function Body() {
 
           <div>
             <p className="mt-8 mb-4">Prices and pool share</p>
-            <div className="grid grid-cols-3 text-center border border-gray-100 rounded-3xl p-4">
+            <div className="grid grid-cols-3 rounded-3xl border border-gray-100 p-4 text-center">
               <div>
                 <p>Your amount</p>
                 <p className="text-xl font-bold">{userAmount}</p>
@@ -52,7 +52,7 @@ function Body() {
           </div>
 
           <div className="text-center">
-            <button className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl w-full py-4 mt-12">
+            <button className="mt-12 w-full rounded-2xl bg-indigo-600 py-4 text-sm text-white hover:bg-indigo-700 sm:text-base">
               Supply
             </button>
           </div>

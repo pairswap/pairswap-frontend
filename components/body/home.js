@@ -30,9 +30,9 @@ function Body() {
 
   return (
     <main className="flex-1">
-      <div className="max-w-4xl mx-auto mt-8 px-4">
-        <div className="border border-gray-100 p-4 rounded-3xl mt-2 bg-white shadow-sm">
-          <div className="border border-gray-100 rounded-3xl p-4">
+      <div className="mx-auto mt-8 max-w-4xl px-4">
+        <div className="mt-2 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="rounded-3xl border border-gray-100 p-4">
             <label className="mx-2">From</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
@@ -42,7 +42,7 @@ function Body() {
                 step="0.0001"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="col-span-2 text-xl text-gray-400 outline-none m-2"
+                className="col-span-2 m-2 text-xl text-gray-400 outline-none"
               />
               <TokenModal
                 tokens={selectedSourceChain?.tokens}
@@ -57,17 +57,17 @@ function Body() {
             </div>
           </div>
 
-          <div className="flex justify-center my-4">
-            <ArrowDownIcon className="w-4 h-4" />
+          <div className="my-4 flex justify-center">
+            <ArrowDownIcon className="h-4 w-4" />
           </div>
 
-          <div className="border border-gray-100 rounded-3xl p-4">
+          <div className="rounded-3xl border border-gray-100 p-4">
             <label className="mx-2">To</label>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input
                 readOnly
                 value={amount}
-                className="col-span-2 text-xl text-gray-400 outline-none m-2"
+                className="col-span-2 m-2 text-xl text-gray-400 outline-none"
               />
               <TokenModal
                 tokens={selectedDestChain?.tokens}
@@ -85,7 +85,7 @@ function Body() {
           <div className="text-center">
             <button
               onClick={() => (active ? transfer({ amount }) : setIsOpen(true))}
-              className="text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl w-full md:w-80 py-4 mt-12"
+              className="mt-12 w-full rounded-2xl bg-indigo-600 py-4 text-sm text-white hover:bg-indigo-700 sm:text-base md:w-80"
             >
               {active ? 'Swap' : 'Connect Wallet'}
             </button>

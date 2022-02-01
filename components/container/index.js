@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 function Main({ children }) {
   return (
-    <div className="flex flex-col w-screen h-screen font-base bg-gradient-to-b from-indigo-50 to-gray-100">
+    <div className="flex h-screen w-screen flex-col bg-gradient-to-b from-indigo-50 to-gray-100 font-base">
       {children}
     </div>
   );

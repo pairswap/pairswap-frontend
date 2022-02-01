@@ -29,17 +29,17 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
 
   if (!selectedChain) {
     return (
-      <div className="flex justify-center items-center flex-1 bg-gray-300 border rounded-xl px-4 py-4 m-2">
-        <div className="animate-spin rounded-full w-8 h-8 border-4 border-b-indigo-600"></div>
+      <div className="m-2 flex flex-1 items-center justify-center rounded-xl border bg-gray-300 px-4 py-4">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-b-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex items-center justify-center">
       <button
         onClick={() => setIsOpen(true)}
-        className="flex justify-between items-center flex-1 bg-gray-300 hover:bg-gray-200 border rounded-xl px-4 py-2 m-2"
+        className="m-2 flex flex-1 items-center justify-between rounded-xl border bg-gray-300 px-4 py-2 hover:bg-gray-200"
       >
         <Image
           src={selectedChain.chainLogoURL}
@@ -49,31 +49,31 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
           unoptimized
           className="rounded-full"
         />
-        <span className="mx-2 h-12 flex justify-center items-center">
+        <span className="mx-2 flex h-12 items-center justify-center">
           {selectedChain.chainName}
         </span>
-        <ChevronDownIcon className="w-4 h-4 ml-1" />
+        <ChevronDownIcon className="ml-1 h-4 w-4" />
       </button>
 
       <Modal open={isOpen} onClose={handleClose}>
         <div className="flex flex-col">
           <div className="flex flex-col border-b">
-            <div className="flex justify-between items-center font-bold mx-4 mt-4">
+            <div className="mx-4 mt-4 flex items-center justify-between font-bold">
               <p>Select a network</p>
               <button onClick={handleClose}>
-                <XIcon className="w-4 h-4" />
+                <XIcon className="h-4 w-4" />
               </button>
             </div>
             <input
               placeholder="Search name or paste ID"
-              className="border rounded-lg h-12 mx-4 mt-4 px-4 focus:outline-none focus:border-indigo-700"
+              className="mx-4 mt-4 h-12 rounded-lg border px-4 focus:border-indigo-700 focus:outline-none"
               onChange={(e) => setKeyword(e.target.value)}
             />
-            <div className="flex justify-between mx-4 pt-8 pb-4">
-              <span className="font-bold text-sm">Network name</span>
+            <div className="mx-4 flex justify-between pt-8 pb-4">
+              <span className="text-sm font-bold">Network name</span>
             </div>
           </div>
-          <div className="flex flex-col h-[450px] overflow-auto">
+          <div className="flex h-[450px] flex-col overflow-auto">
             {filteredChains.length > 0 ? (
               filteredChains.map((chain, index) => (
                 <button
@@ -95,7 +95,7 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
                 </button>
               ))
             ) : (
-              <p className="text-center text-gray-400 mt-32">No networks found</p>
+              <p className="mt-32 text-center text-gray-400">No networks found</p>
             )}
           </div>
         </div>

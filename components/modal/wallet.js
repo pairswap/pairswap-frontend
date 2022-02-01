@@ -16,10 +16,10 @@ function WalletModal({ open, onClose }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex flex-col">
-        <div className="flex justify-between items-center font-bold border-b p-4 mb-4">
+        <div className="mb-4 flex items-center justify-between border-b p-4 font-bold">
           <p>Connect to a wallet</p>
           <button onClick={onClose}>
-            <XIcon className="w-4 h-4" />
+            <XIcon className="h-4 w-4" />
           </button>
         </div>
 
@@ -30,7 +30,7 @@ function WalletModal({ open, onClose }) {
               activate(connector);
               onClose();
             }}
-            className="flex justify-between bg-gray-100 hover:bg-gray-200 rounded-lg p-4 m-4"
+            className="m-4 flex justify-between rounded-lg bg-gray-100 p-4 hover:bg-gray-200"
           >
             <p className="font-bold">{wallets[connectorName]}</p>
             <Image src="/images/metamask.png" alt="metamask" width="24" height="24" />

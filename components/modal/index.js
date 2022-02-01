@@ -7,7 +7,7 @@ function Modal({ open, onClose, children }) {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed z-10 inset-0 flex justify-center items-center"
+        className="fixed inset-0 z-10 flex items-center justify-center"
         onClose={onClose}
       >
         <Transition.Child
@@ -30,7 +30,7 @@ function Modal({ open, onClose, children }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="inline-block bg-white border rounded-xl shadow-xl transform transition-all max-w-sm w-full mx-4 sm:mx-0">
+          <div className="mx-4 inline-block w-full max-w-sm transform rounded-xl border bg-white shadow-xl transition-all sm:mx-0">
             {children}
           </div>
         </Transition.Child>
