@@ -2,7 +2,7 @@ import 'styles/global.css';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 
-import ToastProvider from 'contexts/toast';
+import NotificationProvider from 'contexts/notification';
 import Web3Provider from 'contexts/web3';
 
 function App({ Component, pageProps }) {
@@ -13,9 +13,9 @@ function App({ Component, pageProps }) {
       </Head>
 
       <Web3Provider>
-        <ToastProvider>
+        <NotificationProvider>
           <Component {...pageProps} />
-        </ToastProvider>
+        </NotificationProvider>
       </Web3Provider>
     </>
   );

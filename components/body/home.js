@@ -30,7 +30,7 @@ function Body() {
 
   return (
     <main className="flex-1">
-      <div className="max-w-4xl mx-auto mt-8 md:mt-24 px-4">
+      <div className="max-w-4xl mx-auto mt-8 px-4">
         <div className="border border-gray-100 dark:border-gray-800 p-4 rounded-3xl mt-2 bg-white dark:bg-gray-900 shadow-sm">
           <div className="border border-gray-100 dark:border-gray-800 rounded-3xl p-4">
             <label className="mx-2 dark:text-gray-300">From</label>

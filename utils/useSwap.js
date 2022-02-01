@@ -4,10 +4,12 @@ import { BigNumber } from '@ethersproject/bignumber';
 
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import { SISU_SRC_GW, SISU_SRC_TOKEN, SISU_DEST_TOKEN } from 'config/addresses';
+import useNotification from 'utils/useNotification';
 import useWeb3 from 'utils/useWeb3';
 import { convertDecimalsToBigNumber } from 'utils/transform';
 
 function useSwap() {
+  const { showMessage } = useNotification();
   const { account, library } = useWeb3();
 
   const transfer = useCallback(
@@ -18,23 +20,51 @@ function useSwap() {
       tokenIn = SISU_DEST_TOKEN,
       amount = BigNumber.from(1),
     }) => {
-      const signer = await library.getSigner(account);
-      const contract = new Contract(SISU_SRC_GW, ERC20Gateway.abi, signer);
+      if (Number(amount) === 0) {
+        showMessage({
+          message: 'Please enter a token amount',
+          type: 'error',
+        });
+
+        return;
+      }
 
       const uintAmount = convertDecimalsToBigNumber(`${amount}`);
-      console.log({ uintAmount });
 
-      const transaction = await contract.TransferOut(
-        destChain,
-        recipient,
-        tokenOut,
-        tokenIn,
-        uintAmount
-      );
+      try {
+        const signer = await library.getSigner(account);
+        const contract = new Contract(SISU_SRC_GW, ERC20Gateway.abi, signer);
 
-      await transaction.wait();
+        const transaction = await contract.TransferOut(
+          destChain,
+          recipient,
+          tokenOut,
+          tokenIn,
+          uintAmount
+        );
+        showMessage({
+          message: 'You have made a transaction',
+          type: 'success',
+        });
+
+        await transaction.wait();
+      } catch (error) {
+        console.error(error);
+        // MetaMask Tx Signature: User denied transaction signature.
+        if (error.code === 4001) {
+          showMessage({
+            message: 'Please accept transaction signature to continue',
+            type: 'error',
+          });
+        } else {
+          showMessage({
+            message: 'An unknown error occurred. Check the console for more details',
+            type: 'error',
+          });
+        }
+      }
     },
-    [account, library]
+    [account, library, showMessage]
   );
 
   return { transfer };
