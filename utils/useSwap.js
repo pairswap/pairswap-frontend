@@ -50,7 +50,7 @@ function useSwap() {
         await transaction.wait();
       } catch (error) {
         console.error(error);
-        // MetaMask Tx Signature: User denied transaction signature.
+        // User denied transaction signature.
         if (error.code === 4001) {
           showMessage({
             message: 'Please accept transaction signature to continue',

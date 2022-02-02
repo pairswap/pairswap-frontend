@@ -4,7 +4,6 @@ import { ArrowDownIcon } from '@heroicons/react/solid';
 import ChainModal from 'components/modal/chain';
 import TokenModal from 'components/modal/token';
 import WalletModal from 'components/modal/wallet';
-import data from 'data';
 import useChain from 'utils/useChain';
 import useToken from 'utils/useToken';
 import useWeb3 from 'utils/useWeb3';
@@ -22,7 +21,7 @@ function Body() {
     destChains,
     selectedDestChain,
     setSelectedDestChain,
-  } = useChain(data);
+  } = useChain();
   const { sourceToken, setSourceToken, destToken, setDestToken } = useToken({
     sourceChain: selectedSourceChain,
     destChain: selectedDestChain,

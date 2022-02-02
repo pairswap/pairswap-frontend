@@ -143,6 +143,12 @@ const data = [
     chainName: 'BSC mainnet',
     chainLogoURL: 'https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png',
     chainId: 56,
+    nativeCurrency: {
+      symbol: 'BNB',
+      decimals: 18,
+    },
+    rpcUrls: 'https://bsc-dataseed1.binance.org',
+    blockExplorerUrls: 'https://bscscan.com',
     tokens: [
       {
         name: 'Coin98',
