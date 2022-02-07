@@ -15,6 +15,9 @@ function getErrorMessage(error) {
     return "You're connected to an unsupported network";
   } else if (error instanceof UserRejectedRequestError) {
     return 'Please authorize this website to continue';
+  } else if (error.code === -32002) {
+    // Have a pending request or need to re-enter password
+    return 'Already proccesing request account. Please check your Metamask';
   } else {
     console.error(error);
     return 'An unknown error occurred. Check the console for more details';
