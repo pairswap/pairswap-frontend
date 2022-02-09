@@ -142,7 +142,7 @@ const data = [
   {
     chainName: 'BSC mainnet',
     chainLogoURL: 'https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png',
-    chainId: 56,
+    chainId: 97,
     nativeCurrency: {
       symbol: 'BNB',
       decimals: 18,

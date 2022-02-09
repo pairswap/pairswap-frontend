@@ -14,7 +14,7 @@ function useSwap() {
 
   const transfer = useCallback(
     async ({
-      destChain = 'ganache2',
+      destChain = 'eth-binance-testnet',
       recipient = account,
       tokenOut = SISU_SRC_TOKEN,
       tokenIn = SISU_DEST_TOKEN,
@@ -30,12 +30,13 @@ function useSwap() {
       }
 
       const uintAmount = convertDecimalsToBigNumber(`${amount}`);
+      console.log({ destChain, recipient, tokenOut, tokenIn, amount: uintAmount });
 
       try {
         const signer = await library.getSigner(account);
         const contract = new Contract(SISU_SRC_GW, ERC20Gateway.abi, signer);
 
-        const transaction = await contract.TransferOut(
+        const transaction = await contract.transferOut(
           destChain,
           recipient,
           tokenOut,

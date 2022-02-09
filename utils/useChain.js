@@ -33,7 +33,6 @@ function useChain() {
               chainName: selectedChain.chainName,
               nativeCurrency: selectedChain.nativeCurrency,
               rpcUrls: [selectedChain.rpcUrls],
-              blockExplorerUrls: [selectedChain.blockExplorerUrls],
             },
           ],
         });
