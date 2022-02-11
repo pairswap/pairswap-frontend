@@ -1,40 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 
-function findBySymbol(tokens, symbol) {
-  return tokens.find((token) => token.symbol === symbol);
+import { TokenContext, TokenUpdateContext } from 'contexts/token';
+
+export function useToken() {
+  const context = useContext(TokenContext);
+
+  if (typeof context === 'undefined') {
+    throw new Error('useToken must be used within a TokenProvider');
+  }
+
+  return context;
 }
 
-function useToken({ sourceChain, destChain }) {
-  const [sourceToken, setSourceToken] = useState();
-  const [destToken, setDestToken] = useState();
+export function useUpdateToken() {
+  const context = useContext(TokenUpdateContext);
 
-  useEffect(() => {
-    if (sourceChain && destChain) {
-      if (!sourceToken || !destToken) {
-        const _sourceToken = sourceChain.tokens[0];
-        setSourceToken(_sourceToken);
+  if (typeof context === 'undefined') {
+    throw new Error('useUpdateToken must be used within a TokenProvider');
+  }
 
-        const _destToken = findBySymbol(destChain.tokens, _sourceToken.symbol);
-        setDestToken(_destToken);
-      }
-    }
-  }, [sourceChain, destChain, sourceToken, destToken]);
-
-  useEffect(() => {
-    if (sourceToken) {
-      const _destToken = findBySymbol(destChain.tokens, sourceToken.symbol);
-      setDestToken(_destToken);
-    }
-  }, [sourceToken, destChain]);
-
-  useEffect(() => {
-    if (destToken) {
-      const _sourceToken = findBySymbol(sourceChain.tokens, destToken.symbol);
-      setSourceToken(_sourceToken);
-    }
-  }, [destToken, sourceChain]);
-
-  return { sourceToken, setSourceToken, destToken, setDestToken };
+  return context;
 }
-
-export default useToken;

@@ -4,28 +4,20 @@ import { ArrowDownIcon } from '@heroicons/react/solid';
 import ChainModal from 'components/modal/chain';
 import TokenModal from 'components/modal/token';
 import WalletModal from 'components/modal/wallet';
-import useChain from 'utils/useChain';
-import useToken from 'utils/useToken';
+import { useChain, useUpdateChain } from 'utils/useChain';
+import { useToken, useUpdateToken } from 'utils/useToken';
 import useWeb3 from 'utils/useWeb3';
 import useSwap from 'utils/useSwap';
 
 function Body() {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState(0);
-  const { active } = useWeb3();
+  const { account, active } = useWeb3();
   const { transfer } = useSwap();
-  const {
-    sourceChains,
-    selectedSourceChain,
-    setSelectedSourceChain,
-    destChains,
-    selectedDestChain,
-    setSelectedDestChain,
-  } = useChain();
-  const { sourceToken, setSourceToken, destToken, setDestToken } = useToken({
-    sourceChain: selectedSourceChain,
-    destChain: selectedDestChain,
-  });
+  const { sourceChains, selectedSourceChain, destChains, selectedDestChain } = useChain();
+  const { setSelectedSourceChain, setSelectedDestChain } = useUpdateChain();
+  const { selectedSourceToken, selectedDestToken } = useToken();
+  const { setSelectedSourceToken, setSelectedDestToken } = useUpdateToken();
 
   return (
     <main className="flex-1">
@@ -45,8 +37,8 @@ function Body() {
               />
               <TokenModal
                 tokens={selectedSourceChain?.tokens}
-                selectedToken={sourceToken}
-                setSelectedToken={setSourceToken}
+                selectedToken={selectedSourceToken}
+                setSelectedToken={setSelectedSourceToken}
               />
               <ChainModal
                 chains={sourceChains}
@@ -70,8 +62,8 @@ function Body() {
               />
               <TokenModal
                 tokens={selectedDestChain?.tokens}
-                selectedToken={destToken}
-                setSelectedToken={setDestToken}
+                selectedToken={selectedDestToken}
+                setSelectedToken={setSelectedDestToken}
               />
               <ChainModal
                 chains={destChains}
@@ -83,7 +75,18 @@ function Body() {
 
           <div className="text-center">
             <button
-              onClick={() => (active ? transfer({ amount }) : setIsOpen(true))}
+              onClick={() =>
+                active
+                  ? transfer({
+                      contractAddress: selectedSourceChain.gatewayAddress,
+                      destChain: selectedDestChain.transferName,
+                      recipient: account,
+                      tokenOut: selectedSourceToken.address,
+                      tokenIn: selectedDestToken.address,
+                      amount,
+                    })
+                  : setIsOpen(true)
+              }
               className="mt-12 w-full rounded-2xl bg-indigo-600 py-4 text-sm text-white hover:bg-indigo-700 sm:text-base md:w-80"
             >
               {active ? 'Swap' : 'Connect Wallet'}

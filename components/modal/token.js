@@ -39,19 +39,20 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
     <div className="flex items-center justify-center">
       <button
         onClick={() => setIsOpen(true)}
-        className="m-2 flex flex-1 items-center justify-center rounded-xl border bg-gray-300 px-4 py-2 hover:bg-gray-200"
+        className="m-2 flex flex-1 items-center justify-between gap-x-2 rounded-xl border bg-gray-300 p-2 hover:bg-gray-200"
       >
-        <Image
-          src={selectedToken.logoURL}
-          alt={selectedToken.symbol}
-          width={30}
-          height={30}
-          unoptimized
-          className="rounded-full"
-        />
-        <span className="mx-2 flex h-12 items-center justify-center">
-          {selectedToken.symbol} <ChevronDownIcon className="ml-1 h-4 w-4" />
-        </span>
+        <div className="flex items-center justify-center rounded-full border bg-white p-2">
+          <Image
+            src={selectedToken.iconSrc}
+            alt={selectedToken.symbol}
+            width={30}
+            height={30}
+            unoptimized
+            className="rounded-full"
+          />
+        </div>
+        <span>{selectedToken.symbol}</span>
+        <ChevronDownIcon className="h-4 w-4" />
       </button>
       <Modal open={isOpen} onClose={handleClose}>
         <div className="flex flex-col">
@@ -82,13 +83,15 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
                     'flex items-center p-4 hover:bg-gray-200'
                   )}
                 >
-                  <Image
-                    src={token.logoURL}
-                    alt={token.symbol}
-                    width={40}
-                    height={40}
-                    unoptimized
-                  />
+                  <div className="flex items-center justify-center rounded-full border bg-white p-2">
+                    <Image
+                      src={token.iconSrc}
+                      alt={token.symbol}
+                      width={40}
+                      height={40}
+                      unoptimized
+                    />
+                  </div>
                   <span className="mx-4">{token.symbol}</span>
                 </button>
               ))
@@ -106,7 +109,7 @@ TokenModal.propTypes = {
   tokens: PropTypes.arrayOf(PropTypes.shape({})),
   selectedToken: PropTypes.shape({
     symbol: PropTypes.string,
-    logoURL: PropTypes.string,
+    iconSrc: PropTypes.string,
   }),
   setSelectedToken: PropTypes.func,
 };

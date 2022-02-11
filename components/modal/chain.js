@@ -39,20 +39,20 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
     <div className="flex items-center justify-center">
       <button
         onClick={() => setIsOpen(true)}
-        className="m-2 flex flex-1 items-center justify-between rounded-xl border bg-gray-300 px-4 py-2 hover:bg-gray-200"
+        className="m-2 flex flex-1 items-center justify-between gap-x-2 rounded-xl border bg-gray-300 p-2 hover:bg-gray-200"
       >
-        <Image
-          src={selectedChain.chainLogoURL}
-          alt={selectedChain.chainName}
-          width={30}
-          height={30}
-          unoptimized
-          className="rounded-full"
-        />
-        <span className="mx-2 flex h-12 items-center justify-center">
-          {selectedChain.chainName}
-        </span>
-        <ChevronDownIcon className="ml-1 h-4 w-4" />
+        <div className="flex items-center justify-center rounded-full border bg-white p-2">
+          <Image
+            src={selectedChain.iconSrc}
+            alt={selectedChain.chainName}
+            width={30}
+            height={30}
+            unoptimized
+            className="rounded-full"
+          />
+        </div>
+        <span>{selectedChain.chainName}</span>
+        <ChevronDownIcon className="h-4 w-4" />
       </button>
 
       <Modal open={isOpen} onClose={handleClose}>
@@ -84,13 +84,15 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
                     'flex items-center p-4 hover:bg-gray-200'
                   )}
                 >
-                  <Image
-                    src={chain.chainLogoURL}
-                    alt={chain.chainName}
-                    width={40}
-                    height={40}
-                    unoptimized
-                  />
+                  <div className="flex items-center justify-center rounded-full border  bg-white p-1">
+                    <Image
+                      src={chain.iconSrc}
+                      alt={chain.chainName}
+                      width={40}
+                      height={40}
+                      unoptimized
+                    />
+                  </div>
                   <span className="mx-4">{chain.chainName}</span>
                 </button>
               ))
@@ -108,7 +110,7 @@ ChainModal.propTypes = {
   chains: PropTypes.arrayOf(PropTypes.shape({})),
   selectedChain: PropTypes.shape({
     chainName: PropTypes.string,
-    chainLogoURL: PropTypes.string,
+    iconSrc: PropTypes.string,
     chainId: PropTypes.number,
   }),
   setSelectedChain: PropTypes.func,

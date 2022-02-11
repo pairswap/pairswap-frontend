@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import TokenModal from 'components/modal/token';
-import data from 'data';
+import chains from 'config/chains';
 
-const tokens = data[0].tokens;
+const tokens = chains[0].tokens;
 const userAmount = 10;
 const totalAmount = 1000;
 

@@ -3,7 +3,6 @@ import { Contract } from '@ethersproject/contracts';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import ERC20Gateway from 'abis/ERC20Gateway.json';
-import { SISU_SRC_GW, SISU_SRC_TOKEN, SISU_DEST_TOKEN } from 'config/addresses';
 import useNotification from 'utils/useNotification';
 import useWeb3 from 'utils/useWeb3';
 import { convertDecimalsToBigNumber } from 'utils/transform';
@@ -13,13 +12,7 @@ function useSwap() {
   const { account, library } = useWeb3();
 
   const transfer = useCallback(
-    async ({
-      destChain = 'eth-binance-testnet',
-      recipient = account,
-      tokenOut = SISU_SRC_TOKEN,
-      tokenIn = SISU_DEST_TOKEN,
-      amount = BigNumber.from(1),
-    }) => {
+    async ({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount }) => {
       if (Number(amount) === 0) {
         showMessage({
           message: 'Please enter a token amount',
@@ -30,11 +23,11 @@ function useSwap() {
       }
 
       const uintAmount = convertDecimalsToBigNumber(`${amount}`);
-      console.log({ destChain, recipient, tokenOut, tokenIn, amount: uintAmount });
+      console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount: uintAmount });
 
       try {
         const signer = await library.getSigner(account);
-        const contract = new Contract(SISU_SRC_GW, ERC20Gateway.abi, signer);
+        const contract = new Contract(contractAddress, ERC20Gateway.abi, signer);
 
         const transaction = await contract.transferOut(
           destChain,
