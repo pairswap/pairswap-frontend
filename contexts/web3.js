@@ -13,7 +13,6 @@ export const Web3ReactStateContext = createContext();
 
 function getLibrary(provider) {
   const library = new EthersWeb3Provider(provider);
-  library.pollingInterval = 12000;
   return library;
 }
 

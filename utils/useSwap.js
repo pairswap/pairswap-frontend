@@ -4,7 +4,7 @@ import { Contract } from '@ethersproject/contracts';
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import useNotification from 'utils/useNotification';
 import useWeb3 from 'utils/useWeb3';
-import { convertDecimalsToBigNumber } from 'utils/transform';
+import { convertStringToBigNumber } from 'utils/transform';
 
 function useSwap() {
   const { showMessage } = useNotification();
@@ -21,7 +21,7 @@ function useSwap() {
         return;
       }
 
-      const uintAmount = convertDecimalsToBigNumber(`${amount}`);
+      const uintAmount = convertStringToBigNumber(`${amount}`);
       console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount: uintAmount });
 
       try {

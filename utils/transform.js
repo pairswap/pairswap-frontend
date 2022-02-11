@@ -30,8 +30,8 @@ export function shortenBalance(balance, length = 4) {
   return parseFloat(balance).toFixed(length);
 }
 
-export function convertDecimalsToBigNumber(decimals, exponent = 18) {
-  const [integer, fraction] = decimals.split('.');
+export function convertStringToBigNumber(str, exponent = 18) {
+  const [integer, fraction] = str.split('.');
 
   const bigInteger = BigNumber.from(integer).mul(BigNumber.from(10).pow(exponent));
 
@@ -46,5 +46,27 @@ export function convertDecimalsToBigNumber(decimals, exponent = 18) {
     return bigInteger.add(bigFraction);
   } else {
     throw new RangeError(`The length of fractional part must less than ${exponent}`);
+  }
+}
+
+export function convertBigNumberToString(bigNumber, exponent = 18) {
+  const str = bigNumber.toString();
+
+  let integer, fraction;
+
+  if (str.length > exponent) {
+    integer = str.slice(0, str.length - exponent);
+    fraction = str.slice(str.length - exponent).replace(/0+$/, '');
+
+    if (!fraction) {
+      return integer;
+    }
+
+    return integer + '.' + fraction;
+  } else {
+    integer = 0;
+    fraction = '0'.repeat(exponent - str.length) + str.replace(/0+$/, '');
+
+    return integer + '.' + fraction;
   }
 }
