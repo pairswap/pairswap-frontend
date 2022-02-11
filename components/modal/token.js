@@ -8,7 +8,7 @@ import Modal from 'components/modal';
 import useSearching from 'utils/useSearching';
 
 const conditions = {
-  keys: ['name', 'address'],
+  keys: ['symbol', 'address'],
   exact: ['address'],
 };
 
