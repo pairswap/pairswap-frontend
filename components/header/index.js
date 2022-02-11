@@ -28,8 +28,14 @@ function Header() {
             <div className="flex h-10 w-52 items-center justify-center rounded-2xl bg-gray-300">
               {selectedSourceChain?.chainName}
             </div>
-            <div className="relative -right-7 h-10 rounded-2xl border border-indigo-600 px-8 py-2">
-              {balance} {selectedSourceChain?.nativeCurrency?.symbol}
+            <div className="relative -right-7 flex h-10 w-44 items-center justify-center rounded-2xl border border-indigo-600 px-8">
+              {balance ? (
+                <span>
+                  {balance} {selectedSourceChain?.nativeCurrency?.symbol}
+                </span>
+              ) : (
+                <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-b-indigo-600"></div>
+              )}
             </div>
           </>
         ) : null}

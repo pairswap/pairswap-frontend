@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Contract } from '@ethersproject/contracts';
-import { BigNumber } from '@ethersproject/bignumber';
 
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import useNotification from 'utils/useNotification';
