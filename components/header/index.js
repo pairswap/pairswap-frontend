@@ -28,7 +28,7 @@ function Header() {
             <div className="flex h-10 w-52 items-center justify-center rounded-2xl bg-gray-300">
               {selectedSourceChain?.chainName}
             </div>
-            <div className="relative -right-7 flex h-10 w-44 items-center justify-center rounded-2xl border border-indigo-600 px-8">
+            <div className="relative -right-7 flex h-10 items-center justify-center rounded-2xl border border-indigo-600 px-8">
               {balance ? (
                 <span>
                   {balance} {selectedSourceChain?.nativeCurrency?.symbol}
