@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Image from 'next/image';
 import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
-import clsx from 'clsx';
+import classname from 'utils/classname';
 
 import Modal from 'components/modal';
 import useSearching from 'utils/useSearching';
@@ -42,13 +41,10 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
         className="m-2 flex flex-1 items-center justify-between gap-x-2 rounded-xl border bg-gray-300 p-2 hover:bg-gray-200"
       >
         <div className="flex items-center justify-center rounded-full border bg-white p-2">
-          <Image
+          <img
             src={selectedToken.iconSrc}
             alt={selectedToken.symbol}
-            width={30}
-            height={30}
-            unoptimized
-            className="rounded-full"
+            className="h-8 w-8 rounded-full"
           />
         </div>
         <span>{selectedToken.symbol}</span>
@@ -78,19 +74,13 @@ function TokenModal({ tokens, selectedToken, setSelectedToken }) {
                 <button
                   key={index}
                   onClick={() => handleSelect(token)}
-                  className={clsx(
+                  className={classname(
                     token.symbol === selectedToken.symbol && 'bg-gray-100',
                     'flex items-center p-4 hover:bg-gray-200'
                   )}
                 >
                   <div className="flex items-center justify-center rounded-full border bg-white p-2">
-                    <Image
-                      src={token.iconSrc}
-                      alt={token.symbol}
-                      width={40}
-                      height={40}
-                      unoptimized
-                    />
+                    <img src={token.iconSrc} alt={token.symbol} className="h-10 w-10" />
                   </div>
                   <span className="mx-4">{token.symbol}</span>
                 </button>

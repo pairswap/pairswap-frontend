@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { ArrowDownIcon } from '@heroicons/react/solid';
 import { Contract } from '@ethersproject/contracts';
+import { Web3Provider } from '@ethersproject/providers';
 
 import SampleERC20 from 'abis/SampleERC20.json';
 import ChainModal from 'components/modal/chain';
@@ -9,14 +10,15 @@ import WalletModal from 'components/modal/wallet';
 import { convertBigNumberToString } from 'utils/transform';
 import { useChain, useUpdateChain } from 'utils/useChain';
 import { useToken, useUpdateToken } from 'utils/useToken';
-import useWeb3 from 'utils/useWeb3';
+import { useWeb3 } from 'utils/useWeb3';
 import useSwap from 'utils/useSwap';
+import { shortenBalance } from 'utils/transform';
 
 function Body() {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState(0);
   const [tokenBalance, setTokenBalance] = useState();
-  const { account, active, library } = useWeb3();
+  const { account, active } = useWeb3();
   const { transfer } = useSwap();
   const { sourceChains, selectedSourceChain, destChains, selectedDestChain } = useChain();
   const { setSelectedSourceChain, setSelectedDestChain } = useUpdateChain();
@@ -26,12 +28,13 @@ function Body() {
   const getTokenBalance = useCallback(async () => {
     if (account && selectedSourceToken) {
       try {
-        const contract = new Contract(selectedSourceToken.address, SampleERC20.abi, library);
+        const provider = new Web3Provider(window.ethereum);
+        const contract = new Contract(selectedSourceToken.address, SampleERC20.abi, provider);
         const balance = await contract.balanceOf(account);
         setTokenBalance(convertBigNumberToString(balance));
       } catch (error) {}
     }
-  }, [account, library, selectedSourceToken]);
+  }, [account, selectedSourceToken]);
 
   useEffect(() => {
     getTokenBalance();
@@ -44,7 +47,7 @@ function Body() {
           <div className="rounded-3xl border border-gray-100 p-4">
             <div className="mr-2 flex justify-between">
               <label className="mx-2">From</label>
-              {active && tokenBalance ? <span>Balance: {tokenBalance}</span> : null}
+              {active && tokenBalance ? <span>Balance: {shortenBalance(tokenBalance)}</span> : null}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4">
               <input

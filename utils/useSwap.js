@@ -1,14 +1,15 @@
 import { useCallback } from 'react';
 import { Contract } from '@ethersproject/contracts';
+import { Web3Provider } from '@ethersproject/providers';
 
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import useNotification from 'utils/useNotification';
-import useWeb3 from 'utils/useWeb3';
+import { useWeb3 } from 'utils/useWeb3';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function useSwap() {
   const { showMessage } = useNotification();
-  const { account, library } = useWeb3();
+  const { account } = useWeb3();
 
   const transfer = useCallback(
     async ({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount }) => {
@@ -25,7 +26,8 @@ function useSwap() {
       console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount: uintAmount });
 
       try {
-        const signer = await library.getSigner(account);
+        const provider = new Web3Provider(window.ethereum);
+        const signer = provider.getSigner(account);
         const contract = new Contract(contractAddress, ERC20Gateway.abi, signer);
 
         const transaction = await contract.transferOut(
@@ -57,7 +59,7 @@ function useSwap() {
         }
       }
     },
-    [account, library, showMessage]
+    [account, showMessage]
   );
 
   return { transfer };

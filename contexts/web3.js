@@ -1,59 +1,144 @@
-import { createContext } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Web3Provider as EthersWeb3Provider } from '@ethersproject/providers';
-import { Web3ReactProvider, useWeb3React } from '@web3-react/core';
 
-import connectors from 'config/connectors';
-import { shortenAccount, shortenBalance } from 'utils/transform';
-import useAuth from 'utils/useAuth';
-import useBalance from 'utils/useBalance';
-import useListener from 'utils/useListener';
+import {
+  convertHexStringToString,
+  convertHexStringToNumber,
+  converNumberToHexString,
+} from 'utils/transform';
+import supportedChains from 'config/chains';
 
-export const Web3ReactStateContext = createContext();
+export const Web3Context = createContext();
+export const Web3UpdateContext = createContext();
 
-function getLibrary(provider) {
-  const library = new EthersWeb3Provider(provider);
-  return library;
-}
-
-function Web3ReactStateProvider({ children }) {
-  const { account, activate, active, chainId, connector, deactivate, error, library } =
-    useWeb3React();
-  const balance = useBalance();
-
-  useAuth();
-  useListener();
-
-  return (
-    <Web3ReactStateContext.Provider
-      value={{
-        account,
-        shortenAccount: shortenAccount(account),
-        activate,
-        active,
-        balance: shortenBalance(balance),
-        chainId,
-        connector,
-        connectors,
-        deactivate,
-        error,
-        library,
-      }}
-    >
-      {children}
-    </Web3ReactStateContext.Provider>
-  );
-}
-
-Web3ReactStateProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+const supportedChainIds = supportedChains.map((chain) => chain.chainId);
 
 function Web3Provider({ children }) {
+  const [account, setAccount] = useState('');
+  const [active, setActive] = useState(false);
+  const [balance, setBalance] = useState('');
+  const [chainId, setChainId] = useState(null);
+  const [error, setError] = useState(null);
+
+  const connect = useCallback(async () => {
+    ethereum
+      .request({ method: 'eth_requestAccounts' })
+      .then((accounts) => setAccount(accounts[0]))
+      .catch((error) => setError(error));
+  }, []);
+
+  const addChain = useCallback((newChain) => {
+    ethereum
+      .request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: converNumberToHexString(newChain.chainId),
+            chainName: newChain.chainName,
+            nativeCurrency: newChain.nativeCurrency,
+            rpcUrls: newChain.rpcUrls,
+          },
+        ],
+      })
+      .catch((error) => setError(error));
+  }, []);
+
+  const changeChain = useCallback(
+    (newChain) => {
+      ethereum
+        .request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: converNumberToHexString(newChain.chainId) }],
+        })
+        .catch((error) => {
+          setError(error);
+          if (error.code === 4902) {
+            addChain(newChain);
+          }
+        });
+    },
+    [addChain]
+  );
+
+  function clearError() {
+    setError(null);
+  }
+
+  useEffect(() => {
+    if (account) {
+      ethereum
+        .request({ method: 'eth_getBalance', params: [account, 'latest'] })
+        .then((newBalance) => setBalance(convertHexStringToString(newBalance)))
+        .catch((error) => setError(error));
+    }
+  }, [account]);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      ethereum
+        .request({ method: 'eth_accounts' })
+        .then((accounts) => {
+          if (accounts[0]) {
+            setActive(true);
+            setAccount(accounts[0]);
+          }
+        })
+        .catch((error) => setError(error));
+
+      ethereum
+        .request({ method: 'eth_chainId' })
+        .then((newChainId) => handleChainChanged(newChainId))
+        .catch((error) => setError(error));
+
+      function handleConnect() {
+        console.log('Event: connect');
+      }
+
+      function handleChainChanged(newChainId) {
+        console.log('Event: change chain');
+        const convertedChainId = convertHexStringToNumber(newChainId);
+        if (supportedChainIds.includes(convertedChainId)) {
+          setChainId(convertedChainId);
+        } else {
+          setError(new Error('Unsupported chain.'));
+          // Switch to chain with index 0
+          changeChain(supportedChains[0]);
+        }
+      }
+
+      function handleAccountsChanged(newAccounts) {
+        console.log('Event: account chain');
+
+        if (newAccounts.length > 0) {
+          setActive(true);
+          setAccount(newAccounts[0]);
+        } else {
+          setActive(false);
+        }
+      }
+
+      if (ethereum.on && ethereum.removeListener) {
+        ethereum.on('connect', handleConnect);
+        ethereum.on('chainChanged', handleChainChanged);
+        ethereum.on('accountsChanged', handleAccountsChanged);
+
+        return () => {
+          ethereum.removeListener('connect', handleConnect);
+          ethereum.removeListener('chainChanged', handleChainChanged);
+          ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        };
+      }
+    } else {
+      setError(new Error('No metamask installed'));
+    }
+  }, [changeChain]);
+
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ReactStateProvider>{children}</Web3ReactStateProvider>
-    </Web3ReactProvider>
+    <Web3Context.Provider value={{ account, active, balance, chainId, error }}>
+      <Web3UpdateContext.Provider value={{ connect, changeChain, clearError }}>
+        {children}
+      </Web3UpdateContext.Provider>
+    </Web3Context.Provider>
   );
 }
 

@@ -1,5 +1,6 @@
 import { getAddress } from '@ethersproject/address';
 import { BigNumber } from '@ethersproject/bignumber';
+import { hexValue } from '@ethersproject/bytes';
 
 export function shortenAccount(account, startLength = 6, endLength = 4) {
   if (!account) {
@@ -69,4 +70,17 @@ export function convertBigNumberToString(bigNumber, exponent = 18) {
 
     return integer + '.' + fraction;
   }
+}
+
+export function convertHexStringToString(hexString, exponent = 18) {
+  const bigNumber = BigNumber.from(hexString);
+  return convertBigNumberToString(bigNumber, exponent);
+}
+
+export function convertHexStringToNumber(hexString) {
+  return BigNumber.from(hexString).toNumber();
+}
+
+export function converNumberToHexString(num) {
+  return hexValue(num);
 }

@@ -2,10 +2,9 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { hexValue } from '@ethersproject/bytes';
 
-import { injected } from 'config/connectors';
 import supportedChains from 'config/chains';
 import useNotification from 'utils/useNotification';
-import useWeb3 from 'utils/useWeb3';
+import { useWeb3, useWeb3Update } from 'utils/useWeb3';
 
 function filterChains(chains, chainId) {
   return chains.filter((chain) => chain.chainId !== chainId);
@@ -19,45 +18,12 @@ export const ChainContext = createContext();
 export const ChainUpdateContext = createContext();
 
 function ChainProvider({ children }) {
-  const { showMessage } = useNotification();
   const { chainId } = useWeb3();
+  const { changeChain } = useWeb3Update();
   const [sourceChains, setSourceChains] = useState([]);
   const [selectedSourceChain, setSelectedSourceChain] = useState();
   const [destChains, setDestChains] = useState([]);
   const [selectedDestChain, setSelectedDestChain] = useState();
-
-  const addChain = useCallback(
-    async (selectedChain) => {
-      try {
-        await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: hexValue(selectedChain.chainId),
-              chainName: selectedChain.chainName,
-              nativeCurrency: selectedChain.nativeCurrency,
-              rpcUrls: selectedChain.rpcUrls,
-            },
-          ],
-        });
-      } catch (error) {
-        // User rejected the request
-        console.error(error);
-        if (error.code === 4001) {
-          showMessage({
-            message: 'Please confirm to add chain',
-            type: 'error',
-          });
-        } else {
-          showMessage({
-            message: 'An unknown error occurred. Check the console for more details',
-            type: 'error',
-          });
-        }
-      }
-    },
-    [showMessage]
-  );
 
   const changeSourceChain = useCallback(
     async (selectedChain) => {
@@ -65,33 +31,10 @@ function ChainProvider({ children }) {
         setSelectedSourceChain(selectedChain);
         setDestChains(filterChains(supportedChains, selectedChain.chainId));
       } else {
-        const provider = await injected.getProvider();
-
-        try {
-          await provider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: hexValue(selectedChain.chainId) }],
-          });
-        } catch (error) {
-          // User rejected the request
-          console.error(error.code);
-          if (error.code === 4001) {
-            showMessage({
-              message: 'Please confirm to change chain',
-              type: 'error',
-            });
-          } else if (error.code === 4902) {
-            addChain(selectedChain);
-          } else {
-            showMessage({
-              message: 'An unknown error occurred. Check the console for more details',
-              type: 'error',
-            });
-          }
-        }
+        changeChain(selectedChain);
       }
     },
-    [chainId, addChain, showMessage]
+    [chainId, changeChain]
   );
 
   const changeDestChain = useCallback((selectedChain) => {

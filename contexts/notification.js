@@ -1,27 +1,23 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { UnsupportedChainIdError } from '@web3-react/core';
-import { NoEthereumProviderError, UserRejectedRequestError } from '@web3-react/injected-connector';
 
+import { errorMessages } from 'constants/errors';
 import Toast from 'components/toast';
-import useWeb3 from 'utils/useWeb3';
+import { useWeb3, useWeb3Update } from 'utils/useWeb3';
 
 export const NotificationContext = createContext();
 
 function getErrorMessage(error) {
-  if (error instanceof NoEthereumProviderError) {
-    return 'Please install Metamask extension';
-  } else if (error instanceof UnsupportedChainIdError) {
-    return "You're connected to an unsupported network";
-  } else if (error instanceof UserRejectedRequestError) {
-    return 'Please authorize this website to continue';
-  } else if (error.code === -32002) {
-    // Have a pending request or need to re-enter password
-    return 'Already proccesing request account. Please check your Metamask';
-  } else {
-    console.error(error);
-    return 'An unknown error occurred. Check the console for more details';
+  if (!error.code) {
+    return error.message;
   }
+
+  if (errorMessages[error.code]) {
+    return errorMessages[error.code];
+  }
+
+  console.error(error.message);
+  return 'An unknown error occurred. Check the console for more details';
 }
 
 function NotificationProvider({ children }) {
@@ -29,6 +25,7 @@ function NotificationProvider({ children }) {
   const [message, setMessage] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const { error } = useWeb3();
+  const { clearError } = useWeb3Update();
 
   const showMessage = useCallback(({ message, type }) => {
     setType(type);
@@ -45,7 +42,15 @@ function NotificationProvider({ children }) {
   return (
     <NotificationContext.Provider value={{ showMessage }}>
       {children}
-      <Toast open={showToast} message={message} type={type} onClose={() => setShowToast(false)} />
+      <Toast
+        open={showToast}
+        message={message}
+        type={type}
+        onClose={() => {
+          setShowToast(false);
+          clearError();
+        }}
+      />
     </NotificationContext.Provider>
   );
 }

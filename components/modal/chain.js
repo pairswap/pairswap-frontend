@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Image from 'next/image';
 import { XIcon, ChevronDownIcon } from '@heroicons/react/solid';
-import clsx from 'clsx';
+import classname from 'utils/classname';
 
 import Modal from 'components/modal';
 import useSearching from 'utils/useSearching';
@@ -42,13 +41,10 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
         className="m-2 flex flex-1 items-center justify-between gap-x-2 rounded-xl border bg-gray-300 p-2 hover:bg-gray-200"
       >
         <div className="flex items-center justify-center rounded-full border bg-white p-2">
-          <Image
+          <img
             src={selectedChain.iconSrc}
             alt={selectedChain.chainName}
-            width={30}
-            height={30}
-            unoptimized
-            className="rounded-full"
+            className="h-8 w-8 rounded-full"
           />
         </div>
         <span>{selectedChain.chainName}</span>
@@ -79,19 +75,13 @@ function ChainModal({ chains, selectedChain, setSelectedChain }) {
                 <button
                   key={index}
                   onClick={() => handleSelect(chain)}
-                  className={clsx(
+                  className={classname(
                     chain.chainId === selectedChain.chainId && 'bg-gray-100',
                     'flex items-center p-4 hover:bg-gray-200'
                   )}
                 >
                   <div className="flex items-center justify-center rounded-full border  bg-white p-1">
-                    <Image
-                      src={chain.iconSrc}
-                      alt={chain.chainName}
-                      width={40}
-                      height={40}
-                      unoptimized
-                    />
+                    <img src={chain.iconSrc} alt={chain.chainName} className="h-10 w-10" />
                   </div>
                   <span className="mx-4">{chain.chainName}</span>
                 </button>

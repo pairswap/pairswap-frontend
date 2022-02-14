@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
-import Image from 'next/image';
 import { XIcon } from '@heroicons/react/solid';
 
-import * as Connectors from 'constants/connectors';
 import Modal from 'components/modal';
-import useWeb3 from 'utils/useWeb3';
-
-const wallets = {
-  [Connectors.Injected]: 'Metamask',
-};
+import { useWeb3Update } from 'utils/useWeb3';
 
 function WalletModal({ open, onClose }) {
-  const { activate, connectors } = useWeb3();
+  const { connect } = useWeb3Update();
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -23,19 +17,16 @@ function WalletModal({ open, onClose }) {
           </button>
         </div>
 
-        {Object.entries(connectors).map(([connectorName, connector], index) => (
-          <button
-            key={index}
-            onClick={() => {
-              activate(connector);
-              onClose();
-            }}
-            className="m-4 flex justify-between rounded-lg bg-gray-100 p-4 hover:bg-gray-200"
-          >
-            <p className="font-bold">{wallets[connectorName]}</p>
-            <Image src="/images/metamask.png" alt="metamask" width="24" height="24" />
-          </button>
-        ))}
+        <button
+          onClick={() => {
+            connect();
+            onClose();
+          }}
+          className="m-4 flex justify-between rounded-lg bg-gray-100 p-4 hover:bg-gray-200"
+        >
+          <p className="font-bold">Metamask</p>
+          <img src="/images/metamask.png" alt="metamask" className="h-6 w-6" />
+        </button>
       </div>
     </Modal>
   );
