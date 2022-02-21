@@ -1,14 +1,12 @@
-import Header from 'components/header';
 import Container from 'components/container';
-import Footer from 'components/footer';
-import Body from 'components/body/home';
+import Header from 'components/header';
+import Main from 'components/main/home';
 
 function Home() {
   return (
     <Container>
       <Header />
-      <Body />
-      <Footer />
+      <Main />
     </Container>
   );
 }

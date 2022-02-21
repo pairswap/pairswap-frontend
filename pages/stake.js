@@ -2,7 +2,7 @@ import Container from 'components/container';
 import Header from 'components/header';
 import Main from 'components/main/pool';
 
-function Poll() {
+function Stake() {
   return (
     <Container>
       <Header />
@@ -11,4 +11,4 @@ function Poll() {
   );
 }
 
-export default Poll;
+export default Stake;

@@ -1,9 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { hexValue } from '@ethersproject/bytes';
 
 import supportedChains from 'config/chains';
-import useNotification from 'utils/useNotification';
 import { useWeb3, useWeb3Update } from 'utils/useWeb3';
 
 function filterChains(chains, chainId) {
