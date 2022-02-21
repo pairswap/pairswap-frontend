@@ -419,6 +419,9 @@ input[type=number] {
   padding: 1rem;
   border-radius: 24px;
   max-height: 400px;
+  text-align: center;
+  background: linear-gradient(123.31deg, rgba(48, 87, 254, 0.5) -20.75%, rgba(91, 158, 255, 0.5) 38.69%, rgba(161, 103, 255, 0.5) 98.13%);
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
 .modal--wallet {
@@ -427,21 +430,28 @@ input[type=number] {
   box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
-.modal--token {
-  background: linear-gradient(123.31deg, rgba(48, 87, 254, 0.5) -20.75%, rgba(91, 158, 255, 0.5) 38.69%, rgba(161, 103, 255, 0.5) 98.13%);
-  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
-}
-
-.modal--chain {
-  background: linear-gradient(123.31deg, rgba(48, 87, 254, 0.5) -20.75%, rgba(91, 158, 255, 0.5) 38.69%, rgba(161, 103, 255, 0.5) 98.13%);
-  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
-  border-radius: 30px;
-}
-
 .modal__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.modal__header--end {
+  justify-content: flex-end;
+}
+
+.modal__img {
+  margin-top: 2rem;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+}
+
+.modal__message {
+  margin-top: 1rem;
+  font-size: 24px;
+  color: #ffffffb3;
+  padding: 0.5rem;
 }
 
 .modal__title {

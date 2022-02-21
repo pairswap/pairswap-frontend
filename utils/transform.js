@@ -24,11 +24,15 @@ export function shortenBalance(balance, length = 4) {
 
   const [, fraction] = balance.split('.');
 
-  if (fraction && fraction.length < length) {
-    return balance;
+  if (fraction) {
+    if (fraction.length < length) {
+      return balance;
+    }
+
+    return parseFloat(balance).toFixed(length);
   }
 
-  return parseFloat(balance).toFixed(length);
+  return balance;
 }
 
 export function convertStringToBigNumber(str, exponent = 18) {

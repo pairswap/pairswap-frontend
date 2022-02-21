@@ -2,7 +2,8 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { errorMessages } from 'constants/errors';
-import Toast from 'components/toast';
+import ErrorModal from 'components/modal/error';
+import SuccessModal from 'components/modal/success';
 import { useWeb3, useWeb3Update } from 'utils/useWeb3';
 
 export const NotificationContext = createContext();
@@ -21,17 +22,32 @@ function getErrorMessage(error) {
 }
 
 function NotificationProvider({ children }) {
-  const [type, setType] = useState(null);
   const [message, setMessage] = useState(null);
-  const [showToast, setShowToast] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { error } = useWeb3();
   const { clearError } = useWeb3Update();
 
   const showMessage = useCallback(({ message, type }) => {
-    setType(type);
     setMessage(message);
-    setShowToast(true);
+    if (type === 'error') {
+      setShowErrorModal(true);
+    } else {
+      setShowSuccessModal(true);
+    }
   }, []);
+
+  const onClose = useCallback(
+    (type) => {
+      if (type === 'error') {
+        setShowErrorModal(false);
+        clearError();
+      } else {
+        setShowSuccessModal(false);
+      }
+    },
+    [clearError]
+  );
 
   useEffect(() => {
     if (error) {
@@ -42,15 +58,8 @@ function NotificationProvider({ children }) {
   return (
     <NotificationContext.Provider value={{ showMessage }}>
       {children}
-      <Toast
-        open={showToast}
-        message={message}
-        type={type}
-        onClose={() => {
-          setShowToast(false);
-          clearError();
-        }}
-      />
+      <ErrorModal open={showErrorModal} onClose={() => onClose('error')} message={message} />
+      <SuccessModal open={showSuccessModal} onClose={() => onClose('success')} message={message} />
     </NotificationContext.Provider>
   );
 }
