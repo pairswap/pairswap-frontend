@@ -21,7 +21,7 @@ function Web3Provider({ children }) {
   const [error, setError] = useState(null);
 
   const connect = useCallback(async () => {
-    ethereum
+    return ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((accounts) => setAccount(accounts[0]))
       .catch((error) => setError(error));
@@ -113,7 +113,7 @@ function Web3Provider({ children }) {
           setActive(true);
           setAccount(newAccounts[0]);
         } else {
-          setActive(false);
+          window.location.reload();
         }
       }
 

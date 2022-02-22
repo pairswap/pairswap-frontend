@@ -43,7 +43,11 @@ function Header() {
           {active ? (
             <div className="profile">
               <div className="balance">
-                {shortenBalance(balance)} {selectedSourceChain?.nativeCurrency?.symbol}
+                {balance ? (
+                  `${shortenBalance(balance)} ${selectedSourceChain?.nativeCurrency?.symbol}`
+                ) : (
+                  <div className="spiner" />
+                )}
               </div>
               <div className="profile__divider" />
               <div className="account">{shortenAccount(account)}</div>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import SelectTokenModal from 'components/modal/select-token';
-import Spiner from 'components/spiner';
 
 function TokenInput({ amount, setAmount, tokens, selectedToken, setSelectedToken }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,8 +42,8 @@ function TokenInput({ amount, setAmount, tokens, selectedToken, setSelectedToken
           />
         </button>
       ) : (
-        <div className="select-token">
-          <Spiner />
+        <div className="select-token select-token--loading">
+          <div className="spiner" />
         </div>
       )}
     </div>
