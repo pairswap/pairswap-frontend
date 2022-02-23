@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import SelectChainModal from 'components/modal/select-chain';
 
-function ChainInput({ label, chains, selectedChain, setSelectedChain }) {
+function ChainInput({ label, chains, disabledChain, selectedChain, setSelectedChain }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -22,6 +22,7 @@ function ChainInput({ label, chains, selectedChain, setSelectedChain }) {
               isOpen={isOpen}
               setIsOpen={setIsOpen}
               chains={chains}
+              disabledChain={disabledChain}
               selectedChain={selectedChain}
               setSelectedChain={setSelectedChain}
             />

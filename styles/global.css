@@ -570,7 +570,7 @@ input[type=number] {
 }
 
 .modal__item--token {
-  background: #29295F;
+  background: #23217440;
 }
 
 .modal__item--chain {
@@ -580,11 +580,15 @@ input[type=number] {
 }
 
 .modal__item--token-active {
-  background: #29295f;
+  background: #29295F;
 }
 
 .modal__item--chain-active {
   background: #29295f;
+}
+
+.modal__item--chain-disabled {
+  display: none;
 }
 
 .token-group {

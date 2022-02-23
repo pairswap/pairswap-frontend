@@ -4,8 +4,6 @@ import Head from 'next/head';
 
 import NotificationProvider from 'contexts/notification';
 import Web3Provider from 'contexts/web3';
-import ChainProvider from 'contexts/chain';
-import TokenProvider from 'contexts/token';
 
 function App({ Component, pageProps }) {
   return (
@@ -16,11 +14,7 @@ function App({ Component, pageProps }) {
 
       <Web3Provider>
         <NotificationProvider>
-          <ChainProvider>
-            <TokenProvider>
-              <Component {...pageProps} />
-            </TokenProvider>
-          </ChainProvider>
+          <Component {...pageProps} />
         </NotificationProvider>
       </Web3Provider>
     </>

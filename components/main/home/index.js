@@ -1,21 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import ChainInput from './chain-input';
 import TokenInput from './token-input';
 import TokenBalance from './token-balance';
-import { useChain, useUpdateChain } from 'utils/useChain';
-import { useToken, useUpdateToken } from 'utils/useToken';
+import useChain from 'hooks/useChain';
 import { useWeb3 } from 'utils/useWeb3';
 import useSwap from 'utils/useSwap';
 
 function Main() {
   const [amount, setAmount] = useState(0);
-  const { sourceChains, selectedSourceChain, destChains, selectedDestChain } = useChain();
-  const { setSelectedSourceChain, setSelectedDestChain } = useUpdateChain();
-  const { selectedSourceToken, selectedDestToken } = useToken();
-  const { setSelectedSourceToken } = useUpdateToken();
+  const {
+    chains,
+    srcChain,
+    destChain,
+    srcToken,
+    destToken,
+    selectToken,
+    selectSrcChain,
+    selectDestChain,
+    sync,
+    swapChain,
+  } = useChain();
   const { transfer } = useSwap();
-  const { account, active } = useWeb3();
+  const { account, active, chainId } = useWeb3();
+
+  useEffect(() => {
+    if (active && chainId) {
+      sync(chainId);
+    }
+  }, [active, chainId, sync]);
 
   return (
     <main className="main">
@@ -25,9 +38,9 @@ function Main() {
           <TokenInput
             amount={amount}
             setAmount={setAmount}
-            tokens={selectedSourceChain?.tokens}
-            selectedToken={selectedSourceToken}
-            setSelectedToken={setSelectedSourceToken}
+            tokens={srcChain.tokens}
+            selectedToken={srcToken}
+            setSelectedToken={selectToken}
           />
         </div>
 
@@ -40,22 +53,24 @@ function Main() {
         <div className="form-group">
           <div className="form-group__title">
             Swap Chain
-            <button className="btn-swap-chain">
+            <button onClick={swapChain} className="btn-swap-chain">
               <img src="/images/swap-chain.svg" alt="swap chain" className="btn-swap-chain__img" />
             </button>
           </div>
 
           <ChainInput
             label="From"
-            chains={sourceChains}
-            selectedChain={selectedSourceChain}
-            setSelectedChain={setSelectedSourceChain}
+            chains={chains}
+            disabledChain={destChain}
+            selectedChain={srcChain}
+            setSelectedChain={selectSrcChain}
           />
           <ChainInput
             label="To"
-            chains={destChains}
-            selectedChain={selectedDestChain}
-            setSelectedChain={setSelectedDestChain}
+            chains={chains}
+            disabledChain={srcChain}
+            selectedChain={destChain}
+            setSelectedChain={selectDestChain}
           />
         </div>
 
@@ -63,11 +78,11 @@ function Main() {
           onClick={() => {
             if (active) {
               transfer({
-                contractAddress: selectedSourceChain.gatewayAddress,
-                destChain: selectedDestChain.transferName,
+                contractAddress: srcChain.gatewayAddress,
+                destChain: destChain.transferName,
                 recipient: account,
-                tokenOut: selectedSourceToken.address,
-                tokenIn: selectedDestToken.address,
+                tokenOut: srcToken.address,
+                tokenIn: destToken.address,
                 amount,
               });
             }

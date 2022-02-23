@@ -1,7 +1,14 @@
 import Modal from 'components/modal';
 import classname from 'utils/classname';
 
-function SelectChainModal({ isOpen, setIsOpen, chains, selectedChain, setSelectedChain }) {
+function SelectChainModal({
+  isOpen,
+  setIsOpen,
+  chains,
+  disabledChain,
+  selectedChain,
+  setSelectedChain,
+}) {
   function handleClose() {
     setIsOpen(false);
   }
@@ -30,6 +37,7 @@ function SelectChainModal({ isOpen, setIsOpen, chains, selectedChain, setSelecte
               onClick={() => handleSelect(chain)}
               className={classname(
                 'modal__item modal__item--chain',
+                chain.chainId === disabledChain.chainId && 'modal__item--chain-disabled',
                 chain.chainId === selectedChain.chainId && 'modal__item--chain-active'
               )}
             >
