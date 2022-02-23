@@ -1,11 +1,23 @@
-import Modal from 'components/modal';
+import shallow from 'zustand/shallow';
 
-function ErrorModal({ open, onClose, message }) {
+import Modal from 'components/modal';
+import useError from 'hooks/useError';
+
+function ErrorModal() {
+  const { error, message, reset } = useError(
+    (state) => ({
+      error: state.error,
+      message: state.message,
+      reset: state.reset,
+    }),
+    shallow
+  );
+
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={Boolean(error)} onClose={reset}>
       <div className="modal">
         <div className="modal__header modal__header--end">
-          <button onClick={onClose} className="btn-close-modal">
+          <button onClick={reset} className="btn-close-modal">
             <img src="/images/close.png" alt="close" />
           </button>
         </div>

@@ -1,4 +1,6 @@
-export const errorMessages = {
+import create from 'zustand';
+
+const errorMessages = {
   '-32700':
     'Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.',
   '-32600': 'The JSON sent is not a valid Request object.',
@@ -11,9 +13,39 @@ export const errorMessages = {
   '-32003': 'Transaction rejected.',
   '-32004': 'Method not supported.',
   '-32005': 'Request limit exceeded.',
-  4001: 'You have rejected the request.',
+  4001: 'User rejected the request.',
   4100: 'The requested account and/or method has not been authorized.',
   4200: 'The requested method is not supported by this Ethereum provider.',
   4900: 'The provider is disconnected from all chains.',
   4901: 'The provider is disconnected from the specified chain.',
 };
+
+function getErrorMessage(error) {
+  if (!error.code) {
+    return error.message;
+  }
+
+  if (errorMessages[error.code]) {
+    return errorMessages[error.code];
+  }
+
+  return 'An unknown error occurred.';
+}
+
+const defaultOptions = { silent: false };
+const initialStates = { error: null, message: null };
+
+const useError = create((set) => ({
+  ...initialStates,
+  setError: (error, options = defaultOptions) => {
+    const { silent } = options;
+    console.error(error);
+
+    if (!silent) {
+      set({ error, message: getErrorMessage(error) });
+    }
+  },
+  reset: () => set(initialStates),
+}));
+
+export default useError;

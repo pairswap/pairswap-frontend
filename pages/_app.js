@@ -2,7 +2,8 @@ import 'styles/global.css';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 
-import NotificationProvider from 'contexts/notification';
+import ErrorModal from 'components/modal/error';
+import SuccessModal from 'components/modal/success';
 import Web3Provider from 'contexts/web3';
 
 function App({ Component, pageProps }) {
@@ -13,10 +14,10 @@ function App({ Component, pageProps }) {
       </Head>
 
       <Web3Provider>
-        <NotificationProvider>
-          <Component {...pageProps} />
-        </NotificationProvider>
+        <Component {...pageProps} />
       </Web3Provider>
+      <ErrorModal />
+      <SuccessModal />
     </>
   );
 }
