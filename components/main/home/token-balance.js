@@ -1,34 +1,42 @@
 import { useState, useEffect } from 'react';
-import { Contract } from '@ethersproject/contracts';
-import { Web3Provider } from '@ethersproject/providers';
+import shallow from 'zustand/shallow';
 
-import SampleERC20 from 'abis/SampleERC20.json';
-import { convertBigNumberToString, shortenBalance } from 'utils/transform';
+import { shortenBalance } from 'utils/transform';
 import useChain from 'hooks/useChain';
-import { useWeb3 } from 'utils/useWeb3';
+import useWeb3 from 'hooks/useWeb3';
 
 function TokenBalance() {
   const [tokenBalance, setTokenBalance] = useState();
   const srcToken = useChain((state) => state.srcToken);
-  const { account } = useWeb3();
+  const { connected, getTokenBalance } = useWeb3(
+    (state) => ({
+      connected: state.connected,
+      getTokenBalance: state.getTokenBalance,
+    }),
+    shallow
+  );
 
   useEffect(() => {
-    if (account && srcToken) {
-      const provider = new Web3Provider(window.ethereum);
-      const contract = new Contract(srcToken.address, SampleERC20.abi, provider);
-
-      contract
-        .balanceOf(account)
-        .then((balance) => setTokenBalance(convertBigNumberToString(balance)))
-        .catch((error) => console.error(error));
+    if (connected && srcToken) {
+      getTokenBalance(srcToken.address).then((balance) => {
+        if (balance) {
+          setTokenBalance(balance);
+        }
+      });
+    } else {
+      setTokenBalance();
     }
-  }, [account, srcToken]);
+  }, [connected, srcToken, getTokenBalance]);
 
-  return (
-    <span className="token-balance">
-      Balance: <strong>{tokenBalance ? shortenBalance(tokenBalance) : 0}</strong>
-    </span>
-  );
+  if (tokenBalance) {
+    return (
+      <span className="token-balance">
+        Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
+      </span>
+    );
+  }
+
+  return null;
 }
 
 export default TokenBalance;

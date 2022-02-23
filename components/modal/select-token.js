@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
+import useSearching from 'hooks/useSearching';
 import classname from 'utils/classname';
-import useSearching from 'utils/useSearching';
 
 const conditions = {
   keys: ['symbol', 'address'],
@@ -70,5 +71,15 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
     </Modal>
   );
 }
+
+SelectTokenModal.propTypes = {
+  isOpen: PropTypes.bool,
+  setIsOpen: PropTypes.func,
+  tokens: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedToken: PropTypes.shape({
+    symbol: PropTypes.string,
+  }),
+  setSelectedToken: PropTypes.func,
+};
 
 export default SelectTokenModal;

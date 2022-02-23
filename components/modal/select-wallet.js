@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
-import { useWeb3Update } from 'utils/useWeb3';
+import useWeb3 from 'hooks/useWeb3';
 
 function SelectWalletModal({ open, onClose }) {
-  const { connect } = useWeb3Update();
+  const connect = useWeb3((state) => state.connect);
   const [loading, setLoading] = useState(false);
 
   const handleConnect = useCallback(async () => {
@@ -41,5 +42,10 @@ function SelectWalletModal({ open, onClose }) {
     </Modal>
   );
 }
+
+SelectWalletModal.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+};
 
 export default SelectWalletModal;

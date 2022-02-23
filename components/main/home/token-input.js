@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import SelectTokenModal from 'components/modal/select-token';
 
-function TokenInput({ amount, setAmount, tokens, selectedToken, setSelectedToken }) {
+function TokenInput({ register, tokens, selectedToken, setSelectedToken }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -14,10 +15,8 @@ function TokenInput({ amount, setAmount, tokens, selectedToken, setSelectedToken
         <input
           id="amount"
           type="number"
-          min="0"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
           className="input"
+          {...register('amount', { required: true, min: 0 })}
         />
       </div>
       {selectedToken ? (
@@ -49,5 +48,15 @@ function TokenInput({ amount, setAmount, tokens, selectedToken, setSelectedToken
     </div>
   );
 }
+
+TokenInput.propTypes = {
+  register: PropTypes.func,
+  tokens: PropTypes.arrayOf(PropTypes.shape({})),
+  selectedToken: PropTypes.shape({
+    symbol: PropTypes.string,
+    iconSrc: PropTypes.string,
+  }),
+  setSelectedToken: PropTypes.func,
+};
 
 export default TokenInput;

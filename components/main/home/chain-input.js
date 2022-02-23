@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import SelectChainModal from 'components/modal/select-chain';
 
@@ -39,5 +40,16 @@ function ChainInput({ label, chains, disabledChain, selectedChain, setSelectedCh
     </div>
   );
 }
+
+ChainInput.propTypes = {
+  label: PropTypes.string,
+  chains: PropTypes.arrayOf(PropTypes.shape({})),
+  disabledChain: PropTypes.shape({}),
+  selectedChain: PropTypes.shape({
+    chainName: PropTypes.string,
+    iconSrc: PropTypes.string,
+  }),
+  setSelectedChain: PropTypes.func,
+};
 
 export default ChainInput;

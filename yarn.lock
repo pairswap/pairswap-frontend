@@ -640,15 +640,6 @@
     "@ethersproject/rlp" "^5.5.0"
     "@ethersproject/signing-key" "^5.5.0"
 
-"@ethersproject/units@^5.5.0":
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/@ethersproject/units/-/units-5.5.0.tgz#104d02db5b5dc42cc672cc4587bafb87a95ee45e"
-  integrity sha512-7+DpjiZk4v6wrikj+TCyWWa9dXLNU73tSTa7n0TSJDxkYbV3Yf1eRh9ToMLlZtuctNYu9RDNNy2USq3AdqSbag==
-  dependencies:
-    "@ethersproject/bignumber" "^5.5.0"
-    "@ethersproject/constants" "^5.5.0"
-    "@ethersproject/logger" "^5.5.0"
-
 "@ethersproject/web@^5.5.0":
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/web/-/web-5.5.1.tgz#cfcc4a074a6936c657878ac58917a61341681316"
@@ -4303,11 +4294,6 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier-plugin-tailwindcss@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.1.4.tgz#b09e826a57a0f69b0662eededd659b3d5a5551e7"
-  integrity sha512-kt3YFWqxcG9+bilBI0hPF7RjQZNtgBRvjJZGw6B2MNAjPqlfcYIiZnNaIEnq4XimKLTzZYxz6jQnUXmSQ/5njg==
-
 prettier@^2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.1.tgz#fff75fa9d519c54cf0fce328c1017d94546bc56a"
@@ -4430,6 +4416,11 @@ react-dom@17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
+
+react-hook-form@^7.27.1:
+  version "7.27.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.27.1.tgz#fe5fbcb6bf58751f66d9569e998d671480cc57f6"
+  integrity sha512-N3a7A6zIQ8DJeThisVZGtOUabTbJw+7DHJidmB9w8m3chckv2ZWKb5MHps9d2pPJqmCDoWe53Bos56bYmJms5w==
 
 react-is@17.0.2, react-is@^17.0.1:
   version "17.0.2"

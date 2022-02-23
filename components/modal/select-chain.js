@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import Modal from 'components/modal';
 import classname from 'utils/classname';
 
@@ -50,5 +52,18 @@ function SelectChainModal({
     </Modal>
   );
 }
+
+SelectChainModal.propTypes = {
+  isOpen: PropTypes.bool,
+  setIsOpen: PropTypes.func,
+  chains: PropTypes.arrayOf(PropTypes.shape({})),
+  disabledChain: PropTypes.shape({
+    chainId: PropTypes.number,
+  }),
+  selectedChain: PropTypes.shape({
+    chainId: PropTypes.number,
+  }),
+  setSelectedChain: PropTypes.func,
+};
 
 export default SelectChainModal;

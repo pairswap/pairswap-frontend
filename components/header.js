@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import shallow from 'zustand/shallow';
 
 import SelectWalletModal from 'components/modal/select-wallet';
 import classname from 'utils/classname';
 import { shortenAccount, shortenBalance } from 'utils/transform';
 import useChain from 'hooks/useChain';
-import { useWeb3 } from 'utils/useWeb3';
+import useError from 'hooks/useError';
+import useWeb3 from 'hooks/useWeb3';
 
 const routes = [
   { href: '/', title: 'Swap' },
@@ -18,7 +20,26 @@ function Header() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const srcChain = useChain((state) => state.srcChain);
-  const { account, active, balance } = useWeb3();
+  const setError = useError((state) => state.setError);
+  const { available, account, balance, connected } = useWeb3(
+    (state) => ({
+      available: state.available,
+      account: state.account,
+      balance: state.balance,
+      connected: state.connected,
+    }),
+    shallow
+  );
+
+  const handleConnect = useCallback(() => {
+    if (!connected) {
+      if (available) {
+        setIsOpen(true);
+      } else {
+        setError(new Error('No metamask installed'));
+      }
+    }
+  }, [available, connected, setError]);
 
   return (
     <>
@@ -40,7 +61,7 @@ function Header() {
         </nav>
 
         <div className="header__item">
-          {active ? (
+          {connected ? (
             <div className="profile">
               <div className="balance">
                 {balance ? (
@@ -53,7 +74,7 @@ function Header() {
               <div className="account">{shortenAccount(account)}</div>
             </div>
           ) : (
-            <button onClick={() => !active && setIsOpen(true)} className="btn-connect">
+            <button onClick={handleConnect} className="btn-connect">
               Connect Wallet
             </button>
           )}

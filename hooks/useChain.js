@@ -35,12 +35,11 @@ const useChain = create((set) => ({
       srcToken: token,
       destToken: findTokenBySymbol(state.destChain.tokens, token.symbol),
     })),
-  selectSrcChain: (chain) => {
+  selectSrcChain: (chain) =>
     set((state) => ({
       srcChain: chain,
       srcToken: findTokenBySymbol(chain.tokens, state.srcToken.symbol),
-    }));
-  },
+    })),
   selectDestChain: (chain) =>
     set((state) => ({
       destChain: chain,
