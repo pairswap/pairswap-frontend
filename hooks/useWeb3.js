@@ -126,7 +126,6 @@ const useWeb3 = create((set, get) => ({
   },
   getTokenBalance: (tokenAddress) => {
     const account = get().account;
-    const provider = get().provider;
     const contract = new Contract(tokenAddress, SampleERC20.abi, provider);
 
     return contract
@@ -136,7 +135,6 @@ const useWeb3 = create((set, get) => ({
   },
   transfer: ({ contractAddress, destChain, tokenOut, tokenIn, amount }) => {
     const recipient = get().account;
-    const provider = get().provider;
     const signer = provider.getSigner(recipient);
     const contract = new Contract(contractAddress, ERC20Gateway.abi, signer);
 

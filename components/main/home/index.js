@@ -111,7 +111,7 @@ function Main() {
 
   return (
     <main className="main">
-      <form className="card">
+      <div className="card">
         <div className="form-group">
           <div className="form-group__title">Select a token</div>
           <TokenInput
@@ -160,7 +160,7 @@ function Main() {
         <button onClick={handleSubmit(onSubmit)} className="btn-swap">
           Swap
         </button>
-      </form>
+      </div>
     </main>
   );
 }

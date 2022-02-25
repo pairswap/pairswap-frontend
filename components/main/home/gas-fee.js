@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import shallow from 'zustand/shallow';
 
+import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
 import { getGasFeeInToken } from 'utils/rest';
 import { convertNumberToString } from 'utils/transform';
 
 function GasFee() {
-  const [fee, setFee] = useState();
   const { srcChain, srcToken } = useChain(
     (state) => ({
       srcChain: state.srcChain,
@@ -16,22 +16,19 @@ function GasFee() {
     shallow
   );
   const connected = useWeb3((state) => state.connected);
+  const { execute, value } = useAsync(getGasFeeInToken);
 
   useEffect(() => {
-    if (connected && srcChain && srcToken) {
-      getGasFeeInToken(srcChain.transferName, srcToken.symbol).then(({ gas_cost: gasFee }) =>
-        setFee(convertNumberToString(gasFee))
-      );
-    } else {
-      setFee();
+    if (connected && srcChain && srcChain.transferName && srcToken && srcToken.symbol) {
+      execute(srcChain.transferName, srcToken.symbol);
     }
-  }, [, connected, srcChain, srcToken]);
+  }, [execute, connected, srcChain, srcToken]);
 
   return (
     <div>
-      {fee ? (
+      {value ? (
         <span>
-          Gas fee: <strong>{fee}</strong>
+          Gas fee: <strong>{convertNumberToString(value.gas_cost)}</strong>
         </span>
       ) : null}
     </div>
