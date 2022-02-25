@@ -69,14 +69,14 @@ const supportedChains = [
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ['https://e61b-203-210-210-39.ngrok.io'],
+    rpcUrls: ['https://5723-203-210-210-39.ngrok.io'],
     transferName: 'ganache1',
-    gatewayAddress: '0xD1658825EB56CdbD0435f775001499770ea339f2',
+    gatewayAddress: '0xE76B231edA65F3e5F7577604c943ce6ab5ce81f7',
     iconSrc: '/images/ethereum.png',
     tokens: [
       {
         name: 'SISU Coin',
-        address: '0x3DeaCe7E9C8b6ee632bb71663315d6330914f915',
+        address: '0xf0D676183dD5ae6b370adDdbE770235F23546f9d',
         symbol: 'SISU',
         decimals: 18,
         iconSrc: '/images/sisu.png',

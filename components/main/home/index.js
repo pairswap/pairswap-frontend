@@ -4,6 +4,7 @@ import shallow from 'zustand/shallow';
 
 import ChainInput from './chain-input';
 import TokenInput from './token-input';
+import GasFee from './gas-fee';
 import TokenBalance from './token-balance';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
@@ -119,12 +120,14 @@ function Main() {
             selectedToken={srcToken}
             setSelectedToken={selectToken}
           />
-          {errors.amount?.type === 'required' && (
-            <p className="validation">This field is required</p>
+          {errors.amount?.type === 'required' && <p className="validation">Please enter a value</p>}
+          {errors.amount?.type === 'validate' && (
+            <p className="validation">Value must greater than 0</p>
           )}
         </div>
 
         <div className="form-group__footer">
+          <GasFee />
           <TokenBalance />
         </div>
 

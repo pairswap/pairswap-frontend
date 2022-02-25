@@ -88,3 +88,7 @@ export function convertHexStringToNumber(hexString) {
 export function converNumberToHexString(num) {
   return hexValue(num);
 }
+
+export function convertNumberToString(num, exponent = 18) {
+  return convertBigNumberToString(BigNumber.from(`${num}`), exponent);
+}

@@ -17,7 +17,7 @@ const routes = [
 ];
 
 function Header() {
-  const router = useRouter();
+  const { pathname } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const srcChain = useChain((state) => state.srcChain);
   const setError = useError((state) => state.setError);
@@ -53,7 +53,7 @@ function Header() {
         <nav className="header__item nav">
           {routes.map(({ href, title }, index) => (
             <Link key={index} href={href}>
-              <a className={classname('nav__link', router.asPath === href && 'nav__link--active')}>
+              <a className={classname('nav__link', pathname === href && 'nav__link--active')}>
                 {title}
               </a>
             </Link>

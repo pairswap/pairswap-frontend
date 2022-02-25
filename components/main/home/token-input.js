@@ -16,7 +16,8 @@ function TokenInput({ register, tokens, selectedToken, setSelectedToken }) {
           id="amount"
           type="number"
           className="input"
-          {...register('amount', { required: true, min: 0 })}
+          min="0"
+          {...register('amount', { required: true, validate: (value) => Number(value) > 0 })}
         />
       </div>
       {selectedToken ? (

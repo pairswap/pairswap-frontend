@@ -28,15 +28,15 @@ function TokenBalance() {
     }
   }, [connected, srcToken, getTokenBalance]);
 
-  if (tokenBalance) {
-    return (
-      <span className="token-balance">
-        Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
-      </span>
-    );
-  }
-
-  return null;
+  return (
+    <div>
+      {tokenBalance ? (
+        <span>
+          Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 export default TokenBalance;

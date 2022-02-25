@@ -82,7 +82,7 @@ const useWeb3 = create((set, get) => ({
 
     ethereum
       .request({ method: 'eth_chainId' })
-      .then((chainId) => set({ chainId: convertHexStringToNumber(chainId) }))
+      .then((chainId) => onChainChanged(chainId))
       .catch((error) => setError(error, { silent: true }));
 
     function onChainChanged(chainId) {
