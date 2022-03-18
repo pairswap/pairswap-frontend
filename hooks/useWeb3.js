@@ -18,6 +18,7 @@ const supportedChainIds = supportedChains.map((chain) => chain.chainId);
 
 const setError = errorStore.getState().setError;
 const setMessage = successStore.getState().setMessage;
+const setHash = successStore.getState().setHash;
 
 let provider = null;
 
@@ -141,7 +142,10 @@ const useWeb3 = create((set, get) => ({
     console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount });
     return contract
       .transferOut(destChain, recipient, tokenOut, tokenIn, amount)
-      .then(() => setMessage('You have made a transaction'))
+      .then(({ hash }) => {
+        setHash(hash);
+        setMessage('You have made a transaction');
+      })
       .catch((error) => setError(error));
   },
 }));

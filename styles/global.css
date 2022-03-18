@@ -21,7 +21,7 @@ button {
   outline: none;
 }
 
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -96,7 +96,7 @@ input[type=number] {
 
 .nav__link--active {
   font-weight: 700;
-  background-color: #a167ff; 
+  background-color: #a167ff;
 }
 
 .btn-connect {
@@ -136,7 +136,7 @@ input[type=number] {
   font-weight: 600;
   font-size: 14px;
   line-height: 22px;
-  background: linear-gradient(92.6deg, #4742FF -39.33%, rgba(71, 66, 255, 0) 89.46%);
+  background: linear-gradient(92.6deg, #4742ff -39.33%, rgba(71, 66, 255, 0) 89.46%);
   color: #ffffff;
 }
 
@@ -159,7 +159,7 @@ input[type=number] {
   font-weight: 700;
   font-size: 14px;
   line-height: 22px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .main {
@@ -174,11 +174,17 @@ input[type=number] {
   margin: 4rem 1rem 0;
   padding: 0.75rem 1.25rem 1.5rem;
   border-radius: 22px;
-  background: linear-gradient(123.31deg, rgba(48, 87, 254, 0.5) -20.75%, rgba(91, 158, 255, 0.5) 38.69%, rgba(161, 103, 255, 0.5) 98.13%);
-  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
-@media (max-height: 700px){
+@media (max-height: 700px) {
   .card {
     margin: 1rem 1rem 0;
   }
@@ -361,14 +367,14 @@ input[type=number] {
 }
 
 .select-chain__text {
-  font-weight: 600; 
+  font-weight: 600;
   font-size: 16px;
   line-height: 30px;
   opacity: 0.6;
   color: #ffffff;
 }
 
-@media (max-width: 640px){
+@media (max-width: 640px) {
   .select-chain__chain {
     justify-content: center;
     padding-left: 0;
@@ -378,7 +384,6 @@ input[type=number] {
     font-size: 14px;
   }
 }
-
 
 .select-dropdown-icon {
   padding-right: 1rem;
@@ -445,14 +450,25 @@ input[type=number] {
   border-radius: 24px;
   max-height: 400px;
   text-align: center;
-  background: linear-gradient(123.31deg, rgba(48, 87, 254, 0.5) -20.75%, rgba(91, 158, 255, 0.5) 38.69%, rgba(161, 103, 255, 0.5) 98.13%);
-  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
 .modal--wallet {
-  background: linear-gradient(136.48deg, #3057FE 0.9%, rgba(58, 178, 254, 0.88)
-    53.1%, #A167FF 94.57%);
-  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    136.48deg,
+    #3057fe 0.9%,
+    rgba(58, 178, 254, 0.88) 53.1%,
+    #a167ff 94.57%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
 .modal__header {
@@ -475,8 +491,15 @@ input[type=number] {
 .modal__message {
   margin-top: 1rem;
   font-size: 24px;
-  color: #ffffffb3;
+  color: #ffffff;
   padding: 0.5rem;
+}
+
+.modal-message__link {
+  display: block;
+  margin-top: 2rem;
+  text-decoration: underline;
+  color: #ffffffb3;
 }
 
 .modal__title {
@@ -584,7 +607,7 @@ input[type=number] {
 }
 
 .modal__item--token-active {
-  background: #29295F;
+  background: #29295f;
 }
 
 .modal__item--chain-active {
@@ -631,29 +654,41 @@ input[type=number] {
   height: 24px;
   border-radius: 50%;
   position: relative;
-  animation: rotate 1s linear infinite
+  animation: rotate 1s linear infinite;
 }
 
 .spiner::before {
-  content: "";
+  content: '';
   box-sizing: border-box;
   position: absolute;
   inset: 0px;
   border-radius: 50%;
-  border: 3px solid rgba(256, 256 ,256, 0.7);
-  animation: prixClipFix 2s linear infinite ;
+  border: 3px solid rgba(256, 256, 256, 0.7);
+  animation: prixClipFix 2s linear infinite;
 }
 
 @keyframes rotate {
-  100%   {transform: rotate(360deg)}
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes prixClipFix {
-  0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
-  25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
-  50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
-  75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
-  100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+  }
+  75% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
 }
 
 .validation {
