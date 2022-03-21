@@ -90,19 +90,26 @@ const useWeb3 = create((set, get) => ({
       const convertedChainId = convertHexStringToNumber(chainId);
       if (supportedChainIds.includes(convertedChainId)) {
         set({ chainId: convertedChainId });
+
+        const account = get().account;
+        if (account) {
+          get().getBalance(account);
+        }
       } else {
-        setError(new Error('Unsupported chain'));
-        get()
-          .changeChain(supportedChains[0])
-          .catch((error) => {
-            if (error.code === 4902) {
-              get()
-                .addChain(supportedChains[0])
-                .catch((error) => setError(error));
-            } else {
-              setError(error);
-            }
-          });
+        if (get().connected) {
+          setError(new Error('Unsupported chain'));
+          get()
+            .changeChain(supportedChains[0])
+            .catch((error) => {
+              if (error.code === 4902) {
+                get()
+                  .addChain(supportedChains[0])
+                  .catch((error) => setError(error));
+              } else {
+                setError(error);
+              }
+            });
+        }
       }
     }
 
@@ -110,6 +117,20 @@ const useWeb3 = create((set, get) => ({
       if (accounts.length > 0) {
         set({ connected: true, account: accounts[0] });
         get().getBalance(accounts[0]);
+
+        if (!supportedChainIds.includes(get().chainId)) {
+          get()
+            .changeChain(supportedChains[0])
+            .catch((error) => {
+              if (error.code === 4902) {
+                get()
+                  .addChain(supportedChains[0])
+                  .catch((error) => setError(error, { silent: true }));
+              } else {
+                setError(error, { silent: true });
+              }
+            });
+        }
       } else {
         get().reset();
       }
