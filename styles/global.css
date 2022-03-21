@@ -2,6 +2,14 @@
   box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+  background: #19123c;
+}
+::-webkit-scrollbar-thumb {
+  background: #4742ff;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -163,11 +171,18 @@ input[type='number'] {
 }
 
 .main {
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 80px);
+  padding-bottom: 2rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    max-height: calc(100vh - 140px);
+  }
 }
 
 .card {
@@ -693,6 +708,85 @@ input[type='number'] {
 
 .validation {
   margin: 0.25rem 0.75rem 0;
+  font-size: 12px;
+  color: #f87171;
+}
+
+.support-title {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 28px;
+  color: #ffffff;
+}
+
+.support {
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1.25rem 1rem;
+  border-radius: 22px;
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .support {
+    width: calc(100% - 2rem);
+  }
+}
+
+.support__label {
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #fff;
+}
+
+.support__input {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 2px solid #19123c;
+  background: #19123c;
+  color: #ffffffb3;
+  outline: none;
+}
+
+.support__input:-webkit-autofill,
+.support__input:-webkit-autofill:hover,
+.support__input:-webkit-autofill:focus,
+.support__input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #ffffffb3 !important;
+}
+
+.support__button {
+  margin-top: 1rem;
+  width: 100%;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 34px;
+  border-radius: 15px;
+  background: #4742ff;
+  color: #ffffff;
+  border: none;
+  outline: none;
+}
+
+.support__helper-text {
+  margin: 0.25rem 0;
   font-size: 12px;
   color: #f87171;
 }

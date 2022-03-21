@@ -14,6 +14,7 @@ const routes = [
   { href: '/', title: 'Swap' },
   { href: '/pool', title: 'Pool' },
   { href: '/stake', title: 'Stake' },
+  { href: '/support', title: 'Support' },
 ];
 
 function Header() {
