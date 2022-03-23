@@ -113,13 +113,13 @@ function Main() {
       setHash(value.hash);
       setMessage('You have made a transaction');
     }
-  }, [value, reset, setMessage, setHash]);
+  }, [value, setMessage, setHash]);
 
   useEffect(() => {
     if (error) {
       setError(error);
     }
-  }, [error, reset, setError]);
+  }, [error, setError]);
 
   useEffect(() => {
     if (connected && chainId) {
