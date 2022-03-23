@@ -1,5 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+
+import useAsync from 'hooks/useAsync';
+import useError from 'hooks/useError';
+import useSuccess from 'hooks/useSuccess';
+import { support } from 'utils/rest';
 
 const validationRules = {
   name: {
@@ -10,36 +15,62 @@ const validationRules = {
     pattern:
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
   },
-  txUrl: {
+  txURL: {
     required: true,
     pattern: /^https?:\/\/.*\/tx\/0x.+$/,
+  },
+  comment: {
+    required: true,
   },
 };
 
 const errorMessages = {
   name: {
-    required: 'Name is required',
+    required: 'Please enter your name',
   },
   email: {
-    required: 'Email is required',
+    required: 'Please enter your email',
     pattern: 'Email is invalid',
   },
-  txUrl: {
-    required: 'Transaction link is required',
+  txURL: {
+    required: 'Please provide a transaction link',
     pattern: 'Transaction link is invalid',
+  },
+  comment: {
+    required: 'Please leave a comment',
   },
 };
 
 function Main() {
+  const { execute, value, loading, error } = useAsync(support);
+  const setError = useError((state) => state.setError);
+  const setMessage = useSuccess((state) => state.setMessage);
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = useCallback(({ name, email, txUrl, comment }) => {
-    console.log({ name, email, txUrl, comment });
-  }, []);
+  const onSubmit = useCallback(
+    async ({ name, email, txURL, comment }) => {
+      execute({ name, email, txURL, comment });
+    },
+    [execute]
+  );
+
+  useEffect(() => {
+    if (error) {
+      setError(new Error('An unknown error occurred'));
+    }
+  }, [error, setError]);
+
+  useEffect(() => {
+    if (value) {
+      setMessage('Your report has been sent');
+      reset();
+    }
+  }, [value, reset, setMessage]);
 
   return (
     <main className="main">
@@ -60,24 +91,37 @@ function Main() {
           {...register('email', validationRules.email)}
         />
         <p className="support__helper-text">{errorMessages.email[errors.email?.type]}</p>
-        <label htmlFor="txUrl" className="support__label">
+        <label htmlFor="txURL" className="support__label">
           Your transaction on block explorer
         </label>
         <input
-          id="txUrl"
+          id="txURL"
           type="url"
           placeholder="Eg: https://bscscan.com/tx/0x1234...."
           className="support__input"
-          {...register('txUrl', validationRules.txUrl)}
+          {...register('txURL', validationRules.txURL)}
         />
-        <p className="support__helper-text">{errorMessages.txUrl[errors.txUrl?.type]}</p>
+        <p className="support__helper-text">{errorMessages.txURL[errors.txURL?.type]}</p>
         <label htmlFor="comment" className="support__label">
           Additional comment
         </label>
-        <textarea id="comment" rows={4} className="support__input" {...register('comment')} />
-        <button onClick={handleSubmit(onSubmit)} className="support__button">
-          Send
-        </button>
+        <textarea
+          id="comment"
+          rows={4}
+          className="support__input"
+          placeholder="Please describe your problem in detail so that we can assist you as quickly as possible"
+          {...register('comment', validationRules.comment)}
+        />
+        <p className="support__helper-text">{errorMessages.comment[errors.comment?.type]}</p>
+        {loading ? (
+          <div className="support__button">
+            <div className="spiner" />
+          </div>
+        ) : (
+          <button onClick={handleSubmit(onSubmit)} className="support__button">
+            Send
+          </button>
+        )}
       </form>
     </main>
   );

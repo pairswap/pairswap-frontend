@@ -20,7 +20,7 @@ function GasFee() {
 
   useEffect(() => {
     if (connected && srcChain && srcChain.transferName && srcToken && srcToken.symbol) {
-      execute(srcChain.transferName, srcToken.symbol);
+      execute({ chain: srcChain.transferName, tokenId: srcToken.symbol });
     }
   }, [execute, connected, srcChain, srcToken]);
 

@@ -750,7 +750,7 @@ input[type='number'] {
 
 .support__input {
   min-height: 44px;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   display: flex;
   align-items: center;
   border-radius: 8px;
