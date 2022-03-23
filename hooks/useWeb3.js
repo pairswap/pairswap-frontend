@@ -17,8 +17,6 @@ import {
 const supportedChainIds = supportedChains.map((chain) => chain.chainId);
 
 const setError = errorStore.getState().setError;
-const setMessage = successStore.getState().setMessage;
-const setHash = successStore.getState().setHash;
 
 let provider = null;
 
@@ -33,6 +31,7 @@ const initialStates = {
   connected: false,
   account: null,
   balance: null,
+  tokenBalance: null,
   chainId: null,
   provider,
 };
@@ -152,7 +151,7 @@ const useWeb3 = create((set, get) => ({
 
     return contract
       .balanceOf(account)
-      .then((balance) => convertBigNumberToString(balance))
+      .then((balance) => set({ tokenBalance: convertBigNumberToString(balance) }))
       .catch((error) => setError(error, { silent: true }));
   },
   transfer: ({ contractAddress, destChain, tokenOut, tokenIn, amount }) => {

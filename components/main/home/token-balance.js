@@ -2,32 +2,31 @@ import { useEffect } from 'react';
 import shallow from 'zustand/shallow';
 
 import { shortenBalance } from 'utils/transform';
-import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
 
 function TokenBalance() {
   const srcToken = useChain((state) => state.srcToken);
-  const { connected, getTokenBalance } = useWeb3(
+  const { connected, tokenBalance, getTokenBalance } = useWeb3(
     (state) => ({
       connected: state.connected,
+      tokenBalance: state.tokenBalance,
       getTokenBalance: state.getTokenBalance,
     }),
     shallow
   );
-  const { execute, value } = useAsync(getTokenBalance);
 
   useEffect(() => {
     if (connected && srcToken && srcToken.address) {
-      execute(srcToken.address);
+      getTokenBalance(srcToken.address);
     }
-  }, [connected, srcToken, execute]);
+  }, [connected, srcToken, getTokenBalance]);
 
   return (
     <div>
-      {value ? (
+      {tokenBalance ? (
         <span>
-          Balance: <strong>{`${shortenBalance(value)} ${srcToken.symbol}`}</strong>
+          Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
         </span>
       ) : null}
     </div>

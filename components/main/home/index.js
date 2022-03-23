@@ -13,9 +13,24 @@ import useError from 'hooks/useError';
 import useSuccess from 'hooks/useSuccess';
 import { convertStringToBigNumber } from 'utils/transform';
 
+const validationRules = {
+  amount: {
+    required: true,
+    validate: (value) => Number(value) > 0,
+  },
+};
+
+const errorMessages = {
+  amount: {
+    required: 'Please enter a value',
+    validate: 'Value must greater than 0',
+  },
+};
+
 function Main() {
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -34,18 +49,20 @@ function Main() {
   const setError = useError((state) => state.setError);
   const setMessage = useSuccess((state) => state.setMessage);
   const setHash = useSuccess((state) => state.setHash);
-  const { available, connected, chainId, addChain, changeChain, transfer } = useWeb3(
-    (state) => ({
-      available: state.available,
-      connected: state.connected,
-      chainId: state.chainId,
-      chainId: state.chainId,
-      addChain: state.addChain,
-      changeChain: state.changeChain,
-      transfer: state.transfer,
-    }),
-    shallow
-  );
+  const { available, connected, chainId, addChain, changeChain, getTokenBalance, transfer } =
+    useWeb3(
+      (state) => ({
+        available: state.available,
+        connected: state.connected,
+        chainId: state.chainId,
+        chainId: state.chainId,
+        addChain: state.addChain,
+        changeChain: state.changeChain,
+        getTokenBalance: state.getTokenBalance,
+        transfer: state.transfer,
+      }),
+      shallow
+    );
   const { execute, value, loading, error } = useAsync(transfer);
 
   const onSubmit = useCallback(
@@ -112,14 +129,17 @@ function Main() {
     if (value) {
       setHash(value.hash);
       setMessage('You have made a transaction');
+      reset({ amount: '' });
+      getTokenBalance(srcToken.address);
     }
-  }, [value, setMessage, setHash]);
+  }, [value, getTokenBalance, reset, srcToken, setMessage, setHash]);
 
   useEffect(() => {
     if (error) {
       setError(error);
+      reset({ amount: '' });
     }
-  }, [error, setError]);
+  }, [error, reset, setError]);
 
   useEffect(() => {
     if (connected && chainId) {
@@ -137,11 +157,9 @@ function Main() {
             tokens={srcChain.tokens}
             selectedToken={srcToken}
             setSelectedToken={selectToken}
+            {...register('amount', validationRules.amount)}
           />
-          {errors.amount?.type === 'required' && <p className="validation">Please enter a value</p>}
-          {errors.amount?.type === 'validate' && (
-            <p className="validation">Value must greater than 0</p>
-          )}
+          <p className="validation">{errorMessages.amount[errors.amount?.type]}</p>
         </div>
 
         <div className="form-group__footer">
