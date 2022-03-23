@@ -161,13 +161,7 @@ const useWeb3 = create((set, get) => ({
     const contract = new Contract(contractAddress, ERC20Gateway.abi, signer);
 
     console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount });
-    return contract
-      .transferOut(destChain, recipient, tokenOut, tokenIn, amount)
-      .then(({ hash }) => {
-        setHash(hash);
-        setMessage('You have made a transaction');
-      })
-      .catch((error) => setError(error));
+    return contract.transferOut(destChain, recipient, tokenOut, tokenIn, amount);
   },
 }));
 

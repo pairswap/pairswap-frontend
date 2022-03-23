@@ -6,9 +6,11 @@ import ChainInput from './chain-input';
 import TokenInput from './token-input';
 import GasFee from './gas-fee';
 import TokenBalance from './token-balance';
+import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
 import useError from 'hooks/useError';
+import useSuccess from 'hooks/useSuccess';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function Main() {
@@ -30,6 +32,8 @@ function Main() {
     swapChain,
   } = useChain();
   const setError = useError((state) => state.setError);
+  const setMessage = useSuccess((state) => state.setMessage);
+  const setHash = useSuccess((state) => state.setHash);
   const { available, connected, chainId, addChain, changeChain, transfer } = useWeb3(
     (state) => ({
       available: state.available,
@@ -42,12 +46,13 @@ function Main() {
     }),
     shallow
   );
+  const { execute, value, loading, error } = useAsync(transfer);
 
   const onSubmit = useCallback(
     ({ amount }) => {
       if (available) {
         if (connected) {
-          transfer({
+          execute({
             contractAddress: srcChain.gatewayAddress,
             destChain: destChain.transferName,
             tokenOut: srcToken.address,
@@ -61,7 +66,7 @@ function Main() {
         setError(new Error('No metamask installed'));
       }
     },
-    [available, connected, srcChain, destChain, srcToken, destToken, transfer, setError]
+    [available, connected, execute, srcChain, destChain, srcToken, destToken, setError]
   );
 
   const handleChangeSrcChain = useCallback(
@@ -102,6 +107,19 @@ function Main() {
       swapChain();
     }
   }, [connected, destChain, addChain, changeChain, swapChain, setError]);
+
+  useEffect(() => {
+    if (value) {
+      setHash(value.hash);
+      setMessage('You have made a transaction');
+    }
+  }, [value, reset, setMessage, setHash]);
+
+  useEffect(() => {
+    if (error) {
+      setError(error);
+    }
+  }, [error, reset, setError]);
 
   useEffect(() => {
     if (connected && chainId) {
@@ -157,9 +175,15 @@ function Main() {
           />
         </div>
 
-        <button onClick={handleSubmit(onSubmit)} className="btn-swap">
-          Swap
-        </button>
+        {loading ? (
+          <div className="btn-swap">
+            <div className="spiner" />
+          </div>
+        ) : (
+          <button onClick={handleSubmit(onSubmit)} className="btn-swap">
+            Swap
+          </button>
+        )}
       </div>
     </main>
   );

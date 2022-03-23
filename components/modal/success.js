@@ -34,7 +34,12 @@ function SuccessModal() {
         <img src="/images/success.svg" alt="success" className="modal__img" />
         <div className="modal__message">{message}</div>
         {hash && currentChain?.blockExplorerUrls ? (
-          <a href={`${currentChain.blockExplorerUrls}/tx/${hash}`} className="modal-message__link">
+          <a
+            href={`${currentChain.blockExplorerUrls}/tx/${hash}`}
+            target="_blank"
+            rel="noreferrer"
+            className="modal-message__link"
+          >
             View on block explorer
           </a>
         ) : null}
