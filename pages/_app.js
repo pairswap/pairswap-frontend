@@ -1,41 +1,25 @@
 import 'styles/global.css';
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import shallow from 'zustand/shallow';
 
-import ErrorModal from 'components/modal/error';
-import SuccessModal from 'components/modal/success';
-import useWeb3 from 'hooks/useWeb3';
-import useError from 'hooks/useError';
+import ChainProvider from 'contexts/chain';
+import ErrorProvider from 'contexts/error';
+import Web3Provider from 'contexts/web3';
 
 function App({ Component, pageProps }) {
-  const setError = useError((state) => state.setError);
-  const { available, addListerner } = useWeb3(
-    (state) => ({
-      available: state.available,
-      addListerner: state.addListerner,
-    }),
-    shallow
-  );
-
-  useEffect(() => {
-    if (available) {
-      addListerner();
-    } else {
-      setError(new Error('No metamask installed'));
-    }
-  }, [available, addListerner, setError]);
-
   return (
     <>
       <Head>
-        <title>Pairswap</title>
+        <title>KO Exchange</title>
       </Head>
 
-      <Component {...pageProps} />
-      <ErrorModal />
-      <SuccessModal />
+      <ErrorProvider>
+        <ChainProvider>
+          <Web3Provider>
+            <Component {...pageProps} />
+          </Web3Provider>
+        </ChainProvider>
+      </ErrorProvider>
     </>
   );
 }

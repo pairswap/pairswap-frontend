@@ -26,7 +26,7 @@ function Modal({ open, onClose, children }) {
           leaveFrom="modal-container__visible"
           leaveTo="modal-container__hidden"
         >
-          {children}
+          <div>{children}</div>
         </Transition.Child>
       </Dialog>
     </Transition.Root>

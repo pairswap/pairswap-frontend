@@ -1,16 +1,16 @@
-import { useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import shallow from 'zustand/shallow';
 
 import ChainInput from './chain-input';
 import TokenInput from './token-input';
 import GasFee from './gas-fee';
 import TokenBalance from './token-balance';
+import SuccessModal from './success-modal';
 import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
 import useError from 'hooks/useError';
-import useSuccess from 'hooks/useSuccess';
+import { addChain, changeChain, transfer } from 'request/rpc';
 import { convertStringToBigNumber } from 'utils/transform';
 
 const validationRules = {
@@ -28,12 +28,16 @@ const errorMessages = {
 };
 
 function Main() {
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState(null);
+  const [txHash, setTxHash] = useState(null);
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { execute, value, loading, error } = useAsync(transfer);
   const {
     chains,
     srcChain,
@@ -43,27 +47,10 @@ function Main() {
     selectToken,
     selectSrcChain,
     selectDestChain,
-    sync,
     swapChain,
   } = useChain();
-  const setError = useError((state) => state.setError);
-  const setMessage = useSuccess((state) => state.setMessage);
-  const setHash = useSuccess((state) => state.setHash);
-  const { available, connected, chainId, addChain, changeChain, getTokenBalance, transfer } =
-    useWeb3(
-      (state) => ({
-        available: state.available,
-        connected: state.connected,
-        chainId: state.chainId,
-        chainId: state.chainId,
-        addChain: state.addChain,
-        changeChain: state.changeChain,
-        getTokenBalance: state.getTokenBalance,
-        transfer: state.transfer,
-      }),
-      shallow
-    );
-  const { execute, value, loading, error } = useAsync(transfer);
+  const setError = useError();
+  const { account, available, connected } = useWeb3();
 
   const onSubmit = useCallback(
     ({ amount }) => {
@@ -71,6 +58,7 @@ function Main() {
         if (connected) {
           execute({
             contractAddress: srcChain.gatewayAddress,
+            recipient: account,
             destChain: destChain.transferName,
             tokenOut: srcToken.address,
             tokenIn: destToken.address,
@@ -83,7 +71,7 @@ function Main() {
         setError(new Error('No metamask installed'));
       }
     },
-    [available, connected, execute, srcChain, destChain, srcToken, destToken, setError]
+    [account, available, connected, execute, srcChain, destChain, srcToken, destToken, setError]
   );
 
   const handleChangeSrcChain = useCallback(
@@ -104,7 +92,7 @@ function Main() {
         selectSrcChain(chain);
       }
     },
-    [connected, addChain, changeChain, selectSrcChain, setError]
+    [connected, selectSrcChain, setError]
   );
 
   const handleSwapChain = useCallback(() => {
@@ -123,29 +111,22 @@ function Main() {
     } else {
       swapChain();
     }
-  }, [connected, destChain, addChain, changeChain, swapChain, setError]);
+  }, [connected, destChain, swapChain, setError]);
 
   useEffect(() => {
     if (value) {
-      setHash(value.hash);
-      setMessage('You have made a transaction');
+      setOpenModal(true);
+      setTxHash(value.hash);
+      setModalMessage('You have made a transaction');
       reset({ amount: '' });
-      getTokenBalance(srcToken.address);
     }
-  }, [value, getTokenBalance, reset, srcToken, setMessage, setHash]);
+  }, [value, reset, srcToken]);
 
   useEffect(() => {
     if (error) {
       setError(error);
-      reset({ amount: '' });
     }
   }, [error, reset, setError]);
-
-  useEffect(() => {
-    if (connected && chainId) {
-      sync(chainId);
-    }
-  }, [connected, chainId, sync]);
 
   return (
     <main className="main">
@@ -203,6 +184,16 @@ function Main() {
           </button>
         )}
       </div>
+      <SuccessModal
+        open={openModal}
+        message={modalMessage}
+        txHash={txHash}
+        onClose={() => {
+          setOpenModal(false);
+          setTxHash(null);
+          setModalMessage(null);
+        }}
+      />
     </main>
   );
 }

@@ -459,11 +459,12 @@ input[type='number'] {
 .modal {
   margin: 6rem 1rem 0;
   position: relative;
+  flex-direction: column;
   z-index: 20;
   width: 400px;
   padding: 1rem;
   border-radius: 24px;
-  max-height: 400px;
+  min-height: 400px;
   text-align: center;
   background: linear-gradient(
     123.31deg,
@@ -473,6 +474,12 @@ input[type='number'] {
   );
   box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .modal {
+    width: calc(100vw - 2rem);
+  }
 }
 
 .modal--wallet {
@@ -530,6 +537,16 @@ input[type='number'] {
   height: 1px;
   opacity: 0.15;
   background: #ffffff;
+}
+
+.modal__body {
+  margin-top: 1rem;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.modal__body::-webkit-scrollbar {
+  display: none;
 }
 
 .btn-wallet {
@@ -601,14 +618,18 @@ input[type='number'] {
 }
 
 .modal__item {
-  margin-top: 1rem;
   width: 100%;
   height: 56px;
   padding: 0 1rem;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 15px;
+}
+
+.modal__item:last-child {
+  margin-bottom: 0;
 }
 
 .modal__item--token {
@@ -789,4 +810,52 @@ input[type='number'] {
   margin: 0.25rem 0;
   font-size: 12px;
   color: #f87171;
+}
+
+.wallet {
+  padding-top: 3rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wallet-token {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 600px;
+  border-radius: 24px;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .wallet-token {
+    width: calc(100% - 2rem);
+  }
+}
+
+.wallet-token__group {
+  display: flex;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.wallet-token__img {
+  width: 40px;
+  height: 40px;
+}
+
+.wallet-token__text {
+  color: #ffffffb3;
+  font-weight: 600;
 }

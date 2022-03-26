@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+import SuccessModal from './success-modal';
 import useAsync from 'hooks/useAsync';
 import useError from 'hooks/useError';
-import useSuccess from 'hooks/useSuccess';
-import { support } from 'utils/rest';
+import { support } from 'request/rest';
 
 const validationRules = {
   name: {
@@ -42,9 +42,10 @@ const errorMessages = {
 };
 
 function Main() {
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState(null);
   const { execute, value, loading, error } = useAsync(support);
-  const setError = useError((state) => state.setError);
-  const setMessage = useSuccess((state) => state.setMessage);
+  const setError = useError();
   const {
     register,
     reset,
@@ -67,10 +68,11 @@ function Main() {
 
   useEffect(() => {
     if (value) {
-      setMessage('Your report has been sent');
+      setOpenModal(true);
+      setModalMessage('Your report has been sent');
       reset();
     }
-  }, [value, reset, setMessage]);
+  }, [value, reset]);
 
   return (
     <main className="main">
@@ -123,6 +125,14 @@ function Main() {
           </button>
         )}
       </form>
+      <SuccessModal
+        open={openModal}
+        message={modalMessage}
+        onClose={() => {
+          setOpenModal(false);
+          setModalMessage(null);
+        }}
+      />
     </main>
   );
 }

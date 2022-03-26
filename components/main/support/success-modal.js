@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
 
-function ErrorModal({ open, message, onClose }) {
+function SuccessModal({ open, message, onClose }) {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="modal">
@@ -11,17 +11,18 @@ function ErrorModal({ open, message, onClose }) {
             <img src="/images/close.png" alt="close" />
           </button>
         </div>
-        <img src="/images/error.svg" alt="error" className="modal__img" />
+
+        <img src="/images/success.svg" alt="success" className="modal__img" />
         <div className="modal__message">{message}</div>
       </div>
     </Modal>
   );
 }
 
-ErrorModal.propTypes = {
+SuccessModal.propTypes = {
   open: PropTypes.bool,
   message: PropTypes.string,
   onClose: PropTypes.func,
 };
 
-export default ErrorModal;
+export default SuccessModal;

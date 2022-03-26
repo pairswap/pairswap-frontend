@@ -7,10 +7,10 @@ const supportedChains = [
       decimals: 18,
     },
     rpcUrls: ['https://ropsten.infura.io/v3/92c84d95a1ed4fd593009e4ac1d33b24'],
-    blockExplorerUrls: 'https://ropsten.etherscan.io',
+    blockExplorerUrls: ['https://ropsten.etherscan.io'],
     transferName: 'eth-ropsten',
     gatewayAddress: '0xF524fd11D40998bC54D73aD2a00a8A357aa18Fec',
-    iconSrc: '/images/ethereum.png',
+    iconSrc: '/images/eth.png',
     tokens: [
       {
         name: 'SISU Coin',
@@ -29,10 +29,10 @@ const supportedChains = [
       decimals: 18,
     },
     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
-    blockExplorerUrls: 'https://testnet.bscscan.com',
+    blockExplorerUrls: ['https://testnet.bscscan.com'],
     transferName: 'eth-binance-testnet',
     gatewayAddress: '0xD1658825EB56CdbD0435f775001499770ea339f2',
-    iconSrc: '/images/bsc.png',
+    iconSrc: '/images/bnb.png',
     tokens: [
       {
         name: 'SISU Coin',
@@ -51,10 +51,10 @@ const supportedChains = [
       decimals: 18,
     },
     rpcUrls: ['https://matic-testnet-archive-rpc.bwarelabs.com'],
-    blockExplorerUrls: 'https://mumbai.polygonscan.com',
+    blockExplorerUrls: ['https://mumbai.polygonscan.com'],
     transferName: 'polygon-testnet',
     gatewayAddress: '0xD1658825EB56CdbD0435f775001499770ea339f2',
-    iconSrc: '/images/polygon.png',
+    iconSrc: '/images/matic.png',
     tokens: [
       {
         name: 'SISU Coin',
@@ -75,7 +75,7 @@ const supportedChains = [
     rpcUrls: ['https://5723-203-210-210-39.ngrok.io'],
     transferName: 'ganache1',
     gatewayAddress: '0xE76B231edA65F3e5F7577604c943ce6ab5ce81f7',
-    iconSrc: '/images/ethereum.png',
+    iconSrc: '/images/eth.png',
     tokens: [
       {
         name: 'SISU Coin',
@@ -96,7 +96,7 @@ const supportedChains = [
     rpcUrls: ['https://e6e1-203-210-210-39.ngrok.io'],
     transferName: 'ganache2',
     gatewayAddress: '0xD1658825EB56CdbD0435f775001499770ea339f2',
-    iconSrc: '/images/ethereum.png',
+    iconSrc: '/images/eth.png',
     tokens: [
       {
         name: 'SISU Coin',

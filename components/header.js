@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import shallow from 'zustand/shallow';
 
 import SelectWalletModal from 'components/modal/select-wallet';
 import classname from 'utils/classname';
@@ -12,25 +11,18 @@ import useWeb3 from 'hooks/useWeb3';
 
 const routes = [
   { href: '/', title: 'Swap' },
-  { href: '/pool', title: 'Pool' },
-  { href: '/stake', title: 'Stake' },
+  { href: '/wallet', title: 'Wallet' },
+  // { href: '/pool', title: 'Pool' },
+  // { href: '/stake', title: 'Stake' },
   { href: '/support', title: 'Support' },
 ];
 
 function Header() {
   const { pathname } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const srcChain = useChain((state) => state.srcChain);
-  const setError = useError((state) => state.setError);
-  const { available, account, balance, connected } = useWeb3(
-    (state) => ({
-      available: state.available,
-      account: state.account,
-      balance: state.balance,
-      connected: state.connected,
-    }),
-    shallow
-  );
+  const { srcChain } = useChain();
+  const setError = useError();
+  const { available, account, balance, connected } = useWeb3();
 
   const handleConnect = useCallback(() => {
     if (!connected) {

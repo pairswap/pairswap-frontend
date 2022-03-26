@@ -1,32 +1,28 @@
 import { useEffect } from 'react';
-import shallow from 'zustand/shallow';
 
-import { shortenBalance } from 'utils/transform';
+import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
+import { getTokenBalance } from 'request/rpc';
+import { shortenBalance, convertBigNumberToString } from 'utils/transform';
 
 function TokenBalance() {
-  const srcToken = useChain((state) => state.srcToken);
-  const { connected, tokenBalance, getTokenBalance } = useWeb3(
-    (state) => ({
-      connected: state.connected,
-      tokenBalance: state.tokenBalance,
-      getTokenBalance: state.getTokenBalance,
-    }),
-    shallow
-  );
+  const { execute, value } = useAsync(getTokenBalance);
+  const { srcToken } = useChain();
+  const { account, connected, chainId } = useWeb3();
 
   useEffect(() => {
     if (connected && srcToken && srcToken.address) {
-      getTokenBalance(srcToken.address);
+      execute({ account, tokenAddress: srcToken.address });
     }
-  }, [connected, srcToken, getTokenBalance]);
+  }, [account, connected, chainId, srcToken, execute]);
 
   return (
     <div>
-      {tokenBalance ? (
+      {connected && value ? (
         <span>
-          Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
+          Balance:{' '}
+          <strong>{`${shortenBalance(convertBigNumberToString(value))} ${srcToken.symbol}`}</strong>
         </span>
       ) : null}
     </div>

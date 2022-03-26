@@ -5,7 +5,7 @@ import Modal from 'components/modal';
 import useWeb3 from 'hooks/useWeb3';
 
 function SelectWalletModal({ open, onClose }) {
-  const connect = useWeb3((state) => state.connect);
+  const { connect } = useWeb3();
   const [loading, setLoading] = useState(false);
 
   const handleConnect = useCallback(async () => {

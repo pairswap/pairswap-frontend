@@ -1,21 +1,14 @@
 import { useEffect } from 'react';
-import shallow from 'zustand/shallow';
 
 import useAsync from 'hooks/useAsync';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
-import { getGasFeeInToken } from 'utils/rest';
+import { getGasFeeInToken } from 'request/rest';
 import { convertNumberToString } from 'utils/transform';
 
 function GasFee() {
-  const { srcChain, srcToken } = useChain(
-    (state) => ({
-      srcChain: state.srcChain,
-      srcToken: state.srcToken,
-    }),
-    shallow
-  );
-  const connected = useWeb3((state) => state.connected);
+  const { srcChain, srcToken } = useChain();
+  const { connected } = useWeb3();
   const { execute, value } = useAsync(getGasFeeInToken);
 
   useEffect(() => {

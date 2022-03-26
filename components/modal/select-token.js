@@ -45,7 +45,7 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
           <img src="/images/search.svg" alt="search" className="search__icon" />
         </div>
 
-        <div>
+        <div className="modal__body">
           {filteredTokens.length > 0 ? (
             filteredTokens.map((token, index) => (
               <button
