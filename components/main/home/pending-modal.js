@@ -8,21 +8,17 @@ function findChainByChainId(chainId) {
   return chains.find((chain) => chain.chainId === chainId);
 }
 
-function SuccessModal({ open, txHash, onClose }) {
+function PendingModal({ open, txHash }) {
+  console.log(txHash);
   const { chainId } = useWeb3();
   const currentChain = findChainByChainId(chainId);
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={() => {}}>
       <div className="modal">
-        <div className="modal__header modal__header--end">
-          <button onClick={onClose} className="btn-close-modal">
-            <img src="/images/close.png" alt="close" />
-          </button>
-        </div>
-
-        <img src="/images/success.svg" alt="success" className="modal__img" />
-        <div className="modal__message">You have made a transaction.</div>
+        <div className="loader" />
+        <p className="modal__message">You have a pending transaction. Please wait for a while.</p>
+        <p className="modal__note">Do not reload or close the browser.</p>
         {txHash && currentChain?.blockExplorerUrls?.length ? (
           <a
             href={`${currentChain.blockExplorerUrls[0]}/tx/${txHash}`}
@@ -38,10 +34,9 @@ function SuccessModal({ open, txHash, onClose }) {
   );
 }
 
-SuccessModal.propTypes = {
+PendingModal.propTypes = {
   open: PropTypes.bool,
   txHash: PropTypes.string,
-  onClose: PropTypes.func,
 };
 
-export default SuccessModal;
+export default PendingModal;

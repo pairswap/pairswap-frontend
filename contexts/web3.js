@@ -123,7 +123,7 @@ function Web3Provider({ children }) {
     } else {
       setError(new Error('No metamask installed'));
     }
-  }, [account, chainId, connected, getBalance, reset, setError]);
+  }, [account, chainId, connected, getBalance, reset, setError, sync]);
 
   return (
     <Web3Context.Provider

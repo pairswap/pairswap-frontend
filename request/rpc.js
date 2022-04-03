@@ -1,9 +1,14 @@
+import { BigNumber } from '@ethersproject/bignumber';
+import { parseEther } from '@ethersproject/units';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 
 import SampleERC20 from 'abis/SampleERC20.json';
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import { converNumberToHexString } from 'utils/transform';
+
+// 1 * 10^9 * 10*18
+const allowance = parseEther('1000000000');
 
 let provider = null;
 
@@ -49,16 +54,39 @@ export function changeChain({ chainId }) {
   });
 }
 
+export function getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
+  const contract = new Contract(tokenAddress, SampleERC20.abi, provider);
+
+  return contract.allowance(account, gatewayAddress);
+}
+
+export async function checkApproval({ gatewayAddress, tokenAddress, account }) {
+  const currentAllowance = await getCurrentAllowance({
+    gatewayAddress,
+    tokenAddress,
+    account,
+  });
+
+  return currentAllowance.gt(BigNumber.from('0'));
+}
+
+export function approve({ gatewayAddress, tokenAddress, account }) {
+  const signer = provider.getSigner(account);
+
+  const contract = new Contract(tokenAddress, SampleERC20.abi, signer);
+
+  return contract.approve(gatewayAddress, allowance);
+}
+
 export function getTokenBalance({ account, tokenAddress }) {
   const contract = new Contract(tokenAddress, SampleERC20.abi, provider);
 
   return contract.balanceOf(account);
 }
 
-export function transfer({ contractAddress, recipient, destChain, tokenOut, tokenIn, amount }) {
+export function transfer({ gatewayAddress, recipient, destChain, tokenOut, tokenIn, amount }) {
   const signer = provider.getSigner(recipient);
-  const contract = new Contract(contractAddress, ERC20Gateway.abi, signer);
+  const contract = new Contract(gatewayAddress, ERC20Gateway.abi, signer);
 
-  console.log({ contractAddress, destChain, recipient, tokenOut, tokenIn, amount });
   return contract.transferOut(destChain, recipient, tokenOut, tokenIn, amount);
 }

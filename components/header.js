@@ -39,7 +39,10 @@ function Header() {
       <header className="header">
         <Link href="/">
           <a className="header__item">
-            <img src="/images/logo.svg" alt="logo" className="logo" />
+            <figure className="logo">
+              <img src="images/logo.svg" alt="logo" className="logo__img" />
+              <figcaption className="logo__brand">KO EXCHANGE</figcaption>
+            </figure>
           </a>
         </Link>
 
