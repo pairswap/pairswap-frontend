@@ -1,18 +1,22 @@
 # Pairswap
 
-#### Develop
+#### Config
+
+```
+cp ./public/config.example.js ./public/config.js
+```
+
+Can change config at runtime
+
+#### Development
+
 ```
 yarn dev
 ```
 
-#### Build
+#### Production
+
 ```
 yarn build
+yarn start
 ```
-
-#### Lint
-```
-yarn lint
-yarn lint --fix
-```
-

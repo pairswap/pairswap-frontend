@@ -1,6 +1,7 @@
 import 'styles/global.css';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import Script from 'next/script';
 
 import ChainProvider from 'contexts/chain';
 import ErrorProvider from 'contexts/error';
@@ -12,6 +13,7 @@ function App({ Component, pageProps }) {
       <Head>
         <title>KO Exchange</title>
       </Head>
+      <Script type="text/javascript" src="config.js" strategy="beforeInteractive" />
 
       <ErrorProvider>
         <ChainProvider>
