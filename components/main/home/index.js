@@ -66,7 +66,7 @@ function Main() {
           <div className="form-group__title">Select a token</div>
           <TokenInput
             register={register}
-            tokens={srcChain.tokens}
+            tokens={srcChain?.tokens}
             selectedToken={srcToken}
             setSelectedToken={selectToken}
             {...register('amount', validationRules.amount)}

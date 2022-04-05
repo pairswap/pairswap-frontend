@@ -1,16 +1,14 @@
 import PropTypes from 'prop-types';
 
-import chains from 'config/chains';
 import Modal from 'components/modal';
+import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
-
-function findChainByChainId(chainId) {
-  return chains.find((chain) => chain.chainId === chainId);
-}
+import { findChainByChainId } from 'utils/chain';
 
 function SuccessModal({ open, txHash, onClose }) {
+  const { chains } = useChain();
   const { chainId } = useWeb3();
-  const currentChain = findChainByChainId(chainId);
+  const currentChain = findChainByChainId({ chains, chainId });
 
   return (
     <Modal open={open} onClose={onClose}>

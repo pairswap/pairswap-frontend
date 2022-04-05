@@ -1,14 +1,13 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import supportedChains from 'config/chains';
 import useError from 'hooks/useError';
 import useChain from 'hooks/useChain';
 import * as rpcRequest from 'request/rpc';
 import { convertHexStringToNumber, convertHexStringToString } from 'utils/transform';
+import { getChainIds } from 'utils/chain';
 
 export const Web3Context = createContext();
-const supportedChainIds = supportedChains.map((chain) => chain.chainId);
 const available = typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
 
 function Web3Provider({ children }) {
@@ -16,7 +15,7 @@ function Web3Provider({ children }) {
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
   const [chainId, setChainId] = useState(null);
-  const { sync } = useChain();
+  const { chains, sync } = useChain();
   const setError = useError();
 
   const getBalance = useCallback(
@@ -49,6 +48,7 @@ function Web3Provider({ children }) {
 
   useEffect(() => {
     if (available) {
+      const supportedChainIds = getChainIds({ chains });
       rpcRequest
         .getAccounts()
         .then((accounts) => {
@@ -76,9 +76,9 @@ function Web3Provider({ children }) {
           }
         } else {
           if (connected) {
-            rpcRequest.changeChain(supportedChains[0]).catch((error) => {
+            rpcRequest.changeChain(chains[0]).catch((error) => {
               if (error.code === 4902) {
-                rpcRequest.addChain(supportedChains[0]).catch((error) => setError(error));
+                rpcRequest.addChain(chains[0]).catch((error) => setError(error));
               } else {
                 setError(error);
               }
@@ -94,11 +94,9 @@ function Web3Provider({ children }) {
           getBalance(accounts[0]);
 
           if (!supportedChainIds.includes(chainId)) {
-            rpcRequest.changeChain(supportedChains[0]).catch((error) => {
+            rpcRequest.changeChain(chains[0]).catch((error) => {
               if (error.code === 4902) {
-                rpcRequest
-                  .addChain(supportedChains[0])
-                  .catch((error) => setError(error, { silent: true }));
+                rpcRequest.addChain(chains[0]).catch((error) => setError(error, { silent: true }));
               } else {
                 setError(error, { silent: true });
               }
@@ -123,7 +121,7 @@ function Web3Provider({ children }) {
     } else {
       setError(new Error('No metamask installed'));
     }
-  }, [account, chainId, connected, getBalance, reset, setError, sync]);
+  }, [account, chainId, chains, connected, getBalance, reset, setError, sync]);
 
   return (
     <Web3Context.Provider
