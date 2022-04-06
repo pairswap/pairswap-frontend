@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import useError from 'hooks/useError';
 import useChain from 'hooks/useChain';
 import * as rpcRequest from 'request/rpc';
-import { convertHexStringToNumber, convertHexStringToString } from 'utils/transform';
+import {
+  convertBigNumberToString,
+  convertHexStringToNumber,
+  convertHexStringToString,
+} from 'utils/transform';
 import { getChainIds } from 'utils/chain';
 
 export const Web3Context = createContext();
@@ -15,18 +19,33 @@ function Web3Provider({ children }) {
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
   const [chainId, setChainId] = useState(null);
-  const { chains, sync } = useChain();
+  const [tokenBalance, setTokenBalance] = useState(null);
+  const { chains, sync, srcToken } = useChain();
   const setError = useError();
 
   const getBalance = useCallback(
     (account) => {
-      rpcRequest
+      return rpcRequest
         .getBalance(account)
         .then((balance) => setBalance(convertHexStringToString(balance)))
         .catch((error) => setError(error));
     },
     [setError]
   );
+
+  const getTokenBalance = useCallback(() => {
+    return rpcRequest
+      .getTokenBalance({ account, tokenAddress: srcToken.address })
+      .then((newTokenBalance) => {
+        setTokenBalance(convertBigNumberToString(newTokenBalance));
+      })
+      .catch((error) => setError(error, { silent: true }));
+  }, [account, srcToken, setError]);
+
+  const reloadBalance = useCallback(async () => {
+    await getBalance(account);
+    await getTokenBalance();
+  }, [account, getBalance, getTokenBalance]);
 
   const connect = useCallback(() => {
     rpcRequest
@@ -45,6 +64,12 @@ function Web3Provider({ children }) {
     setBalance(null);
     setChainId(null);
   }, []);
+
+  useEffect(() => {
+    if (account && srcToken?.address) {
+      getTokenBalance();
+    }
+  }, [account, srcToken, getTokenBalance]);
 
   useEffect(() => {
     if (available) {
@@ -80,7 +105,7 @@ function Web3Provider({ children }) {
               if (error.code === 4902) {
                 rpcRequest.addChain(chains[0]).catch((error) => setError(error));
               } else {
-                setError(error);
+                setError(error, { silent: true });
               }
             });
           }
@@ -130,8 +155,10 @@ function Web3Provider({ children }) {
         connected,
         account,
         balance,
+        tokenBalance,
         chainId,
         connect,
+        reloadBalance,
       }}
     >
       {children}

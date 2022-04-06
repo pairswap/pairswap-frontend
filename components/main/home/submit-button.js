@@ -19,7 +19,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const [txHash, setTxHash] = useState(null);
   const { srcChain, destChain, srcToken, destToken } = useChain();
   const setError = useError();
-  const { account, available, connected } = useWeb3();
+  const { account, available, connected, reloadBalance } = useWeb3();
 
   const submitCallback = useCallback(
     async ({ amount }) => {
@@ -36,6 +36,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
         setTxHash(tx.hash);
         setIsPending(true);
         await tx.wait();
+        await reloadBalance();
         setIsPending(false);
         setIsSuccess(true);
         onSuccess();
@@ -45,7 +46,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
         setIsLoading(false);
       }
     },
-    [account, srcChain, destChain, srcToken, destToken, onSuccess, setError]
+    [account, srcChain, destChain, srcToken, destToken, onSuccess, setError, reloadBalance]
   );
 
   const handleApprove = useCallback(async () => {
@@ -59,6 +60,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
       setTxHash(tx.hash);
       setIsPending(true);
       await tx.wait();
+      await reloadBalance();
       setIsPending(false);
       setIsApproved(true);
     } catch (error) {
@@ -66,7 +68,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
     } finally {
       setIsLoading(false);
     }
-  }, [account, srcChain, srcToken, setError]);
+  }, [account, srcChain, srcToken, setError, reloadBalance]);
 
   const handleConnect = useCallback(() => {
     if (!connected) {
