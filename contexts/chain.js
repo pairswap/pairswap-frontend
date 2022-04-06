@@ -48,6 +48,7 @@ function ChainProvider({ children }) {
       const values = generate({
         chains,
         srcChain: findChainByChainId({ chains, chainId }),
+        destChain,
       });
 
       setSrcChain(values.srcChain);
@@ -55,7 +56,7 @@ function ChainProvider({ children }) {
       setSrcToken(values.srcToken);
       setDestToken(values.destToken);
     },
-    [chains]
+    [chains, destChain]
   );
 
   useEffect(() => {
