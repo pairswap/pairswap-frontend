@@ -60,7 +60,17 @@ function SubmitButton({ onSubmit, onSuccess }) {
         setIsLoading(false);
       }
     },
-    [account, srcChain, destChain, srcToken, destToken, onSuccess, setError, reloadBalance]
+    [
+      account,
+      srcChain,
+      destChain,
+      srcToken,
+      destToken,
+      tokenBalance,
+      onSuccess,
+      setError,
+      reloadBalance,
+    ]
   );
 
   const handleApprove = useCallback(async () => {
