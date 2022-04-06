@@ -19,6 +19,7 @@ function Web3Provider({ children }) {
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
   const [chainId, setChainId] = useState(null);
+  const [supported, setSupported] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(null);
   const { chains, sync, srcToken } = useChain();
   const setError = useError();
@@ -58,6 +59,16 @@ function Web3Provider({ children }) {
       .catch((error) => setError(error));
   }, [getBalance, setError]);
 
+  const switchToSupportedChain = useCallback(() => {
+    return rpcRequest.changeChain(chains[0]).catch((error) => {
+      if (error.code === 4902) {
+        rpcRequest.addChain(chains[0]).catch((error) => setError(error));
+      } else {
+        setError(error);
+      }
+    });
+  }, [chains, setError]);
+
   const reset = useCallback(() => {
     setConnected(false);
     setAccount(null);
@@ -66,10 +77,10 @@ function Web3Provider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (account && srcToken?.address) {
+    if (account && supported && srcToken?.address) {
       getTokenBalance();
     }
-  }, [account, srcToken, getTokenBalance]);
+  }, [account, supported, srcToken, getTokenBalance]);
 
   useEffect(() => {
     if (available) {
@@ -93,6 +104,7 @@ function Web3Provider({ children }) {
       function onChainChanged(chainId) {
         const convertedChainId = convertHexStringToNumber(chainId);
         if (supportedChainIds.includes(convertedChainId)) {
+          setSupported(true);
           setChainId(convertedChainId);
 
           if (account) {
@@ -100,14 +112,9 @@ function Web3Provider({ children }) {
             getBalance(account);
           }
         } else {
+          setSupported(false);
           if (connected) {
-            rpcRequest.changeChain(chains[0]).catch((error) => {
-              if (error.code === 4902) {
-                rpcRequest.addChain(chains[0]).catch((error) => setError(error));
-              } else {
-                setError(error, { silent: true });
-              }
-            });
+            setError(new Error('Unsupported network'));
           }
         }
       }
@@ -117,18 +124,6 @@ function Web3Provider({ children }) {
           setConnected(true);
           setAccount(accounts[0]);
           getBalance(accounts[0]);
-
-          if (!supportedChainIds.includes(chainId)) {
-            rpcRequest.changeChain(chains[0]).catch((error) => {
-              if (error.code === 4902) {
-                rpcRequest.addChain(chains[0]).catch((error) => setError(error, { silent: true }));
-              } else {
-                setError(error, { silent: true });
-              }
-            });
-          } else {
-            sync(chainId);
-          }
         } else {
           reset();
         }
@@ -146,7 +141,17 @@ function Web3Provider({ children }) {
     } else {
       setError(new Error('No metamask installed'));
     }
-  }, [account, chainId, chains, connected, getBalance, reset, setError, sync]);
+  }, [
+    account,
+    chainId,
+    chains,
+    connected,
+    getBalance,
+    reset,
+    setError,
+    sync,
+    switchToSupportedChain,
+  ]);
 
   return (
     <Web3Context.Provider
@@ -155,10 +160,12 @@ function Web3Provider({ children }) {
         connected,
         account,
         balance,
+        supported,
         tokenBalance,
         chainId,
         connect,
         reloadBalance,
+        switchToSupportedChain,
       }}
     >
       {children}

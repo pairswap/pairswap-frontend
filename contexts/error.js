@@ -6,15 +6,8 @@ import ErrorModal from 'components/modal/error';
 export const ErrorContext = createContext();
 
 const errorMessages = {
-  '-32700':
-    'Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.',
-  '-32600': 'The JSON sent is not a valid Request object.',
-  '-32601': 'The method does not exist / is not available.',
-  '-32602': 'Invalid method parameter(s).',
-  '-32603': 'Internal JSON-RPC error.',
-  '-32000': 'Invalid input.',
   '-32001': 'Resource not found.',
-  '-32002': 'Resource unavailable.',
+  '-32002': 'Have a pending request from metamask',
   '-32003': 'Transaction rejected.',
   '-32004': 'Method not supported.',
   '-32005': 'Request limit exceeded.',
@@ -34,7 +27,7 @@ function getErrorMessage(error) {
     return errorMessages[error.code];
   }
 
-  return 'An unknown error occurred.';
+  return 'An unknown error occurred. Please retry or reload the browser.';
 }
 
 function ErrorProvider({ children }) {
