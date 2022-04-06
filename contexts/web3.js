@@ -10,9 +10,9 @@ import {
   convertHexStringToString,
 } from 'utils/transform';
 import { getChainIds } from 'utils/chain';
+import { available, metamaskProvider } from 'utils/provider';
 
 export const Web3Context = createContext();
-const available = typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
 
 function Web3Provider({ children }) {
   const [connected, setConnected] = useState(false);
@@ -134,13 +134,13 @@ function Web3Provider({ children }) {
         }
       }
 
-      if (ethereum.on && ethereum.removeListener) {
-        ethereum.on('chainChanged', onChainChanged);
-        ethereum.on('accountsChanged', onAccountsChanged);
+      if (metamaskProvider.on && metamaskProvider.removeListener) {
+        metamaskProvider.on('chainChanged', onChainChanged);
+        metamaskProvider.on('accountsChanged', onAccountsChanged);
 
         return () => {
-          ethereum.removeListener('chainChanged', onChainChanged);
-          ethereum.removeListener('accountsChanged', onAccountsChanged);
+          metamaskProvider.removeListener('chainChanged', onChainChanged);
+          metamaskProvider.removeListener('accountsChanged', onAccountsChanged);
         };
       }
     } else {

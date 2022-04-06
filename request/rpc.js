@@ -1,39 +1,33 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { parseEther } from '@ethersproject/units';
 import { Contract } from '@ethersproject/contracts';
-import { Web3Provider } from '@ethersproject/providers';
 
 import SampleERC20 from 'abis/SampleERC20.json';
 import ERC20Gateway from 'abis/ERC20Gateway.json';
 import { converNumberToHexString } from 'utils/transform';
+import { metamaskProvider, web3Provider } from 'utils/provider';
 
 // 1 * 10^9 * 10*18
 const allowance = parseEther('1000000000');
 
-let provider = null;
-
-if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
-  provider = new Web3Provider(window.ethereum, 'any');
-}
-
 export function getBalance(account) {
-  return ethereum.request({ method: 'eth_getBalance', params: [account, 'latest'] });
+  return metamaskProvider.request({ method: 'eth_getBalance', params: [account, 'latest'] });
 }
 
 export function requestAccounts() {
-  return ethereum.request({ method: 'eth_requestAccounts' });
+  return metamaskProvider.request({ method: 'eth_requestAccounts' });
 }
 
 export function getAccounts() {
-  return ethereum.request({ method: 'eth_accounts' });
+  return metamaskProvider.request({ method: 'eth_accounts' });
 }
 
 export function getChainId() {
-  return ethereum.request({ method: 'eth_chainId' });
+  return metamaskProvider.request({ method: 'eth_chainId' });
 }
 
 export function addChain({ chainId, chainName, nativeCurrency, rpcUrls, blockExplorerUrls }) {
-  return ethereum.request({
+  return metamaskProvider.request({
     method: 'wallet_addEthereumChain',
     params: [
       {
@@ -48,14 +42,14 @@ export function addChain({ chainId, chainName, nativeCurrency, rpcUrls, blockExp
 }
 
 export function changeChain({ chainId }) {
-  return ethereum.request({
+  return metamaskProvider.request({
     method: 'wallet_switchEthereumChain',
     params: [{ chainId: converNumberToHexString(chainId) }],
   });
 }
 
 export function getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
-  const contract = new Contract(tokenAddress, SampleERC20.abi, provider);
+  const contract = new Contract(tokenAddress, SampleERC20.abi, web3Provider);
 
   return contract.allowance(account, gatewayAddress);
 }
@@ -71,7 +65,7 @@ export async function checkApproval({ gatewayAddress, tokenAddress, account }) {
 }
 
 export function approve({ gatewayAddress, tokenAddress, account }) {
-  const signer = provider.getSigner(account);
+  const signer = web3Provider.getSigner(account);
 
   const contract = new Contract(tokenAddress, SampleERC20.abi, signer);
 
@@ -79,13 +73,13 @@ export function approve({ gatewayAddress, tokenAddress, account }) {
 }
 
 export function getTokenBalance({ account, tokenAddress }) {
-  const contract = new Contract(tokenAddress, SampleERC20.abi, provider);
+  const contract = new Contract(tokenAddress, SampleERC20.abi, web3Provider);
 
   return contract.balanceOf(account);
 }
 
 export function transfer({ gatewayAddress, recipient, destChain, tokenOut, tokenIn, amount }) {
-  const signer = provider.getSigner(recipient);
+  const signer = web3Provider.getSigner(recipient);
   const contract = new Contract(gatewayAddress, ERC20Gateway.abi, signer);
 
   return contract.transferOut(destChain, recipient, tokenOut, tokenIn, amount);
