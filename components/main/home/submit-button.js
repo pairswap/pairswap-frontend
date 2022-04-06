@@ -12,6 +12,7 @@ import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({ onSubmit, onSuccess }) {
   const [isOpenWallet, setIsOpenWallet] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -19,10 +20,23 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const [txHash, setTxHash] = useState(null);
   const { srcChain, destChain, srcToken, destToken } = useChain();
   const setError = useError();
-  const { account, available, connected, reloadBalance } = useWeb3();
+  const {
+    account,
+    available,
+    connected,
+    supported,
+    tokenBalance,
+    reloadBalance,
+    switchToSupportedChain,
+  } = useWeb3();
 
   const submitCallback = useCallback(
     async ({ amount }) => {
+      if (Number(amount) >= Number(tokenBalance)) {
+        setError(new Error('Do not have enough token'));
+        return;
+      }
+
       setIsLoading(true);
       try {
         const tx = await transfer({
@@ -90,16 +104,33 @@ function SubmitButton({ onSubmit, onSuccess }) {
     }
 
     if (connected) {
-      if (isApproved) {
+      if (supported) {
+        if (isApproved) {
+          return (
+            <button onClick={onSubmit(submitCallback)} className="btn-swap">
+              Swap
+            </button>
+          );
+        }
+
+        if (isDisabled) {
+          return (
+            <button onClick={() => window.location.reload()} className="btn-swap">
+              Reload
+            </button>
+          );
+        }
+
         return (
-          <button onClick={onSubmit(submitCallback)} className="btn-swap">
-            Swap
+          <button onClick={handleApprove} className="btn-swap">
+            Give permission
           </button>
         );
       }
+
       return (
-        <button onClick={handleApprove} className="btn-swap">
-          Give permission
+        <button onClick={switchToSupportedChain} className="btn-swap">
+          Switch to supported network
         </button>
       );
     }
@@ -109,10 +140,21 @@ function SubmitButton({ onSubmit, onSuccess }) {
         Connect
       </button>
     );
-  }, [connected, isApproved, isLoading, handleApprove, handleConnect, onSubmit, submitCallback]);
+  }, [
+    connected,
+    supported,
+    isApproved,
+    isDisabled,
+    isLoading,
+    handleApprove,
+    handleConnect,
+    onSubmit,
+    submitCallback,
+    switchToSupportedChain,
+  ]);
 
   useEffect(() => {
-    if (account && connected && srcChain && srcToken) {
+    if (account && supported && srcChain && srcToken) {
       setIsLoading(true);
       checkApproval({
         gatewayAddress: srcChain.gatewayAddress,
@@ -120,10 +162,13 @@ function SubmitButton({ onSubmit, onSuccess }) {
         account,
       })
         .then(setIsApproved)
-        .catch((error) => setError(error, { silent: true }))
+        .catch((error) => {
+          setIsDisabled(true);
+          setError(error);
+        })
         .finally(() => setIsLoading(false));
     }
-  }, [account, connected, srcChain, srcToken, setError]);
+  }, [account, supported, srcChain, srcToken, setError]);
 
   return (
     <>

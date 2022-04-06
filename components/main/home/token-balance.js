@@ -4,11 +4,11 @@ import { shortenBalance } from 'utils/transform';
 
 function TokenBalance() {
   const { srcToken } = useChain();
-  const { connected, tokenBalance } = useWeb3();
+  const { connected, supported, tokenBalance } = useWeb3();
 
   return (
     <div>
-      {connected && tokenBalance ? (
+      {connected && supported && tokenBalance ? (
         <span>
           Balance: <strong>{`${shortenBalance(tokenBalance)} ${srcToken.symbol}`}</strong>
         </span>

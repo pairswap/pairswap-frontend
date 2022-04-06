@@ -100,11 +100,7 @@ function Main() {
           />
         </div>
 
-        <SubmitButton
-          onSubmit={(cb) => handleSubmit(cb)}
-          onError={(error) => setError(error)}
-          onSuccess={() => reset({ amount: '' })}
-        />
+        <SubmitButton onSubmit={(cb) => handleSubmit(cb)} onSuccess={() => reset({ amount: '' })} />
       </div>
     </main>
   );
