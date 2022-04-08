@@ -1,21 +1,23 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import useError from 'hooks/useError';
 import useChain from 'hooks/useChain';
-import * as rpcRequest from 'request/rpc';
+import useError from 'hooks/useError';
+import useLocalStorage from 'hooks/useLocalStorage';
+import RPCRequest from 'request/rpc';
 import {
   convertBigNumberToString,
   convertHexStringToNumber,
   convertHexStringToString,
 } from 'utils/transform';
 import { getChainIds } from 'utils/chain';
-import { available, metamaskProvider } from 'utils/provider';
+import { getProvider, hasProvider } from 'utils/provider';
 
 export const Web3Context = createContext();
 
 function Web3Provider({ children }) {
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useLocalStorage('connected', null);
+  const [library, setLibrary] = useState(null);
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
   const [chainId, setChainId] = useState(null);
@@ -26,55 +28,62 @@ function Web3Provider({ children }) {
 
   const getBalance = useCallback(
     (account) => {
-      return rpcRequest
+      return library
         .getBalance(account)
         .then((balance) => setBalance(convertHexStringToString(balance)))
         .catch((error) => setError(error));
     },
-    [setError]
+    [library, setError]
   );
 
   const getTokenBalance = useCallback(() => {
-    return rpcRequest
+    return library
       .getTokenBalance({ account, tokenAddress: srcToken.address })
       .then((newTokenBalance) => {
         setTokenBalance(convertBigNumberToString(newTokenBalance));
       })
       .catch((error) => setError(error, { silent: true }));
-  }, [account, srcToken, setError]);
+  }, [account, library, srcToken, setError]);
 
   const reloadBalance = useCallback(async () => {
     await getBalance(account);
     await getTokenBalance();
   }, [account, getBalance, getTokenBalance]);
 
-  const connect = useCallback(() => {
-    rpcRequest
-      .requestAccounts()
-      .then((accounts) => {
-        setConnected(true);
-        setAccount(accounts[0]);
-        getBalance(accounts[0]);
-      })
-      .catch((error) => setError(error));
-  }, [getBalance, setError]);
+  const connect = useCallback(
+    (providerName) => {
+      if (!hasProvider(providerName)) {
+        return Promise.reject(new Error(`No ${providerName} extenstion installed`));
+      }
+
+      const provider = getProvider(providerName);
+      const library = new RPCRequest(provider);
+      setLibrary(library);
+
+      return library
+        .requestAccounts()
+        .then(() => setConnected(providerName))
+        .catch((error) => setError(error));
+    },
+    [setConnected, setError]
+  );
 
   const switchToSupportedChain = useCallback(() => {
-    return rpcRequest.changeChain(chains[0]).catch((error) => {
+    return library.changeChain(chains[0]).catch((error) => {
       if (error.code === 4902) {
-        rpcRequest.addChain(chains[0]).catch((error) => setError(error));
+        library.addChain(chains[0]).catch((error) => setError(error));
       } else {
         setError(error);
       }
     });
-  }, [chains, setError]);
+  }, [chains, library, setError]);
 
-  const reset = useCallback(() => {
-    setConnected(false);
+  const logout = useCallback(() => {
+    setConnected(null);
     setAccount(null);
     setBalance(null);
     setChainId(null);
-  }, []);
+  }, [setConnected]);
 
   useEffect(() => {
     if (account && supported && srcToken?.address) {
@@ -83,20 +92,27 @@ function Web3Provider({ children }) {
   }, [account, supported, srcToken, getTokenBalance]);
 
   useEffect(() => {
-    if (available) {
+    if (connected && !library) {
+      const provider = getProvider(connected);
+      const library = new RPCRequest(provider);
+      setLibrary(library);
+    }
+  }, [connected, library]);
+
+  useEffect(() => {
+    if (connected && library) {
       const supportedChainIds = getChainIds({ chains });
-      rpcRequest
+      library
         .getAccounts()
         .then((accounts) => {
           if (accounts[0]) {
-            setConnected(true);
             setAccount(accounts[0]);
             getBalance(accounts[0]);
           }
         })
         .catch((error) => setError(error, { silent: true }));
 
-      rpcRequest
+      library
         .getChainId()
         .then((chainId) => onChainChanged(chainId))
         .catch((error) => setError(error, { silent: true }));
@@ -113,33 +129,28 @@ function Web3Provider({ children }) {
           }
         } else {
           setSupported(false);
-          if (connected) {
-            setError(new Error('Unsupported network'));
-          }
+          setError(new Error('Unsupported network'));
         }
       }
 
       function onAccountsChanged(accounts) {
         if (accounts.length > 0) {
-          setConnected(true);
           setAccount(accounts[0]);
           getBalance(accounts[0]);
         } else {
-          reset();
+          logout();
         }
       }
 
-      if (metamaskProvider.on && metamaskProvider.removeListener) {
-        metamaskProvider.on('chainChanged', onChainChanged);
-        metamaskProvider.on('accountsChanged', onAccountsChanged);
+      if (library.provider.on && library.provider.removeListener) {
+        library.provider.on('chainChanged', onChainChanged);
+        library.provider.on('accountsChanged', onAccountsChanged);
 
         return () => {
-          metamaskProvider.removeListener('chainChanged', onChainChanged);
-          metamaskProvider.removeListener('accountsChanged', onAccountsChanged);
+          library.provider.removeListener('chainChanged', onChainChanged);
+          library.provider.removeListener('accountsChanged', onAccountsChanged);
         };
       }
-    } else {
-      setError(new Error('No metamask installed'));
     }
   }, [
     account,
@@ -147,7 +158,9 @@ function Web3Provider({ children }) {
     chains,
     connected,
     getBalance,
-    reset,
+    logout,
+    library,
+    setConnected,
     setError,
     sync,
     switchToSupportedChain,
@@ -156,16 +169,17 @@ function Web3Provider({ children }) {
   return (
     <Web3Context.Provider
       value={{
-        available,
-        connected,
         account,
         balance,
-        supported,
-        tokenBalance,
         chainId,
         connect,
+        connected,
+        library,
+        logout,
         reloadBalance,
+        supported,
         switchToSupportedChain,
+        tokenBalance,
       }}
     >
       {children}
