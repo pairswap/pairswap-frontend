@@ -7,7 +7,6 @@ import SelectWalletModal from 'components/modal/select-wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
-import { approve, checkApproval, transfer } from 'request/rpc';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({ onSubmit, onSuccess }) {
@@ -22,9 +21,9 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const setError = useError();
   const {
     account,
-    available,
     connected,
     supported,
+    library,
     tokenBalance,
     reloadBalance,
     switchToSupportedChain,
@@ -33,13 +32,13 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const submitCallback = useCallback(
     async ({ amount }) => {
       if (Number(amount) >= Number(tokenBalance)) {
-        setError(new Error('Do not have enough token'));
+        setError(new Error('Do not have enough tokens'));
         return;
       }
 
       setIsLoading(true);
       try {
-        const tx = await transfer({
+        const tx = await library.transfer({
           gatewayAddress: srcChain.gatewayAddress,
           recipient: account,
           destChain: destChain.transferName,
@@ -62,6 +61,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
     },
     [
       account,
+      library,
       srcChain,
       destChain,
       srcToken,
@@ -76,7 +76,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const handleApprove = useCallback(async () => {
     setIsLoading(true);
     try {
-      const tx = await approve({
+      const tx = await library.approve({
         gatewayAddress: srcChain.gatewayAddress,
         tokenAddress: srcToken.address,
         account,
@@ -92,17 +92,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
     } finally {
       setIsLoading(false);
     }
-  }, [account, srcChain, srcToken, setError, reloadBalance]);
-
-  const handleConnect = useCallback(() => {
-    if (!connected) {
-      if (available) {
-        setIsOpenWallet(true);
-      } else {
-        setError(new Error('No metamask installed'));
-      }
-    }
-  }, [available, connected, setError]);
+  }, [account, library, srcChain, srcToken, setError, reloadBalance]);
 
   const renderButton = useCallback(() => {
     if (isLoading) {
@@ -146,7 +136,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
     }
 
     return (
-      <button onClick={handleConnect} className="btn-swap">
+      <button onClick={() => setIsOpenWallet(true)} className="btn-swap">
         Connect
       </button>
     );
@@ -157,20 +147,20 @@ function SubmitButton({ onSubmit, onSuccess }) {
     isDisabled,
     isLoading,
     handleApprove,
-    handleConnect,
     onSubmit,
     submitCallback,
     switchToSupportedChain,
   ]);
 
   useEffect(() => {
-    if (account && supported && srcChain && srcToken) {
+    if (account && library && supported && srcChain && srcToken) {
       setIsLoading(true);
-      checkApproval({
-        gatewayAddress: srcChain.gatewayAddress,
-        tokenAddress: srcToken.address,
-        account,
-      })
+      library
+        .checkApproval({
+          gatewayAddress: srcChain.gatewayAddress,
+          tokenAddress: srcToken.address,
+          account,
+        })
         .then(setIsApproved)
         .catch((error) => {
           setIsDisabled(true);
@@ -178,7 +168,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
         })
         .finally(() => setIsLoading(false));
     }
-  }, [account, supported, srcChain, srcToken, setError]);
+  }, [account, library, supported, srcChain, srcToken, setError]);
 
   return (
     <>

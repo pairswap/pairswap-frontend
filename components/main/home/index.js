@@ -10,7 +10,6 @@ import TokenInput from './token-input';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
-import { addChain, changeChain } from 'request/rpc';
 
 const validationRules = {
   amount: {
@@ -36,16 +35,18 @@ function Main() {
   const { chains, srcChain, destChain, srcToken, selectToken, selectSrcChain, selectDestChain } =
     useChain();
   const setError = useError();
-  const { connected } = useWeb3();
+  const { connected, library } = useWeb3();
 
   const handleChangeSrcChain = useCallback(
     (chain) => {
       if (connected) {
-        changeChain(chain)
+        library
+          .changeChain(chain)
           .then(() => selectSrcChain(chain))
           .catch((error) => {
             if (error.code === 4902) {
-              addChain(chain)
+              library
+                .addChain(chain)
                 .then(() => selectSrcChain(chain))
                 .catch((error) => setError(error));
             } else {
@@ -56,7 +57,7 @@ function Main() {
         selectSrcChain(chain);
       }
     },
-    [connected, selectSrcChain, setError]
+    [connected, library, selectSrcChain, setError]
   );
 
   return (

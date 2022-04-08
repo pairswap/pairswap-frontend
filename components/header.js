@@ -1,12 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
+import Dropdown from 'components/dropdown';
 import SelectWalletModal from 'components/modal/select-wallet';
 import classname from 'utils/classname';
 import { shortenAccount, shortenBalance } from 'utils/transform';
 import useChain from 'hooks/useChain';
-import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
 
 const routes = [
@@ -21,18 +21,7 @@ function Header() {
   const { pathname } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { srcChain } = useChain();
-  const setError = useError();
-  const { available, account, balance, connected } = useWeb3();
-
-  const handleConnect = useCallback(() => {
-    if (!connected) {
-      if (available) {
-        setIsOpen(true);
-      } else {
-        setError(new Error('No metamask installed'));
-      }
-    }
-  }, [available, connected, setError]);
+  const { account, balance, connected } = useWeb3();
 
   return (
     <>
@@ -58,19 +47,22 @@ function Header() {
 
         <div className="header__item">
           {connected ? (
-            <div className="profile">
-              <div className="balance">
-                {balance ? (
-                  `${shortenBalance(balance)} ${srcChain?.nativeCurrency?.symbol}`
-                ) : (
-                  <div className="spiner" />
-                )}
+            <div className="account">
+              <div className="account-detail">
+                <div className="account-balance">
+                  {balance ? (
+                    `${shortenBalance(balance)} ${srcChain?.nativeCurrency?.symbol}`
+                  ) : (
+                    <div className="spiner" />
+                  )}
+                </div>
+                <div className="account-detail__provider" />
+                <div className="account-address">{shortenAccount(account)}</div>
               </div>
-              <div className="profile__divider" />
-              <div className="account">{shortenAccount(account)}</div>
+              <Dropdown />
             </div>
           ) : (
-            <button onClick={handleConnect} className="btn-connect">
+            <button onClick={() => setIsOpen(true)} className="btn-connect">
               Connect Wallet
             </button>
           )}

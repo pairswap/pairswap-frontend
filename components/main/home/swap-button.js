@@ -3,20 +3,21 @@ import { useCallback } from 'react';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
-import { addChain, changeChain } from 'request/rpc';
 
 function SwapButton() {
   const { destChain, swapChain } = useChain();
   const setError = useError();
-  const { connected } = useWeb3();
+  const { connected, library } = useWeb3();
 
   const handleClick = useCallback(() => {
     if (connected) {
-      changeChain(destChain)
+      library
+        .changeChain(destChain)
         .then(() => swapChain())
         .catch((error) => {
           if (error.code === 4902) {
-            addChain(destChain)
+            library
+              .addChain(destChain)
               .then(() => swapChain())
               .catch((error) => setError(error));
           } else {
@@ -26,7 +27,7 @@ function SwapButton() {
     } else {
       swapChain();
     }
-  }, [connected, destChain, swapChain, setError]);
+  }, [connected, library, destChain, swapChain, setError]);
 
   return (
     <div className="form-group__title">
