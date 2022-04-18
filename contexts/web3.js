@@ -23,7 +23,7 @@ function Web3Provider({ children }) {
   const [chainId, setChainId] = useState(null);
   const [supported, setSupported] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(null);
-  const { chains, sync, srcToken } = useChain();
+  const { chains, srcToken } = useChain();
   const setError = useError();
 
   const getBalance = useCallback(
@@ -108,6 +108,8 @@ function Web3Provider({ children }) {
           if (accounts[0]) {
             setAccount(accounts[0]);
             getBalance(accounts[0]);
+          } else {
+            setConnected(null);
           }
         })
         .catch((error) => setError(error, { silent: true }));
@@ -124,7 +126,6 @@ function Web3Provider({ children }) {
           setChainId(convertedChainId);
 
           if (account) {
-            sync(convertedChainId);
             getBalance(account);
           }
         } else {
@@ -162,7 +163,6 @@ function Web3Provider({ children }) {
     library,
     setConnected,
     setError,
-    sync,
     switchToSupportedChain,
   ]);
 
