@@ -19,8 +19,8 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
     setKeyword('');
   }
 
-  function handleSelect(token) {
-    setSelectedToken(token);
+  function handleSelect(tokenSymbol) {
+    setSelectedToken(tokenSymbol);
     handleClose();
   }
 
@@ -50,7 +50,7 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
             filteredTokens.map((token, index) => (
               <button
                 key={index}
-                onClick={() => handleSelect(token)}
+                onClick={() => handleSelect(token.symbol)}
                 className={classname(
                   'modal__item modal__item--token',
                   token.symbol === selectedToken.symbol && 'modal__item--token-active'

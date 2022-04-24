@@ -17,20 +17,20 @@ function getAllTokenBalances({ account, library, tokens }) {
 }
 
 function Main() {
-  const [tokens, setTokens] = useState([]);
+  const [items, setItems] = useState([]);
   const { account, connected, library } = useWeb3();
   const { srcChain } = useChain();
 
   useEffect(() => {
     if (connected && account && srcChain?.tokens) {
-      getAllTokenBalances({ library, account, tokens: srcChain.tokens }).then(setTokens);
+      getAllTokenBalances({ library, account, tokens: srcChain.tokens }).then(setItems);
     }
   }, [account, connected, library, srcChain]);
 
   return (
     <main className="main">
       <div className="wallet">
-        {tokens.map(({ symbol, iconSrc, balance }, index) => (
+        {items.map(({ symbol, iconSrc, balance }, index) => (
           <div key={index} className="wallet-token">
             <div className="wallet-token__group">
               <img src={iconSrc} alt="token" className="wallet-token__img" />

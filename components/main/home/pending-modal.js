@@ -2,13 +2,10 @@ import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
 import useChain from 'hooks/useChain';
-import useWeb3 from 'hooks/useWeb3';
-import { findChainByChainId } from 'utils/chain';
 
 function PendingModal({ open, txHash }) {
-  const { chains } = useChain();
-  const { chainId } = useWeb3();
-  const currentChain = findChainByChainId({ chains, chainId });
+  const { srcChain } = useChain();
+  const blockExplorerUrl = srcChain?.blockExplorerUrls?.[0];
 
   return (
     <Modal open={open} onClose={() => {}}>
@@ -16,9 +13,9 @@ function PendingModal({ open, txHash }) {
         <div className="loader" />
         <p className="modal__message">You have a pending transaction. Please wait for a while.</p>
         <p className="modal__note">Do not reload or close the browser.</p>
-        {txHash && currentChain?.blockExplorerUrls?.length ? (
+        {txHash && blockExplorerUrl ? (
           <a
-            href={`${currentChain.blockExplorerUrls[0]}/tx/${txHash}`}
+            href={`${blockExplorerUrl}/tx/${txHash}`}
             target="_blank"
             rel="noreferrer"
             className="modal-message__link"

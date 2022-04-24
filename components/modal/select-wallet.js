@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
 import useError from 'hooks/useError';
-import useWeb3 from 'hooks/useWeb3';
+import useWeb3Update from 'hooks/useWeb3Update';
 import { METAMASK, COINBASE } from 'utils/provider';
 
 function SelectWalletModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
   const setError = useError();
-  const { connect } = useWeb3();
+  const { connect } = useWeb3Update();
 
   const handleConnect = useCallback(
     async (providerName) => {

@@ -7,6 +7,7 @@ import SelectWalletModal from 'components/modal/select-wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
+import useWeb3Update from 'hooks/useWeb3Update';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({ onSubmit, onSuccess }) {
@@ -17,17 +18,20 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [txHash, setTxHash] = useState(null);
-  const { srcChain, destChain, srcToken, destToken } = useChain();
+  const { supportedChains, srcChain, destChain, srcToken, destToken } = useChain();
   const setError = useError();
-  const {
-    account,
-    connected,
-    supported,
-    library,
-    tokenBalance,
-    reloadBalance,
-    switchToSupportedChain,
-  } = useWeb3();
+  const { account, connected, supported, library, tokenBalance } = useWeb3();
+  const { reloadBalance } = useWeb3Update();
+
+  const switchToSupportedChain = useCallback(() => {
+    return library.changeChain(supportedChains[0]).catch((error) => {
+      if (error.code === 4902) {
+        library.addChain(supportedChains[0]).catch((error) => setError(error));
+      } else {
+        setError(error);
+      }
+    });
+  }, [library, supportedChains, setError]);
 
   const submitCallback = useCallback(
     async ({ amount }) => {

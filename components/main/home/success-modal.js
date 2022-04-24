@@ -2,13 +2,10 @@ import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
 import useChain from 'hooks/useChain';
-import useWeb3 from 'hooks/useWeb3';
-import { findChainByChainId } from 'utils/chain';
 
 function SuccessModal({ open, txHash, onClose }) {
-  const { chains } = useChain();
-  const { chainId } = useWeb3();
-  const currentChain = findChainByChainId({ chains, chainId });
+  const { srcChain } = useChain();
+  const blockExplorerUrl = srcChain?.blockExplorerUrls?.[0];
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -21,9 +18,9 @@ function SuccessModal({ open, txHash, onClose }) {
 
         <img src="/images/success.svg" alt="success" className="modal__img" />
         <div className="modal__message">You have made a transaction.</div>
-        {txHash && currentChain?.blockExplorerUrls?.length ? (
+        {txHash && blockExplorerUrl ? (
           <a
-            href={`${currentChain.blockExplorerUrls[0]}/tx/${txHash}`}
+            href={`${blockExplorerUrl}/tx/${txHash}`}
             target="_blank"
             rel="noreferrer"
             className="modal-message__link"
