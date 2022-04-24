@@ -12,8 +12,6 @@ import useWeb3 from 'hooks/useWeb3';
 const routes = [
   { href: '/', title: 'Swap' },
   { href: '/wallet', title: 'Wallet' },
-  // { href: '/pool', title: 'Pool' },
-  // { href: '/stake', title: 'Stake' },
   { href: '/support', title: 'Support' },
 ];
 
@@ -22,6 +20,7 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { srcChain } = useChain();
   const { account, balance, connected } = useWeb3();
+  const nativeTokenSymbol = srcChain?.nativeCurrency?.symbol;
 
   return (
     <>
@@ -51,7 +50,7 @@ function Header() {
               <div className="account-detail">
                 <div className="account-balance">
                   {balance ? (
-                    `${shortenBalance(balance)} ${srcChain?.nativeCurrency?.symbol}`
+                    `${shortenBalance(balance)} ${nativeTokenSymbol}`
                   ) : (
                     <div className="spiner" />
                   )}

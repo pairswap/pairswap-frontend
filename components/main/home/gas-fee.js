@@ -13,7 +13,7 @@ function GasFee() {
   const { connected, supported } = useWeb3();
 
   useEffect(() => {
-    if (connected && supported && srcChain?.transferName && srcToken?.symbol) {
+    if (connected && supported && srcToken) {
       getGasFeeInToken({ chain: srcChain.transferName, tokenId: srcToken.symbol })
         .then((value) => {
           if (value?.gas_cost) {

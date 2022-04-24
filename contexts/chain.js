@@ -1,94 +1,91 @@
-import { createContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useState, useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { generate, findChainByChainId, findTokenBySymbol } from 'utils/chain';
-
 export const ChainContext = createContext();
+export const ChainContextUpdate = createContext();
 
 function ChainProvider({ children }) {
-  const [chains, setChains] = useState([]);
-  const [srcChain, setSrcChain] = useState(null);
-  const [destChain, setDestChain] = useState(null);
-  const [srcToken, setSrcToken] = useState(null);
-  const [destToken, setDestToken] = useState(null);
+  const [supportedChains, setSupportedChains] = useState([]);
+  const [srcChainId, setSrcChainId] = useState(null);
+  const [destChainId, setDestChainId] = useState(null);
+  const [tokenSymbol, setTokenSymbol] = useState(null);
 
-  const selectToken = useCallback(
-    (token) => {
-      setSrcToken(token);
-      setDestToken(findTokenBySymbol({ tokens: destChain.tokens, symbol: token.symbol }));
-    },
-    [destChain]
+  const srcChain = useMemo(
+    () => supportedChains.find((chain) => chain.chainId === srcChainId),
+    [srcChainId, supportedChains]
   );
 
-  const selectSrcChain = useCallback(
-    (chain) => {
-      setSrcChain(chain);
-      setSrcToken(findTokenBySymbol({ tokens: chain.tokens, symbol: srcToken.symbol }));
-    },
-    [srcToken]
+  const destChain = useMemo(
+    () => supportedChains.find((chain) => chain.chainId === destChainId),
+    [destChainId, supportedChains]
   );
 
-  const selectDestChain = useCallback(
-    (chain) => {
-      setDestChain(chain);
-      setDestToken(findTokenBySymbol({ tokens: chain.tokens, symbol: srcToken.symbol }));
-    },
-    [srcToken]
-  );
+  const srcToken = useMemo(() => {
+    if (srcChain?.tokens) {
+      return srcChain.tokens.find((token) => token.symbol === tokenSymbol);
+    }
+  }, [srcChain, tokenSymbol]);
 
-  const swapChain = useCallback(() => {
-    setSrcChain(destChain);
-    setDestChain(srcChain);
-    setSrcToken(destToken);
-    setDestToken(srcToken);
-  }, [srcChain, destChain, srcToken, destToken]);
+  const destToken = useMemo(() => {
+    if (destChain?.tokens) {
+      return destChain.tokens.find((token) => token.symbol === tokenSymbol);
+    }
+  }, [destChain, tokenSymbol]);
 
   const sync = useCallback(
     (chainId) => {
-      const values = generate({
-        chains,
-        srcChain: findChainByChainId({ chains, chainId }),
-        destChain,
-      });
+      if (chainId) {
+        if (chainId === srcChainId) return;
 
-      setSrcChain(values.srcChain);
-      setDestChain(values.destChain);
-      setSrcToken(values.srcToken);
-      setDestToken(values.destToken);
+        setSrcChainId(chainId);
+
+        if (chainId !== destChainId) return;
+
+        const destChain = supportedChains.find((chain) => chain.chainId !== chainId);
+
+        if (!destChain) return;
+
+        setDestChainId(destChain.chainId);
+      }
     },
-    [chains, destChain]
+    [supportedChains, srcChainId, destChainId]
   );
 
-  useEffect(() => {
-    if (window?.config?.supportedChains) {
-      const supportedChains = window.config.supportedChains;
-      const values = generate({ chains: supportedChains, srcChain: supportedChains[0] });
+  const swap = useCallback(() => {
+    setSrcChainId(destChainId);
+    setDestChainId(srcChainId);
+  }, [srcChainId, destChainId]);
 
-      setChains(supportedChains);
-      setSrcChain(values.srcChain);
-      setDestChain(values.destChain);
-      setSrcToken(values.srcToken);
-      setDestToken(values.destToken);
+  useEffect(() => {
+    const chains = window?.config?.supportedChains;
+
+    if (chains) {
+      setSupportedChains(chains);
+      setSrcChainId(chains[0].chainId);
+      setDestChainId(chains[1].chainId);
+      setTokenSymbol(chains[0].tokens[0].symbol);
     }
   }, []);
 
   return (
-    <ChainContext.Provider
-      value={{
-        chains,
-        srcChain,
-        destChain,
-        srcToken,
-        destToken,
-        selectToken,
-        selectSrcChain,
-        selectDestChain,
-        swapChain,
-        sync,
-      }}
+    <ChainContextUpdate.Provider
+      value={{ setSrcChainId, setDestChainId, setTokenSymbol, sync, swap }}
     >
-      {children}
-    </ChainContext.Provider>
+      <ChainContext.Provider
+        value={{
+          supportedChains,
+          srcChain,
+          destChain,
+          srcToken,
+          destToken,
+          srcChainId,
+          destChainId,
+          tokenSymbol,
+        }}
+      >
+        {children}
+      </ChainContext.Provider>
+    </ChainContextUpdate.Provider>
   );
 }
 

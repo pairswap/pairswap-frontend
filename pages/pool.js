@@ -1,5 +1,8 @@
-import Header from 'components/header';
+import dynamic from 'next/dynamic';
+
 import Main from 'components/main/pool';
+
+const Header = dynamic(() => import('components/header'), { ssr: false });
 
 function Poll() {
   return (

@@ -2,10 +2,12 @@ import { Fragment, useCallback } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 
 import useWeb3 from 'hooks/useWeb3';
+import useWeb3Update from 'hooks/useWeb3Update';
 import { METAMASK, COINBASE } from 'utils/provider';
 
 function Dropdown() {
-  const { connected, logout } = useWeb3();
+  const { connected } = useWeb3();
+  const { logout } = useWeb3Update();
 
   const renderDropdownButton = useCallback(() => {
     switch (connected) {

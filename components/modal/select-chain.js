@@ -1,22 +1,18 @@
 import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
+import useChain from 'hooks/useChain';
 import classname from 'utils/classname';
 
-function SelectChainModal({
-  isOpen,
-  setIsOpen,
-  chains,
-  disabledChain,
-  selectedChain,
-  setSelectedChain,
-}) {
+function SelectChainModal({ isOpen, setIsOpen, chainId, setChainId, excludedChainId }) {
+  const { supportedChains } = useChain();
+
   function handleClose() {
     setIsOpen(false);
   }
 
-  function handleSelect(chain) {
-    setSelectedChain(chain);
+  function handleSelect(newChainId) {
+    setChainId(newChainId);
     handleClose();
   }
 
@@ -33,14 +29,14 @@ function SelectChainModal({
         <div className="modal__divider" />
 
         <div>
-          {chains.map((chain, index) => (
+          {supportedChains.map((chain, index) => (
             <button
               key={index}
-              onClick={() => handleSelect(chain)}
+              onClick={() => handleSelect(chain.chainId)}
               className={classname(
                 'modal__item modal__item--chain',
-                chain.chainId === disabledChain.chainId && 'modal__item--chain-disabled',
-                chain.chainId === selectedChain.chainId && 'modal__item--chain-active'
+                chain.chainId === excludedChainId && 'modal__item--chain-disabled',
+                chain.chainId === chainId && 'modal__item--chain-active'
               )}
             >
               <img src={chain.iconSrc} alt={chain.chainName} className="token__img" />
@@ -56,14 +52,9 @@ function SelectChainModal({
 SelectChainModal.propTypes = {
   isOpen: PropTypes.bool,
   setIsOpen: PropTypes.func,
-  chains: PropTypes.arrayOf(PropTypes.shape({})),
-  disabledChain: PropTypes.shape({
-    chainId: PropTypes.number,
-  }),
-  selectedChain: PropTypes.shape({
-    chainId: PropTypes.number,
-  }),
-  setSelectedChain: PropTypes.func,
+  chainId: PropTypes.number,
+  setChainId: PropTypes.func,
+  excludedChainId: PropTypes.number,
 };
 
 export default SelectChainModal;

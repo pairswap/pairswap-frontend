@@ -2,6 +2,7 @@ import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import useChain from 'hooks/useChain';
+import useChainUpdate from 'hooks/useChainUpdate';
 import useError from 'hooks/useError';
 import useLocalStorage from 'hooks/useLocalStorage';
 import RPCRequest from 'request/rpc';
@@ -10,10 +11,10 @@ import {
   convertHexStringToNumber,
   convertHexStringToString,
 } from 'utils/transform';
-import { getChainIds } from 'utils/chain';
 import { getProvider, hasProvider } from 'utils/provider';
 
 export const Web3Context = createContext();
+export const Web3ContextUpdate = createContext();
 
 function Web3Provider({ children }) {
   const [connected, setConnected] = useLocalStorage('connected', null);
@@ -23,7 +24,8 @@ function Web3Provider({ children }) {
   const [chainId, setChainId] = useState(null);
   const [supported, setSupported] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(null);
-  const { chains, srcToken } = useChain();
+  const { supportedChains, srcToken } = useChain();
+  const { sync } = useChainUpdate();
   const setError = useError();
 
   const getBalance = useCallback(
@@ -43,7 +45,7 @@ function Web3Provider({ children }) {
         setTokenBalance(convertBigNumberToString(newTokenBalance));
       })
       .catch((error) => setError(error, { silent: true }));
-  }, [account, library, srcToken, setError]);
+  }, [account, library, setError, srcToken]);
 
   const reloadBalance = useCallback(async () => {
     await getBalance(account);
@@ -68,16 +70,6 @@ function Web3Provider({ children }) {
     [setConnected, setError]
   );
 
-  const switchToSupportedChain = useCallback(() => {
-    return library.changeChain(chains[0]).catch((error) => {
-      if (error.code === 4902) {
-        library.addChain(chains[0]).catch((error) => setError(error));
-      } else {
-        setError(error);
-      }
-    });
-  }, [chains, library, setError]);
-
   const logout = useCallback(() => {
     setConnected(null);
     setAccount(null);
@@ -86,10 +78,10 @@ function Web3Provider({ children }) {
   }, [setConnected]);
 
   useEffect(() => {
-    if (account && supported && srcToken?.address) {
+    if (account && supported) {
       getTokenBalance();
     }
-  }, [account, supported, srcToken, getTokenBalance]);
+  }, [account, supported, getTokenBalance]);
 
   useEffect(() => {
     if (connected && !library) {
@@ -100,8 +92,9 @@ function Web3Provider({ children }) {
   }, [connected, library]);
 
   useEffect(() => {
-    if (connected && library) {
-      const supportedChainIds = getChainIds({ chains });
+    if (connected && library && supportedChains.length > 0) {
+      const supportedChainIds = supportedChains.map((chain) => chain.chainId);
+
       library
         .getAccounts()
         .then((accounts) => {
@@ -127,10 +120,13 @@ function Web3Provider({ children }) {
 
           if (account) {
             getBalance(account);
+            sync(convertedChainId);
           }
         } else {
           setSupported(false);
-          setError(new Error('Unsupported network'));
+          if (account) {
+            setError(new Error('Unsupported network'));
+          }
         }
       }
 
@@ -156,34 +152,24 @@ function Web3Provider({ children }) {
   }, [
     account,
     chainId,
-    chains,
     connected,
     getBalance,
-    logout,
     library,
+    logout,
     setConnected,
     setError,
-    switchToSupportedChain,
+    supportedChains,
+    sync,
   ]);
 
   return (
-    <Web3Context.Provider
-      value={{
-        account,
-        balance,
-        chainId,
-        connect,
-        connected,
-        library,
-        logout,
-        reloadBalance,
-        supported,
-        switchToSupportedChain,
-        tokenBalance,
-      }}
-    >
-      {children}
-    </Web3Context.Provider>
+    <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance }}>
+      <Web3Context.Provider
+        value={{ account, balance, connected, library, supported, tokenBalance }}
+      >
+        {children}
+      </Web3Context.Provider>
+    </Web3ContextUpdate.Provider>
   );
 }
 
