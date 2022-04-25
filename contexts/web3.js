@@ -24,7 +24,7 @@ function Web3Provider({ children }) {
   const [chainId, setChainId] = useState(null);
   const [supported, setSupported] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(null);
-  const { supportedChains, srcToken } = useChain();
+  const { supportedChains, srcChainId, srcToken } = useChain();
   const { sync } = useChainUpdate();
   const setError = useError();
 
@@ -39,13 +39,15 @@ function Web3Provider({ children }) {
   );
 
   const getTokenBalance = useCallback(() => {
-    return library
-      .getTokenBalance({ account, tokenAddress: srcToken.address })
-      .then((newTokenBalance) => {
-        setTokenBalance(convertBigNumberToString(newTokenBalance));
-      })
-      .catch((error) => setError(error, { silent: true }));
-  }, [account, library, setError, srcToken]);
+    if (chainId === srcChainId) {
+      return library
+        .getTokenBalance({ account, tokenAddress: srcToken.address })
+        .then((newTokenBalance) => {
+          setTokenBalance(convertBigNumberToString(newTokenBalance));
+        })
+        .catch((error) => setError(error, { silent: true }));
+    }
+  }, [account, chainId, library, setError, srcChainId, srcToken]);
 
   const reloadBalance = useCallback(async () => {
     await getBalance(account);
@@ -165,7 +167,7 @@ function Web3Provider({ children }) {
   return (
     <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance }}>
       <Web3Context.Provider
-        value={{ account, balance, connected, library, supported, tokenBalance }}
+        value={{ account, balance, chainId, connected, library, supported, tokenBalance }}
       >
         {children}
       </Web3Context.Provider>

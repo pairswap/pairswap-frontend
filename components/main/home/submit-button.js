@@ -20,7 +20,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const [txHash, setTxHash] = useState(null);
   const { supportedChains, srcChain, destChain, srcToken, destToken } = useChain();
   const setError = useError();
-  const { account, connected, supported, library, tokenBalance } = useWeb3();
+  const { account, chainId, connected, supported, library, tokenBalance } = useWeb3();
   const { reloadBalance } = useWeb3Update();
 
   const switchToSupportedChain = useCallback(() => {
@@ -157,7 +157,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
   ]);
 
   useEffect(() => {
-    if (account && library && supported && srcChain && srcToken) {
+    if (account && library && supported && srcChain && srcToken && chainId === srcChain.chainId) {
       setIsLoading(true);
       library
         .checkApproval({
@@ -172,7 +172,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
         })
         .finally(() => setIsLoading(false));
     }
-  }, [account, library, supported, srcChain, srcToken, setError]);
+  }, [account, chainId, library, supported, srcChain, srcToken, setError]);
 
   return (
     <>
