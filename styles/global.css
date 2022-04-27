@@ -375,8 +375,9 @@ input[type='number'] {
 }
 
 .select-token__token-img {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
 }
 
 .select-token__token-text {
@@ -765,8 +766,9 @@ input[type='number'] {
 }
 
 .token__img {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
 }
 
 .token__symbol {
@@ -983,6 +985,7 @@ input[type='number'] {
 .wallet-token__img {
   width: 40px;
   height: 40px;
+  border-radius: 20px;
 }
 
 .wallet-token__text {
