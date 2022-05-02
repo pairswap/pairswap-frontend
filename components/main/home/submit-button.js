@@ -51,10 +51,6 @@ function SubmitButton({ onSubmit, onSuccess }) {
           amount: convertStringToBigNumber(amount),
         });
         setTxHash(tx.hash);
-        setIsPending(true);
-        await tx.wait();
-        await reloadBalance();
-        setIsPending(false);
         setIsSuccess(true);
         onSuccess();
       } catch (error) {
@@ -63,18 +59,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
         setIsLoading(false);
       }
     },
-    [
-      account,
-      library,
-      srcChain,
-      destChain,
-      srcToken,
-      destToken,
-      tokenBalance,
-      onSuccess,
-      setError,
-      reloadBalance,
-    ]
+    [account, library, srcChain, destChain, srcToken, destToken, tokenBalance, onSuccess, setError]
   );
 
   const handleApprove = useCallback(async () => {
