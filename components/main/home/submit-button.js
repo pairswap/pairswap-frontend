@@ -159,6 +159,22 @@ function SubmitButton({ onSubmit, onSuccess }) {
     }
   }, [account, chainId, library, supported, srcChain, srcToken, setError]);
 
+  useEffect(() => {
+    if (library) {
+      function onTransferIn() {
+        if (connected && supported) {
+          reloadBalance();
+        }
+      }
+
+      const contract = library.getGatewayContract(destChain);
+
+      contract.on('TransferInEvent', onTransferIn);
+
+      return () => contract.off('TransferInEvent', onTransferIn);
+    }
+  }, [connected, supported, library, destChain, reloadBalance]);
+
   return (
     <>
       {renderButton()}

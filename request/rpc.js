@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
-import { Web3Provider } from '@ethersproject/providers';
+import { Web3Provider, JsonRpcProvider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 
 import SampleERC20 from 'abis/SampleERC20.json';
@@ -52,6 +52,13 @@ class RPCRequest {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: converNumberToHexString(chainId) }],
     });
+  }
+
+  getGatewayContract({ gatewayAddress, rpcUrls, chainId }) {
+    const jsonRpcProvider = new JsonRpcProvider(rpcUrls[0], chainId);
+    const contract = new Contract(gatewayAddress, ERC20Gateway.abi, jsonRpcProvider);
+
+    return contract;
   }
 
   getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
