@@ -412,8 +412,8 @@ input[type='number'] {
 }
 
 .btn-swap-chain {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -422,8 +422,8 @@ input[type='number'] {
 }
 
 .btn-swap-chain__img {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
 }
 
 .chain-input {
@@ -991,4 +991,48 @@ input[type='number'] {
 .wallet-token__text {
   color: #ffffffb3;
   font-weight: 600;
+}
+
+.toast {
+  position: absolute;
+  display: flex;
+  column-gap: 1.5rem;
+  align-items: center;
+  bottom: 2rem;
+  left: 2rem;
+  padding: 1rem 2rem;
+  font-size: 16px;
+  color: #ffffff;
+  border-radius: 8px;
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+}
+
+.toast__enter {
+  transition: transform 0.5s ease-out;
+}
+
+.toast__leave {
+  transition: transform 0.5s ease-out;
+}
+
+.toast__hidden {
+  transform: translateX(calc(-100% - 2rem));
+}
+
+.toast__visible {
+  transform: translateX(0);
+}
+
+.toast__title {
+  margin-bottom: 0.25rem;
+  font-size: 18px;
+  font-weight: 700;
+  color: #4ade80;
 }
