@@ -945,21 +945,10 @@ input[type='number'] {
 }
 
 .wallet {
-  padding-top: 3rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.wallet-token {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 600px;
+  padding: 1rem;
+  margin-top: 3rem;
+  width: 800px;
   border-radius: 24px;
-  padding: 0.5rem 1rem;
   background: linear-gradient(
     123.31deg,
     rgba(48, 87, 254, 0.5) -20.75%,
@@ -970,16 +959,43 @@ input[type='number'] {
     0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
-@media (max-width: 640px) {
-  .wallet-token {
-    width: calc(100% - 2rem);
-  }
+.wallet__header {
+  display: flex;
+  margin-bottom: 0.5rem;
 }
 
-.wallet-token__group {
+.wallet-header__text {
+  font-weight: 600;
+  color: #fff;
+}
+
+.wallet__col {
+  flex: 1;
+  padding: 0 2rem;
+}
+
+.wallet__body {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wallet__row {
   display: flex;
   align-items: center;
   column-gap: 1rem;
+  height: 50px;
+  padding: 2rem 0;
+}
+
+@media (max-width: 840px) {
+  .wallet {
+    width: calc(100% - 2rem);
+    border-radius: 10px;
+  }
+
+  .wallet__col {
+    padding: 0;
+  }
 }
 
 .wallet-token__img {

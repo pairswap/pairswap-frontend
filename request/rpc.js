@@ -61,6 +61,13 @@ class RPCRequest {
     return contract;
   }
 
+  getTokenBalanceByChain({ account, tokenAddress, rpcUrls, chainId }) {
+    const jsonRpcProvider = new JsonRpcProvider(rpcUrls[0], chainId);
+    const contract = new Contract(tokenAddress, SampleERC20.abi, jsonRpcProvider);
+
+    return contract.balanceOf(account);
+  }
+
   getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
     const web3Provider = new Web3Provider(this.provider, 'any');
     const contract = new Contract(tokenAddress, SampleERC20.abi, web3Provider);
