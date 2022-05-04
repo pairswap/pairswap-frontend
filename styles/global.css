@@ -945,9 +945,9 @@ input[type='number'] {
 }
 
 .wallet {
-  padding: 1rem;
+  padding: 1rem 2rem;
   margin-top: 3rem;
-  width: 800px;
+  width: 600px;
   border-radius: 24px;
   background: linear-gradient(
     123.31deg,
@@ -960,8 +960,10 @@ input[type='number'] {
 }
 
 .wallet__header {
+  height: 40px;
   display: flex;
-  margin-bottom: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 
 .wallet-header__text {
@@ -969,32 +971,25 @@ input[type='number'] {
   color: #fff;
 }
 
-.wallet__col {
-  flex: 1;
-  padding: 0 2rem;
-}
-
-.wallet__body {
-  display: flex;
-  justify-content: space-between;
-}
-
 .wallet__row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   column-gap: 1rem;
   height: 50px;
   padding: 2rem 0;
 }
 
-@media (max-width: 840px) {
+.wallet__token {
+  display: flex;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+@media (max-width: 640px) {
   .wallet {
     width: calc(100% - 2rem);
     border-radius: 10px;
-  }
-
-  .wallet__col {
-    padding: 0;
   }
 }
 
