@@ -8,13 +8,13 @@ import { convertNumberToString } from 'utils/transform';
 
 function GasFee() {
   const [gasCost, setGasCost] = useState(null);
-  const { srcChain, srcToken } = useChain();
+  const { destChain, destToken, tokenSymbol } = useChain();
   const setError = useError();
   const { connected, supported } = useWeb3();
 
   useEffect(() => {
-    if (connected && supported && srcToken) {
-      getGasFeeInToken({ chain: srcChain.transferName, tokenId: srcToken.symbol })
+    if (connected && supported && destToken) {
+      getGasFeeInToken({ chain: destChain.transferName, tokenId: destToken.symbol })
         .then((value) => {
           if (value?.gas_cost) {
             setGasCost(value.gas_cost);
@@ -24,13 +24,13 @@ function GasFee() {
     } else {
       setGasCost(null);
     }
-  }, [connected, supported, srcChain, srcToken, setError]);
+  }, [connected, supported, destChain, destToken, setError]);
 
   return (
     <div>
       {gasCost ? (
         <span>
-          Gas fee: <strong>{convertNumberToString(gasCost)}</strong>
+          Gas fee: <strong>{`${convertNumberToString(gasCost)} ${tokenSymbol}`}</strong>
         </span>
       ) : null}
     </div>

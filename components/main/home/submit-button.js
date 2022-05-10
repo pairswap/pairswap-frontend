@@ -12,6 +12,7 @@ import useWeb3Update from 'hooks/useWeb3Update';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({ onSubmit, onSuccess }) {
+  const [timestamp, settimestamp] = useState(Date.now());
   const [openToast, setOpenToast] = useState(false);
   const [isOpenWallet, setIsOpenWallet] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -165,8 +166,14 @@ function SubmitButton({ onSubmit, onSuccess }) {
     if (library) {
       function onTransferIn(token, recipient, amount) {
         if (connected && supported && account.toLowerCase() === recipient.toLowerCase()) {
-          reloadBalance();
-          setOpenToast(true);
+          const newTimestamp = Date.now();
+
+          // Prevent re-trigger
+          if (newTimestamp - timestamp > 30000) {
+            reloadBalance();
+            settimestamp(newTimestamp);
+            setOpenToast(true);
+          }
         }
       }
 
@@ -176,7 +183,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
 
       return () => contract.off('TransferInEvent', onTransferIn);
     }
-  }, [account, connected, supported, library, destChain, reloadBalance]);
+  }, [account, connected, supported, library, destChain, reloadBalance, timestamp]);
 
   return (
     <>
