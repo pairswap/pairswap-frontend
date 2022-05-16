@@ -24,6 +24,7 @@ function Web3Provider({ children }) {
   const [chainId, setChainId] = useState(null);
   const [supported, setSupported] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(null);
+  const [gasPrice, setGasPrice] = useState(null);
   const { supportedChains, srcChainId, srcToken } = useChain();
   const { sync } = useChainUpdate();
   const setError = useError();
@@ -165,9 +166,9 @@ function Web3Provider({ children }) {
   ]);
 
   return (
-    <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance }}>
+    <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance, setGasPrice }}>
       <Web3Context.Provider
-        value={{ account, balance, chainId, connected, library, supported, tokenBalance }}
+        value={{ account, balance, chainId, connected, gasPrice, library, supported, tokenBalance }}
       >
         {children}
       </Web3Context.Provider>

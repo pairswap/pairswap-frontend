@@ -22,7 +22,7 @@ function SubmitButton({ onSubmit, onSuccess }) {
   const [txHash, setTxHash] = useState(null);
   const { supportedChains, srcChain, destChain, srcToken, destToken } = useChain();
   const setError = useError();
-  const { account, chainId, connected, supported, library, tokenBalance } = useWeb3();
+  const { account, chainId, connected, gasPrice, supported, library, tokenBalance } = useWeb3();
   const { reloadBalance } = useWeb3Update();
 
   const switchToSupportedChain = useCallback(() => {
@@ -37,7 +37,12 @@ function SubmitButton({ onSubmit, onSuccess }) {
 
   const submitCallback = useCallback(
     async ({ amount }) => {
-      if (Number(amount) >= Number(tokenBalance)) {
+      if (Number(amount) > Number(tokenBalance)) {
+        setError(new Error('Do not have enough tokens'));
+        return;
+      }
+
+      if (Number(gasPrice) > Number(tokenBalance)) {
         setError(new Error('Do not have enough tokens'));
         return;
       }
@@ -61,7 +66,18 @@ function SubmitButton({ onSubmit, onSuccess }) {
         setIsLoading(false);
       }
     },
-    [account, library, srcChain, destChain, srcToken, destToken, tokenBalance, onSuccess, setError]
+    [
+      account,
+      library,
+      srcChain,
+      destChain,
+      gasPrice,
+      srcToken,
+      destToken,
+      tokenBalance,
+      onSuccess,
+      setError,
+    ]
   );
 
   const handleApprove = useCallback(async () => {
