@@ -22,17 +22,9 @@ export function shortenBalance(balance, length = 4) {
     return;
   }
 
-  const [, fraction] = balance.split('.');
+  const exponent = 10 ** length;
 
-  if (fraction) {
-    if (fraction.length < length) {
-      return balance;
-    }
-
-    return parseFloat(balance).toFixed(length);
-  }
-
-  return balance;
+  return Math.floor(Number(balance) * exponent) / exponent;
 }
 
 export function convertStringToBigNumber(str, exponent = 18) {
