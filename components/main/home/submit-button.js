@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import PendingModal from './pending-modal';
 import SuccessModal from './success-modal';
-import SuccessToast from './success-toast';
 import SelectWalletModal from 'components/modal/select-wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
@@ -12,7 +11,6 @@ import useWeb3Update from 'hooks/useWeb3Update';
 import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({ onSubmit, onSuccess }) {
-  const [openToast, setOpenToast] = useState(false);
   const [isOpenWallet, setIsOpenWallet] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
@@ -177,29 +175,11 @@ function SubmitButton({ onSubmit, onSuccess }) {
     }
   }, [account, chainId, library, supported, srcChain, srcToken, setError]);
 
-  useEffect(() => {
-    if (library) {
-      function onTransferIn(token, recipient, amount) {
-        if (connected && supported && account.toLowerCase() === recipient.toLowerCase()) {
-          reloadBalance();
-          setOpenToast(true);
-        }
-      }
-
-      const contract = library.getGatewayContract(destChain);
-
-      contract.on('TransferInEvent', onTransferIn);
-
-      return () => contract.off('TransferInEvent', onTransferIn);
-    }
-  }, [account, connected, supported, library, destChain, reloadBalance]);
-
   return (
     <>
       {renderButton()}
       <SelectWalletModal open={isOpenWallet} onClose={() => setIsOpenWallet(false)} />
       <PendingModal open={isPending} txHash={txHash} />
-      <SuccessToast open={openToast} onClose={() => setOpenToast(false)} />
       <SuccessModal
         open={isSuccess}
         txHash={txHash}

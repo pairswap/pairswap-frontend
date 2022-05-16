@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Script from 'next/script';
 
+import Listerner from 'components/listener';
 import ChainProvider from 'contexts/chain';
 import ErrorProvider from 'contexts/error';
 import Web3Provider from 'contexts/web3';
@@ -19,6 +20,7 @@ function App({ Component, pageProps }) {
         <ChainProvider>
           <Web3Provider>
             <Component {...pageProps} />
+            <Listerner />
           </Web3Provider>
         </ChainProvider>
       </ErrorProvider>
