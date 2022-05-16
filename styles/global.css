@@ -247,6 +247,7 @@ input[type='number'] {
 .dropdown-menu {
   position: absolute;
   right: 0;
+  z-index: 1;
   margin-top: 10px;
   background: linear-gradient(92.6deg, #4742ff -39.33%, rgba(71, 66, 255) 89.46%);
   border-radius: 4px;
@@ -948,6 +949,7 @@ input[type='number'] {
   padding: 1rem 2rem;
   margin-top: 3rem;
   width: 600px;
+  min-height: 200px;
   border-radius: 24px;
   background: linear-gradient(
     123.31deg,
