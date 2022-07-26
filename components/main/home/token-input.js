@@ -2,19 +2,19 @@ import { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import SelectTokenModal from 'components/modal/select-token';
-import useChain from 'hooks/useChain';
-import useChainUpdate from 'hooks/useChainUpdate';
+import useToken from 'hooks/useToken';
+import useTokenUpdate from 'hooks/useTokenUpdate';
 
 const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { srcChain, srcToken, tokenSymbol } = useChain();
-  const { setTokenSymbol } = useChainUpdate();
+  const { tokenInfos, token } = useToken();
+  const { setToken } = useTokenUpdate();
 
   return (
     <div className="token-input">
       <div className="input-group">
         <label htmlFor="amount" className="input__label">
-          Send
+          Amount
         </label>
         <input
           ref={ref}
@@ -26,11 +26,11 @@ const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
           onBlur={onBlur}
         />
       </div>
-      {tokenSymbol ? (
+      {tokenInfos && token ? (
         <button onClick={() => setIsOpen(true)} className="select-token">
           <div className="select-token__token">
-            <img src={srcToken.iconSrc} alt={srcToken.symbol} className="select-token__token-img" />
-            <span className="select-token__token-text">{srcToken.symbol}</span>
+            <img src={tokenInfos[token].icon} alt={token} className="select-token__token-img" />
+            <span className="select-token__token-text">{token}</span>
           </div>
 
           <img src="/images/chevron-down.svg" alt="dropdown" />
@@ -38,9 +38,9 @@ const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
           <SelectTokenModal
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            tokens={srcChain?.tokens}
-            selectedToken={srcToken}
-            setSelectedToken={setTokenSymbol}
+            tokens={Object.values(tokenInfos)}
+            selectedToken={token}
+            setSelectedToken={setToken}
           />
         </button>
       ) : (

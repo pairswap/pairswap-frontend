@@ -19,8 +19,8 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
     setKeyword('');
   }
 
-  function handleSelect(tokenSymbol) {
-    setSelectedToken(tokenSymbol);
+  function handleSelect(token) {
+    setSelectedToken(token);
     handleClose();
   }
 
@@ -53,11 +53,11 @@ function SelectTokenModal({ isOpen, setIsOpen, tokens, selectedToken, setSelecte
                 onClick={() => handleSelect(token.symbol)}
                 className={classname(
                   'modal__item modal__item--token',
-                  token.symbol === selectedToken.symbol && 'modal__item--token-active'
+                  token.symbol === selectedToken && 'modal__item--token-active'
                 )}
               >
                 <div className="token-group">
-                  <img src={token.iconSrc} alt={token.symbol} className="token__img" />
+                  <img src={token.icon} alt={token.symbol} className="token__img" />
                   <span className="token__symbol">{token.symbol}</span>
                 </div>
                 <span className="token__name">{token.name}</span>
@@ -76,9 +76,7 @@ SelectTokenModal.propTypes = {
   isOpen: PropTypes.bool,
   setIsOpen: PropTypes.func,
   tokens: PropTypes.arrayOf(PropTypes.shape({})),
-  selectedToken: PropTypes.shape({
-    symbol: PropTypes.string,
-  }),
+  selectedToken: PropTypes.string,
   setSelectedToken: PropTypes.func,
 };
 

@@ -2,25 +2,31 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import SelectChainModal from 'components/modal/select-chain';
+import useChain from 'hooks/useChain';
 
-function ChainInput({ label, chain, setChainId, excludedChainId }) {
+function ChainInput({ label, chain, setChain, excludedChain }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { chainInfos } = useChain();
 
   return (
     <div className="chain-input">
-      {chain ? (
+      {chainInfos && chain ? (
         <button onClick={() => setIsOpen(true)} className="select-chain">
           <label className="select__label">{label}</label>
           <div className="select-chain__chain">
-            <img src={chain.iconSrc} alt={chain.chainName} className="select-chain__img" />
-            <span className="select-chain__text">{chain.chainName}</span>
+            <img
+              src={chainInfos[chain].icon}
+              alt={chainInfos[chain].name}
+              className="select-chain__img"
+            />
+            <span className="select-chain__text">{chainInfos[chain].name}</span>
 
             <SelectChainModal
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              chainId={chain.chainId}
-              setChainId={setChainId}
-              excludedChainId={excludedChainId}
+              setChain={setChain}
+              currentChain={chain}
+              excludedChain={excludedChain}
             />
           </div>
           <div className="select-dropdown-icon">
@@ -38,13 +44,9 @@ function ChainInput({ label, chain, setChainId, excludedChainId }) {
 
 ChainInput.propTypes = {
   label: PropTypes.string,
-  chain: PropTypes.shape({
-    chainId: PropTypes.number,
-    chainName: PropTypes.string,
-    iconSrc: PropTypes.string,
-  }),
-  setChainId: PropTypes.func,
-  excludedChainId: PropTypes.number,
+  setChain: PropTypes.func,
+  chain: PropTypes.string,
+  excludedChain: PropTypes.string,
 };
 
 export default ChainInput;

@@ -1,16 +1,16 @@
-import useChain from 'hooks/useChain';
+import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import { shortenBalance } from 'utils/transform';
 
 function TokenBalance() {
-  const { tokenSymbol } = useChain();
-  const { connected, supported, tokenBalance } = useWeb3();
+  const { token } = useToken();
+  const { chainId, tokenBalance, wallet } = useWeb3();
 
   return (
     <div>
-      {connected && supported && tokenBalance ? (
+      {Number.isInteger(chainId) && tokenBalance && wallet ? (
         <span>
-          Balance: <strong>{`${shortenBalance(tokenBalance)} ${tokenSymbol}`}</strong>
+          Balance: <strong>{`${shortenBalance(tokenBalance)} ${token}`}</strong>
         </span>
       ) : null}
     </div>

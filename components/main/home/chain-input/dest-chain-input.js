@@ -5,16 +5,11 @@ import useChain from 'hooks/useChain';
 import useChainUpdate from 'hooks/useChainUpdate';
 
 function DestChainInput() {
-  const { destChain, srcChainId } = useChain();
-  const { setDestChainId } = useChainUpdate();
+  const { srcChain, destChain } = useChain();
+  const { setDestChain } = useChainUpdate();
 
   return (
-    <BaseInput
-      label="To"
-      chain={destChain}
-      setChainId={setDestChainId}
-      excludedChainId={srcChainId}
-    />
+    <BaseInput label="To" chain={destChain} setChain={setDestChain} excludedChain={srcChain} />
   );
 }
 

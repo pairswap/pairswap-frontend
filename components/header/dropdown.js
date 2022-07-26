@@ -1,40 +1,22 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 
+import { WALLET_INFOS } from 'constants/wallet';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
-import { METAMASK, COINBASE } from 'utils/provider';
 
 function Dropdown() {
-  const { connected } = useWeb3();
+  const { wallet } = useWeb3();
   const { logout } = useWeb3Update();
-
-  const renderDropdownButton = useCallback(() => {
-    switch (connected) {
-      case METAMASK:
-        return (
-          <>
-            <img src="images/metamask.png" alt="wallet" className="dropdown__img" />
-            <span>Metamask</span>
-            <img src="images/chevron-down.svg" alt="dropdown icon" />
-          </>
-        );
-      case COINBASE:
-        return (
-          <>
-            <img src="images/coinbase.png" alt="wallet" className="dropdown__img" />
-            <span>Coinbase</span>
-            <img src="images/chevron-down.svg" alt="dropdown icon" />
-          </>
-        );
-      default:
-        return null;
-    }
-  }, [connected]);
+  const { name, icon } = WALLET_INFOS[wallet];
 
   return (
     <Menu as="div" className="dropdown">
-      <Menu.Button className="dropdown__button">{renderDropdownButton()}</Menu.Button>
+      <Menu.Button className="dropdown__button">
+        <img src={icon} alt={name} className="dropdown__img" />
+        <span>{name}</span>
+        <img src="images/chevron-down.svg" alt="dropdown icon" />
+      </Menu.Button>
       <Transition
         as={Fragment}
         enter="dropdown__enter"

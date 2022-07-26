@@ -1,8 +1,7 @@
-import dynamic from 'next/dynamic';
+import { createContext, useState } from 'react';
 
 import Main from 'components/main/home';
-
-const Header = dynamic(() => import('components/header'), { ssr: false });
+import Header from 'components/header';
 
 function Home() {
   return (

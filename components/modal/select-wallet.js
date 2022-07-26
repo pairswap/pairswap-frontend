@@ -1,30 +1,47 @@
-import { useState, useCallback } from 'react';
+import { createContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
+import { WALLETS, WALLET_INFOS } from 'constants/wallet';
 import Modal from 'components/modal';
-import useError from 'hooks/useError';
+import useChain from 'hooks/useChain';
 import useWeb3Update from 'hooks/useWeb3Update';
-import { METAMASK, COINBASE } from 'utils/provider';
 
-function SelectWalletModal({ open, onClose }) {
+export const WalletModalContext = createContext();
+
+export function WalletModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
-  const setError = useError();
   const { connect } = useWeb3Update();
+  const { chainInfos, srcChain } = useChain();
 
   const handleConnect = useCallback(
     async (providerName) => {
       setLoading(true);
-      try {
-        await connect(providerName);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-        onClose();
-      }
+      await connect(providerName);
+      setLoading(false);
+      onClose();
     },
-    [connect, onClose, setError]
+    [connect, onClose]
   );
+
+  const renderWallets = useCallback(() => {
+    if (chainInfos && srcChain) {
+      const { type } = chainInfos[srcChain];
+      const wallets = WALLETS[type];
+
+      return wallets.map((wallet) => (
+        <button key={wallet} onClick={() => handleConnect(wallet)} className="btn-wallet">
+          <p className="btn-wallet__text">{WALLET_INFOS[wallet].name}</p>
+          <img
+            src={WALLET_INFOS[wallet].icon}
+            alt={WALLET_INFOS[wallet].name}
+            className="btn-wallet__img"
+          />
+        </button>
+      ));
+    }
+
+    return null;
+  }, [chainInfos, srcChain, handleConnect]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -44,25 +61,14 @@ function SelectWalletModal({ open, onClose }) {
             <p className="btn-wallet__text">Initializing...</p>
           </div>
         ) : (
-          <>
-            <button onClick={() => handleConnect(METAMASK)} className="btn-wallet">
-              <p className="btn-wallet__text">Metamask</p>
-              <img src="/images/metamask.png" alt="metamask" className="btn-wallet__img" />
-            </button>
-            <button onClick={() => handleConnect(COINBASE)} className="btn-wallet">
-              <p className="btn-wallet__text">Coinbase</p>
-              <img src="/images/coinbase.png" alt="metamask" className="btn-wallet__img" />
-            </button>
-          </>
+          renderWallets()
         )}
       </div>
     </Modal>
   );
 }
 
-SelectWalletModal.propTypes = {
+WalletModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
 };
-
-export default SelectWalletModal;

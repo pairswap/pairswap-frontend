@@ -16,6 +16,15 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px #19123c inset !important;
+  -webkit-box-shadow: 0 0 0 30px #19123c inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -522,6 +531,10 @@ input[type='number'] {
   color: #ffffff;
   border: none;
   outline: none;
+}
+
+.btn-swap:disabled {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .modal-container {
