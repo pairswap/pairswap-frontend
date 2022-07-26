@@ -85,6 +85,8 @@ function Web3Provider({ children }) {
       const chainId = await library.getChainId();
       if (chainInfos[srcChain].id === chainId) {
         setChainId(chainId);
+      } else {
+        setChainId(null);
       }
     } catch (error) {
       setError(error, { silent: true });
@@ -110,16 +112,10 @@ function Web3Provider({ children }) {
   }, [getBalance, getTokenBalance]);
 
   useEffect(() => {
-    if (wallet) {
-      getTokenBalance();
-    }
-  }, [wallet, getTokenBalance]);
-
-  useEffect(() => {
-    if (account && Number.isInteger(chainId)) {
+    if (wallet && account && Number.isInteger(chainId)) {
       reloadBalance();
     }
-  }, [account, chainId, reloadBalance]);
+  }, [account, chainId, wallet, reloadBalance]);
 
   useEffect(() => {
     if (wallet) {
@@ -131,7 +127,7 @@ function Web3Provider({ children }) {
         library.init().then(() => setLibrary(library));
       }
     }
-  }, [account, wallet, library, getAccount, getBalance, getChainId]);
+  }, [account, wallet, library, getAccount, getChainId]);
 
   useEffect(() => {
     if (chainInfos && srcChain) {
