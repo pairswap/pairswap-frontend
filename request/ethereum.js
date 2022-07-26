@@ -105,13 +105,15 @@ class EthereumLibrary {
   }
 
   async checkApproval({ gatewayAddress, tokenAddress, account }) {
-    const currentAllowance = await this.getCurrentAllowance({
-      gatewayAddress,
-      tokenAddress,
-      account,
-    });
-
-    return currentAllowance.gt(BigNumber.from('0'));
+    // TODO: Remove this with valid gatewayAddress
+    return Promise.resolve(true);
+    // const currentAllowance = await this.getCurrentAllowance({
+    //   gatewayAddress,
+    //   tokenAddress,
+    //   account,
+    // });
+    //
+    // return currentAllowance.gt(BigNumber.from('0'));
   }
 
   approve({ gatewayAddress, tokenAddress, account }) {
