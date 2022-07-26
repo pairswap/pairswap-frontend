@@ -1,78 +1,47 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import SuccessModal from './success-modal';
-import useAsync from 'hooks/useAsync';
 import useError from 'hooks/useError';
 import { support } from 'request/rest';
 
-const validationRules = {
-  name: {
-    required: true,
-  },
-  email: {
-    required: true,
-    pattern:
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  },
-  txURL: {
-    required: true,
-    pattern: /^https?:\/\/.*\/tx\/0x.+$/,
-  },
-  comment: {
-    required: true,
-  },
-};
-
-const errorMessages = {
-  name: {
-    required: 'Please enter your name',
-  },
-  email: {
-    required: 'Please enter your email',
-    pattern: 'Email is invalid',
-  },
-  txURL: {
-    required: 'Please provide a transaction link',
-    pattern: 'Transaction link is invalid',
-  },
-  comment: {
-    required: 'Please leave a comment',
-  },
-};
+const schema = yup.object({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email('Email is invalid').required('Email is required'),
+  txURL: yup
+    .string()
+    .required('Transaction link is required')
+    .matches(/^https?:\/\/.*\/tx\/0x.+$/, 'Transaction link is invalid'),
+  comment: yup.string().required('Comment is required'),
+});
 
 function Main() {
   const [openModal, setOpenModal] = useState(false);
   const [modalMessage, setModalMessage] = useState(null);
-  const { execute, value, loading, error } = useAsync(support);
+  const [isLoading, setIsLoading] = useState(false);
   const setError = useError();
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ resolver: yupResolver(schema) });
 
-  const onSubmit = useCallback(
-    async ({ name, email, txURL, comment }) => {
-      execute({ name, email, txURL, comment });
-    },
-    [execute]
-  );
-
-  useEffect(() => {
-    if (error) {
-      setError(new Error('An unknown error occurred'));
-    }
-  }, [error, setError]);
-
-  useEffect(() => {
-    if (value) {
+  async function onSubmit({ name, email, txURL, comment }) {
+    setIsLoading(true);
+    try {
+      await support({ name, email, txURL, comment });
       setOpenModal(true);
       setModalMessage('Your report has been sent');
       reset();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [value, reset]);
+  }
 
   return (
     <main className="main">
@@ -81,18 +50,13 @@ function Main() {
         <label htmlFor="name" className="support__label">
           Name
         </label>
-        <input id="name" className="support__input" {...register('name', validationRules.name)} />
-        <p className="support__helper-text">{errorMessages.name[errors.name?.type]}</p>
+        <input id="name" className="support__input" {...register('name')} />
+        <p className="support__helper-text">{errors.name?.message}</p>
         <label htmlFor="email" className="support__label">
           Email
         </label>
-        <input
-          id="email"
-          type="email"
-          className="support__input"
-          {...register('email', validationRules.email)}
-        />
-        <p className="support__helper-text">{errorMessages.email[errors.email?.type]}</p>
+        <input id="email" type="email" className="support__input" {...register('email')} />
+        <p className="support__helper-text">{errors.email?.message}</p>
         <label htmlFor="txURL" className="support__label">
           Your transaction on block explorer
         </label>
@@ -101,9 +65,9 @@ function Main() {
           type="url"
           placeholder="Eg: https://bscscan.com/tx/0x1234...."
           className="support__input"
-          {...register('txURL', validationRules.txURL)}
+          {...register('txURL')}
         />
-        <p className="support__helper-text">{errorMessages.txURL[errors.txURL?.type]}</p>
+        <p className="support__helper-text">{errors.txURL?.message}</p>
         <label htmlFor="comment" className="support__label">
           Additional comment
         </label>
@@ -112,10 +76,10 @@ function Main() {
           rows={4}
           className="support__input"
           placeholder="Please describe your problem in detail so that we can assist you as quickly as possible"
-          {...register('comment', validationRules.comment)}
+          {...register('comment')}
         />
-        <p className="support__helper-text">{errorMessages.comment[errors.comment?.type]}</p>
-        {loading ? (
+        <p className="support__helper-text">{errors.comment?.message}</p>
+        {isLoading ? (
           <div className="support__button">
             <div className="spiner" />
           </div>
