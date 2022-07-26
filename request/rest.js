@@ -14,8 +14,6 @@ export async function getGasFeeInToken({ chain, tokenId }) {
 }
 
 export async function support({ name, email, txURL, comment }) {
-  if (!proxyAPI) return Promise.reject('No proxy API');
-
   const { data } = await request.post(`/support`, {
     name,
     email,
