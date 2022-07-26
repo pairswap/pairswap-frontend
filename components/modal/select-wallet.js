@@ -1,27 +1,12 @@
 import { createContext, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { METAMASK, COINBASE, NAMI } from 'constants/wallet';
+import { WALLETS, WALLET_INFOS } from 'constants/wallet';
 import Modal from 'components/modal';
 import useChain from 'hooks/useChain';
 import useWeb3Update from 'hooks/useWeb3Update';
 
 export const WalletModalContext = createContext();
-
-const walletInfos = {
-  [METAMASK]: {
-    name: 'Metamask',
-    icon: '/images/metamask.png',
-  },
-  [COINBASE]: {
-    name: 'Coinbase',
-    icon: '/images/coinbase.png',
-  },
-  [NAMI]: {
-    name: 'Nami',
-    icon: '/images/nami.png',
-  },
-};
 
 export function WalletModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
@@ -40,13 +25,15 @@ export function WalletModal({ open, onClose }) {
 
   const renderWallets = useCallback(() => {
     if (chainInfos && srcChain) {
-      const { wallets } = chainInfos[srcChain];
+      const { type } = chainInfos[srcChain];
+      const wallets = WALLETS[type];
+
       return wallets.map((wallet) => (
         <button key={wallet} onClick={() => handleConnect(wallet)} className="btn-wallet">
-          <p className="btn-wallet__text">{walletInfos[wallet].name}</p>
+          <p className="btn-wallet__text">{WALLET_INFOS[wallet].name}</p>
           <img
-            src={walletInfos[wallet].icon}
-            alt={walletInfos[wallet].name}
+            src={WALLET_INFOS[wallet].icon}
+            alt={WALLET_INFOS[wallet].name}
             className="btn-wallet__img"
           />
         </button>

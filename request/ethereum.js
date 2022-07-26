@@ -1,6 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
-import { Web3Provider, JsonRpcProvider } from '@ethersproject/providers';
+import { Web3Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 
 import SampleERC20 from 'abis/SampleERC20.json';

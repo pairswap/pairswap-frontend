@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { Address } from '@emurgo/cardano-serialization-lib-asmjs';
 import { isAddress } from '@ethersproject/address';
 
-import { ETHEREUM, CARDANO } from 'constants/chain-type';
+import { ETHEREUM, CARDANO } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
 import SrcChainInput from './chain-input/src-chain-input';

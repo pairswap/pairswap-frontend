@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { ETHEREUM } from 'constants/chain-type';
+import { ETHEREUM } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWalletModal from 'hooks/useWalletModal';
