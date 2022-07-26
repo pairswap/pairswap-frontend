@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const Header = dynamic(() => import('components/header'), { ssr: false });
+import Header from 'components/header';
+
 const Main = dynamic(() => import('components/main/wallet'), { ssr: false });
 
 function Wallet() {

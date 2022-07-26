@@ -35,14 +35,6 @@ function Header() {
               </a>
             </Link>
           ))}
-          <a
-            rel="noreferrer"
-            target="_blank"
-            href="https://faucet.ko.exchange"
-            className="nav__link"
-          >
-            Faucet
-          </a>
         </nav>
 
         <div className="header__item">
