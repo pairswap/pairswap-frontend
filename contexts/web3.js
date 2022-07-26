@@ -2,16 +2,13 @@ import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Address } from '@emurgo/cardano-serialization-lib-asmjs';
 
-import { METAMASK, COINBASE, NAMI } from 'constants/wallet';
+import { WALLETS, ETHEREUM, CARDANO } from 'constants/wallet';
 import useToken from 'hooks/useToken';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { hasProvider, getLibrary } from 'utils/provider';
 import { convertHexStringToNumber } from 'utils/transform';
-
-const ethereumBasedWallets = [METAMASK, COINBASE];
-const cardanoBasedWallets = [NAMI];
 
 export const Web3Context = createContext();
 export const Web3ContextUpdate = createContext();
@@ -131,9 +128,9 @@ function Web3Provider({ children }) {
 
   useEffect(() => {
     if (chainInfos && srcChain) {
-      const { wallets } = chainInfos[srcChain];
+      const { type } = chainInfos[srcChain];
 
-      if (!wallets.includes(wallet)) {
+      if (!WALLETS[type].includes(wallet)) {
         logout();
       }
     }
@@ -146,7 +143,7 @@ function Web3Provider({ children }) {
   }, [chainId, chainInfos, srcChain]);
 
   useEffect(() => {
-    if (library?.provider && wallet && ethereumBasedWallets.includes(wallet)) {
+    if (library?.provider && wallet && WALLETS[ETHEREUM].includes(wallet)) {
       function onChainChanged(hexChainId) {
         const chainId = convertHexStringToNumber(hexChainId);
         if (chainInfos[srcChain].id === chainId) {
@@ -171,7 +168,7 @@ function Web3Provider({ children }) {
   }, [library, wallet, chainInfos, srcChain]);
 
   useEffect(() => {
-    if (library?.provider && wallet && cardanoBasedWallets.includes(wallet)) {
+    if (library?.provider && wallet && WALLETS[CARDANO].includes(wallet)) {
       function onChainChanged(chainId) {
         if (chainInfos[srcChain].id === chainId) {
           setChainId(chainId);
@@ -186,12 +183,19 @@ function Web3Provider({ children }) {
         }
       }
 
-      library.provider.experimental.on('networkChange', onChainChanged);
-      library.provider.experimental.on('accountChange', onAccountsChanged);
+      if (library.provider.experimental?.on) {
+        library.provider.experimental.on('networkChange', onChainChanged);
+        library.provider.experimental.on('accountChange', onAccountsChanged);
+      } else {
+        library.provider.onNetworkChange(onChainChanged);
+        library.provider.onAccountChange(onAccountsChanged);
+      }
 
       return () => {
-        library.provider.experimental.off('networkChange', onChainChanged);
-        library.provider.experimental.off('accountChange', onAccountsChanged);
+        if (library.provider?.experimental.off) {
+          library.provider.experimental.off('networkChange', onChainChanged);
+          library.provider.experimental.off('accountChange', onAccountsChanged);
+        }
       };
     }
   }, [library, wallet, chainInfos, srcChain]);

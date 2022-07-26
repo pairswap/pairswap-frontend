@@ -1,29 +1,14 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 
-import { METAMASK, COINBASE, NAMI } from 'constants/wallet';
+import { WALLET_INFOS } from 'constants/wallet';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
-
-const walletInfos = {
-  [METAMASK]: {
-    name: 'Metamask',
-    icon: '/images/metamask.png',
-  },
-  [COINBASE]: {
-    name: 'Coinbase',
-    icon: '/images/coinbase.png',
-  },
-  [NAMI]: {
-    name: 'Nami',
-    icon: '/images/nami.png',
-  },
-};
 
 function Dropdown() {
   const { wallet } = useWeb3();
   const { logout } = useWeb3Update();
-  const { name, icon } = walletInfos[wallet];
+  const { name, icon } = WALLET_INFOS[wallet];
 
   return (
     <Menu as="div" className="dropdown">

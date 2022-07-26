@@ -17,6 +17,7 @@ import {
   TransactionUnspentOutputs,
   Value,
 } from '@emurgo/cardano-serialization-lib-asmjs';
+import { getProvider } from 'utils/provider';
 
 // https://github.com/input-output-hk/cardano-node/blob/master/configuration/cardano/testnet-shelley-genesis.json
 const protocolParams = {
@@ -40,13 +41,13 @@ class CardanoLibrary {
     const isEnabled = await window.cardano[this.name].isEnabled();
 
     if (isEnabled) {
-      this.provider = await window.cardano[this.name].enable();
+      this.provider = await getProvider(this.name);
     }
   }
 
   async connect() {
     try {
-      this.provider = await window.cardano[this.name].enable();
+      this.provider = await getProvider(this.name);
     } catch (error) {
       throw error;
     }
