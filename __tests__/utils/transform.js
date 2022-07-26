@@ -7,14 +7,13 @@ import {
 
 test('can shorten account', () => {
   expect(shortenAccount('0x1111000000000000000000000000000000001234')).toBe('0x1111...1234');
-  expect(() => shortenAccount('0xabcd')).toThrow(TypeError('Invalid account format'));
 });
 
 test('can shorten balance', () => {
-  expect(shortenBalance('0.0')).toBe('0.0');
-  expect(shortenBalance('0.01235')).toBe('0.0123');
-  expect(shortenBalance('0.01239')).toBe('0.0124');
-  expect(shortenBalance('0.01235', 2)).toBe('0.01');
+  expect(shortenBalance('0.0')).toBe(0);
+  expect(shortenBalance('0.01235')).toBe(0.0123);
+  expect(shortenBalance('0.01239')).toBe(0.0123);
+  expect(shortenBalance('0.01235', 2)).toBe(0.01);
 });
 
 test('can convert string to BigNumber', () => {
