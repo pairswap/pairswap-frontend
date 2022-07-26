@@ -1,174 +1,209 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Address } from '@emurgo/cardano-serialization-lib-asmjs';
 
+import { METAMASK, COINBASE, NAMI } from 'constants/wallet';
+import useToken from 'hooks/useToken';
 import useChain from 'hooks/useChain';
-import useChainUpdate from 'hooks/useChainUpdate';
 import useError from 'hooks/useError';
 import useLocalStorage from 'hooks/useLocalStorage';
-import RPCRequest from 'request/rpc';
-import {
-  convertBigNumberToString,
-  convertHexStringToNumber,
-  convertHexStringToString,
-} from 'utils/transform';
-import { getProvider, hasProvider } from 'utils/provider';
+import { hasProvider, getLibrary } from 'utils/provider';
+import { convertHexStringToNumber } from 'utils/transform';
+
+const ethereumBasedWallets = [METAMASK, COINBASE];
+const cardanoBasedWallets = [NAMI];
 
 export const Web3Context = createContext();
 export const Web3ContextUpdate = createContext();
 
 function Web3Provider({ children }) {
-  const [connected, setConnected] = useLocalStorage('connected', null);
-  const [library, setLibrary] = useState(null);
+  const [wallet, setWallet] = useLocalStorage('wallet', null);
   const [account, setAccount] = useState(null);
+  const [library, setLibrary] = useState(null);
   const [balance, setBalance] = useState(null);
   const [chainId, setChainId] = useState(null);
-  const [supported, setSupported] = useState(false);
-  const [tokenBalance, setTokenBalance] = useState(null);
   const [gasPrice, setGasPrice] = useState(null);
-  const { supportedChains, srcChainId, srcToken } = useChain();
-  const { sync } = useChainUpdate();
+  const [tokenBalance, setTokenBalance] = useState(null);
+  const { chainInfos, srcChain } = useChain();
+  const { tokenInfos, token } = useToken();
   const setError = useError();
 
-  const getBalance = useCallback(
-    (account) => {
-      return library
-        .getBalance(account)
-        .then((balance) => setBalance(convertHexStringToString(balance)))
-        .catch((error) => setError(error));
-    },
-    [library, setError]
-  );
-
-  const getTokenBalance = useCallback(() => {
-    if (chainId === srcChainId) {
-      return library
-        .getTokenBalance({ account, tokenAddress: srcToken.address })
-        .then((newTokenBalance) => {
-          setTokenBalance(convertBigNumberToString(newTokenBalance));
-        })
-        .catch((error) => setError(error, { silent: true }));
-    }
-  }, [account, chainId, library, setError, srcChainId, srcToken]);
-
-  const reloadBalance = useCallback(async () => {
-    await getBalance(account);
-    await getTokenBalance();
-  }, [account, getBalance, getTokenBalance]);
-
   const connect = useCallback(
-    (providerName) => {
-      if (!hasProvider(providerName)) {
-        return Promise.reject(new Error(`No ${providerName} extenstion installed`));
+    async (name) => {
+      if (!hasProvider(name)) {
+        setError(new Error(`No ${name} extenstion installed`));
+        return;
       }
 
-      const provider = getProvider(providerName);
-      const library = new RPCRequest(provider);
+      const library = getLibrary(name);
+      await library.init();
       setLibrary(library);
 
-      return library
-        .requestAccounts()
-        .then(() => setConnected(providerName))
-        .catch((error) => setError(error));
+      try {
+        await library.connect();
+        setWallet(name);
+      } catch (error) {
+        setError(error);
+      }
     },
-    [setConnected, setError]
+    [setError, setWallet]
   );
 
   const logout = useCallback(() => {
-    setConnected(null);
+    setWallet(null);
     setAccount(null);
     setBalance(null);
     setChainId(null);
-  }, [setConnected]);
+  }, [setWallet]);
+
+  const getAccount = useCallback(async () => {
+    if (!library) return;
+
+    try {
+      const account = await library.getAccount();
+      setAccount(account);
+    } catch (error) {
+      setError(error, { slient: true });
+    }
+  }, [library, setError]);
+
+  const getBalance = useCallback(async () => {
+    if (!library || !account) return;
+
+    try {
+      const balance = await library.getBalance(account);
+      setBalance(balance);
+    } catch (error) {
+      setError(error, { silent: true });
+    }
+  }, [account, library, setError]);
+
+  const getChainId = useCallback(async () => {
+    if (!library) return;
+
+    try {
+      const chainId = await library.getChainId();
+      if (chainInfos[srcChain].id === chainId) {
+        setChainId(chainId);
+      }
+    } catch (error) {
+      setError(error, { silent: true });
+    }
+  }, [library, setError, chainInfos, srcChain]);
+
+  const getTokenBalance = useCallback(async () => {
+    if (!library || !account || !tokenInfos || !token || !srcChain) return;
+
+    try {
+      const { addresses } = tokenInfos[token];
+      const tokenAddress = addresses[srcChain];
+      const tokenBalance = await library.getTokenBalance({ account, tokenAddress });
+      setTokenBalance(tokenBalance);
+    } catch (error) {
+      setError(error, { silent: true });
+    }
+  }, [account, library, srcChain, tokenInfos, token, setError]);
+
+  const reloadBalance = useCallback(async () => {
+    await getBalance();
+    await getTokenBalance();
+  }, [getBalance, getTokenBalance]);
 
   useEffect(() => {
-    if (account && supported) {
+    if (wallet) {
       getTokenBalance();
     }
-  }, [account, supported, getTokenBalance]);
+  }, [wallet, getTokenBalance]);
 
   useEffect(() => {
-    if (connected && !library) {
-      const provider = getProvider(connected);
-      const library = new RPCRequest(provider);
-      setLibrary(library);
+    if (account && Number.isInteger(chainId)) {
+      reloadBalance();
     }
-  }, [connected, library]);
+  }, [account, chainId, reloadBalance]);
 
   useEffect(() => {
-    if (connected && library && supportedChains.length > 0) {
-      const supportedChainIds = supportedChains.map((chain) => chain.chainId);
+    if (wallet) {
+      if (library) {
+        getAccount();
+        getChainId();
+      } else {
+        const library = getLibrary(wallet);
+        library.init().then(() => setLibrary(library));
+      }
+    }
+  }, [account, wallet, library, getAccount, getBalance, getChainId]);
 
-      library
-        .getAccounts()
-        .then((accounts) => {
-          if (accounts[0]) {
-            setAccount(accounts[0]);
-            getBalance(accounts[0]);
-          } else {
-            setConnected(null);
-          }
-        })
-        .catch((error) => setError(error, { silent: true }));
+  useEffect(() => {
+    if (chainInfos && srcChain) {
+      const { wallets } = chainInfos[srcChain];
 
-      library
-        .getChainId()
-        .then((chainId) => onChainChanged(chainId))
-        .catch((error) => setError(error, { silent: true }));
+      if (!wallets.includes(wallet)) {
+        logout();
+      }
+    }
+  }, [wallet, chainInfos, srcChain, logout]);
 
-      function onChainChanged(chainId) {
-        const convertedChainId = convertHexStringToNumber(chainId);
-        if (supportedChainIds.includes(convertedChainId)) {
-          setSupported(true);
-          setChainId(convertedChainId);
+  useEffect(() => {
+    if (chainInfos && srcChain && chainInfos[srcChain].id !== chainId) {
+      setChainId(null);
+    }
+  }, [chainId, chainInfos, srcChain]);
 
-          if (account) {
-            getBalance(account);
-            sync(convertedChainId);
-          }
-        } else {
-          setSupported(false);
-          if (account) {
-            setError(new Error('Unsupported network'));
-          }
+  useEffect(() => {
+    if (library?.provider && wallet && ethereumBasedWallets.includes(wallet)) {
+      function onChainChanged(hexChainId) {
+        const chainId = convertHexStringToNumber(hexChainId);
+        if (chainInfos[srcChain].id === chainId) {
+          setChainId(chainId);
         }
       }
 
       function onAccountsChanged(accounts) {
-        if (accounts.length > 0) {
+        if (accounts && accounts.length > 0) {
           setAccount(accounts[0]);
-          getBalance(accounts[0]);
-        } else {
-          logout();
         }
       }
 
-      if (library.provider.on && library.provider.removeListener) {
-        library.provider.on('chainChanged', onChainChanged);
-        library.provider.on('accountsChanged', onAccountsChanged);
+      library.provider.on('chainChanged', onChainChanged);
+      library.provider.on('accountsChanged', onAccountsChanged);
 
-        return () => {
-          library.provider.removeListener('chainChanged', onChainChanged);
-          library.provider.removeListener('accountsChanged', onAccountsChanged);
-        };
-      }
+      return () => {
+        library.provider.removeListener('chainChanged', onChainChanged);
+        library.provider.removeListener('accountsChanged', onAccountsChanged);
+      };
     }
-  }, [
-    account,
-    chainId,
-    connected,
-    getBalance,
-    library,
-    logout,
-    setConnected,
-    setError,
-    supportedChains,
-    sync,
-  ]);
+  }, [library, wallet, chainInfos, srcChain]);
+
+  useEffect(() => {
+    if (library?.provider && wallet && cardanoBasedWallets.includes(wallet)) {
+      function onChainChanged(chainId) {
+        if (chainInfos[srcChain].id === chainId) {
+          setChainId(chainId);
+        } else {
+          setChainId(null);
+        }
+      }
+
+      function onAccountsChanged(accounts) {
+        if (accounts && accounts.length > 0) {
+          setAccount(Address.from_bytes(Buffer.from(accounts[0], 'hex')).to_bech32());
+        }
+      }
+
+      library.provider.experimental.on('networkChange', onChainChanged);
+      library.provider.experimental.on('accountChange', onAccountsChanged);
+
+      return () => {
+        library.provider.experimental.off('networkChange', onChainChanged);
+        library.provider.experimental.off('accountChange', onAccountsChanged);
+      };
+    }
+  }, [library, wallet, chainInfos, srcChain]);
 
   return (
     <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance, setGasPrice }}>
       <Web3Context.Provider
-        value={{ account, balance, chainId, connected, gasPrice, library, supported, tokenBalance }}
+        value={{ account, balance, chainId, gasPrice, library, tokenBalance, wallet }}
       >
         {children}
       </Web3Context.Provider>

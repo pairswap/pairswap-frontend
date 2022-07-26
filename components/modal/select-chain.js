@@ -4,15 +4,15 @@ import Modal from 'components/modal';
 import useChain from 'hooks/useChain';
 import classname from 'utils/classname';
 
-function SelectChainModal({ isOpen, setIsOpen, chainId, setChainId, excludedChainId }) {
-  const { supportedChains } = useChain();
+function SelectChainModal({ isOpen, setIsOpen, setChain, currentChain, excludedChain }) {
+  const { chains, chainInfos } = useChain();
 
   function handleClose() {
     setIsOpen(false);
   }
 
-  function handleSelect(newChainId) {
-    setChainId(newChainId);
+  function handleSelect(chain) {
+    setChain(chain);
     handleClose();
   }
 
@@ -29,20 +29,25 @@ function SelectChainModal({ isOpen, setIsOpen, chainId, setChainId, excludedChai
         <div className="modal__divider" />
 
         <div>
-          {supportedChains.map((chain, index) => (
-            <button
-              key={index}
-              onClick={() => handleSelect(chain.chainId)}
-              className={classname(
-                'modal__item modal__item--chain',
-                chain.chainId === excludedChainId && 'modal__item--chain-disabled',
-                chain.chainId === chainId && 'modal__item--chain-active'
-              )}
-            >
-              <img src={chain.iconSrc} alt={chain.chainName} className="token__img" />
-              <span className="token__symbol">{chain.chainName}</span>
-            </button>
-          ))}
+          {chains &&
+            chains.map((chain, index) => {
+              const { name, icon } = chainInfos[chain];
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleSelect(chain)}
+                  className={classname(
+                    'modal__item modal__item--chain',
+                    chain === excludedChain && 'modal__item--chain-disabled',
+                    chain === currentChain && 'modal__item--chain-active'
+                  )}
+                >
+                  <img src={icon} alt={name} className="token__img" />
+                  <span className="token__symbol">{name}</span>
+                </button>
+              );
+            })}
         </div>
       </div>
     </Modal>
@@ -52,9 +57,9 @@ function SelectChainModal({ isOpen, setIsOpen, chainId, setChainId, excludedChai
 SelectChainModal.propTypes = {
   isOpen: PropTypes.bool,
   setIsOpen: PropTypes.func,
-  chainId: PropTypes.number,
-  setChainId: PropTypes.func,
-  excludedChainId: PropTypes.number,
+  setChain: PropTypes.func,
+  currentChain: PropTypes.string,
+  excludedChain: PropTypes.string,
 };
 
 export default SelectChainModal;
