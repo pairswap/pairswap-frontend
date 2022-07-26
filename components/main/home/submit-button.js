@@ -1,89 +1,89 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import PendingModal from './pending-modal';
-import SuccessModal from './success-modal';
-import SelectWalletModal from 'components/modal/select-wallet';
+import { ETHEREUM } from 'constants/chain-type';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
+import useWalletModal from 'hooks/useWalletModal';
+import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
 import { convertStringToBigNumber } from 'utils/transform';
 
-function SubmitButton({ onSubmit, onSuccess }) {
-  const [isOpenWallet, setIsOpenWallet] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+function SubmitButton({
+  isSameChainType,
+  onSubmit,
+  onSuccess,
+  setIsPending,
+  setIsSuccess,
+  setTxHash,
+}) {
   const [isApproved, setIsApproved] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [txHash, setTxHash] = useState(null);
-  const { supportedChains, srcChain, destChain, srcToken, destToken } = useChain();
-  const setError = useError();
-  const { account, chainId, connected, gasPrice, supported, library, tokenBalance } = useWeb3();
+  const { setIsOpen } = useWalletModal();
+  const { account, chainId, library, wallet } = useWeb3();
   const { reloadBalance } = useWeb3Update();
+  const { tokenInfos, token } = useToken();
+  const { chainInfos, srcChain, destChain } = useChain();
+  const setError = useError();
 
-  const switchToSupportedChain = useCallback(() => {
-    return library.changeChain(supportedChains[0]).catch((error) => {
+  async function submit({ amount, recipient }) {
+    setIsLoading(true);
+    try {
+      const { gatewayAddress } = chainInfos[srcChain];
+      const { addresses } = tokenInfos[token];
+      const tokenOut = addresses[srcChain];
+      const tokenIn = addresses[destChain];
+
+      const hash = await library.transfer({
+        gatewayAddress,
+        account,
+        recipient: isSameChainType ? '' : recipient,
+        destChain,
+        tokenOut,
+        tokenIn,
+        amount: convertStringToBigNumber(amount.toString()),
+      });
+
+      setTxHash(hash);
+      setIsSuccess(true);
+      onSuccess();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function switchChain() {
+    const { id, name, rpcs, explorers, nativeCurrency } = chainInfos[srcChain];
+
+    try {
+      await library.changeChain({ id });
+    } catch (error) {
       if (error.code === 4902) {
-        library.addChain(supportedChains[0]).catch((error) => setError(error));
+        try {
+          await library.addChain({ id, name, rpcs, explorers, nativeCurrency });
+        } catch (error) {
+          setError(error);
+        }
       } else {
         setError(error);
       }
-    });
-  }, [library, supportedChains, setError]);
+    }
+  }
 
-  const submitCallback = useCallback(
-    async ({ amount }) => {
-      if (Number(amount) > Number(tokenBalance)) {
-        setError(new Error('Do not have enough tokens'));
-        return;
-      }
-
-      if (Number(gasPrice) > Number(tokenBalance)) {
-        setError(new Error('Do not have enough tokens'));
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        const tx = await library.transfer({
-          gatewayAddress: srcChain.gatewayAddress,
-          recipient: account,
-          destChain: destChain.transferName,
-          tokenOut: srcToken.address,
-          tokenIn: destToken.address,
-          amount: convertStringToBigNumber(amount),
-        });
-        setTxHash(tx.hash);
-        setIsSuccess(true);
-        onSuccess();
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [
-      account,
-      library,
-      srcChain,
-      destChain,
-      gasPrice,
-      srcToken,
-      destToken,
-      tokenBalance,
-      onSuccess,
-      setError,
-    ]
-  );
-
-  const handleApprove = useCallback(async () => {
+  async function handleApprove() {
     setIsLoading(true);
     try {
+      const { gatewayAddress } = chainInfos[srcChain];
+      const { addresses } = tokenInfos[token];
+      const tokenAddress = addresses[srcChain];
+
       const tx = await library.approve({
-        gatewayAddress: srcChain.gatewayAddress,
-        tokenAddress: srcToken.address,
+        gatewayAddress,
+        tokenAddress,
         account,
       });
       setTxHash(tx.hash);
@@ -97,104 +97,102 @@ function SubmitButton({ onSubmit, onSuccess }) {
     } finally {
       setIsLoading(false);
     }
-  }, [account, library, srcChain, srcToken, setError, reloadBalance]);
+  }
 
-  const renderButton = useCallback(() => {
-    if (isLoading) {
-      return (
-        <div className="btn-swap">
-          <div className="spiner" />
-        </div>
-      );
+  useEffect(() => {
+    if (
+      Number.isInteger(chainId) &&
+      account &&
+      wallet &&
+      library &&
+      tokenInfos &&
+      token &&
+      chainInfos &&
+      srcChain
+    ) {
+      const isRequiredApproval = !!library?.checkApproval;
+      if (isRequiredApproval) {
+        const { gatewayAddress } = chainInfos[srcChain];
+        const { addresses } = tokenInfos[token];
+        const tokenAddress = addresses[srcChain];
+
+        setIsLoading(true);
+        library
+          .checkApproval({ gatewayAddress, tokenAddress, account })
+          .then(setIsApproved)
+          .catch((error) => {
+            setIsFailed(true);
+            setError(error);
+          })
+          .finally(() => setIsLoading(false));
+      } else {
+        setIsApproved(true);
+      }
     }
+  }, [account, chainId, chainInfos, library, srcChain, tokenInfos, token, wallet, setError]);
 
-    if (connected) {
-      if (supported) {
+  if (isLoading) {
+    return (
+      <div className="btn-swap">
+        <div className="spiner" />
+      </div>
+    );
+  }
+
+  if (wallet) {
+    if (Number.isInteger(chainId)) {
+      if (isFailed) {
+        return (
+          <button onClick={() => window.location.reload()} className="btn-swap">
+            Reload
+          </button>
+        );
+      } else {
         if (isApproved) {
           return (
-            <button onClick={onSubmit(submitCallback)} className="btn-swap">
+            <button onClick={onSubmit(submit)} className="btn-swap">
               Swap
             </button>
           );
-        }
-
-        if (isDisabled) {
+        } else {
           return (
-            <button onClick={() => window.location.reload()} className="btn-swap">
-              Reload
+            <button onClick={() => handleApprove()} className="btn-swap">
+              Give permission
             </button>
           );
         }
-
+      }
+    } else {
+      if (chainInfos && srcChain && chainInfos[srcChain].type === ETHEREUM) {
         return (
-          <button onClick={handleApprove} className="btn-swap">
-            Give permission
+          <button onClick={() => switchChain()} className="btn-swap">
+            Switch to the correct chain
+          </button>
+        );
+      } else {
+        return (
+          <button disabled className="btn-swap">
+            Unsupported chain
           </button>
         );
       }
-
-      return (
-        <button onClick={switchToSupportedChain} className="btn-swap">
-          Switch to supported network
-        </button>
-      );
     }
-
+  } else {
     return (
-      <button onClick={() => setIsOpenWallet(true)} className="btn-swap">
+      <button onClick={() => setIsOpen(true)} className="btn-swap">
         Connect
       </button>
     );
-  }, [
-    connected,
-    supported,
-    isApproved,
-    isDisabled,
-    isLoading,
-    handleApprove,
-    onSubmit,
-    submitCallback,
-    switchToSupportedChain,
-  ]);
-
-  useEffect(() => {
-    if (account && library && supported && srcChain && srcToken && chainId === srcChain.chainId) {
-      setIsLoading(true);
-      library
-        .checkApproval({
-          gatewayAddress: srcChain.gatewayAddress,
-          tokenAddress: srcToken.address,
-          account,
-        })
-        .then(setIsApproved)
-        .catch((error) => {
-          setIsDisabled(true);
-          setError(error);
-        })
-        .finally(() => setIsLoading(false));
-    }
-  }, [account, chainId, library, supported, srcChain, srcToken, setError]);
-
-  return (
-    <>
-      {renderButton()}
-      <SelectWalletModal open={isOpenWallet} onClose={() => setIsOpenWallet(false)} />
-      <PendingModal open={isPending} txHash={txHash} />
-      <SuccessModal
-        open={isSuccess}
-        txHash={txHash}
-        onClose={() => {
-          setIsSuccess(false);
-          setTxHash(null);
-        }}
-      />
-    </>
-  );
+  }
 }
 
 SubmitButton.propTypes = {
+  isSameChainType: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  setIsPending: PropTypes.func,
+  setIsSuccess: PropTypes.func,
+  setTxHash: PropTypes.func,
 };
 
 export default SubmitButton;

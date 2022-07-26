@@ -1,38 +1,27 @@
-let proxyAPI;
+import axios from 'axios';
+
+let request;
 
 if (typeof window !== 'undefined' && typeof window.config !== 'undefined') {
-  proxyAPI = window.config.proxyAPI;
+  request = axios.create({
+    baseURL: window.config.proxyAPI,
+  });
 }
 
 export async function getGasFeeInToken({ chain, tokenId }) {
-  if (!proxyAPI) return Promise.reject('No proxy API');
-
-  try {
-    const response = await fetch(`${proxyAPI}/getGasFeeInToken?chain=${chain}&token_id=${tokenId}`);
-
-    if (!response.ok) {
-      throw Error(response.statusText);
-    }
-
-    const { data } = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
+  const { data } = await request.get(`/getGasFeeInToken?chain=${chain}&token_id=${tokenId}`);
+  return data;
 }
 
 export async function support({ name, email, txURL, comment }) {
   if (!proxyAPI) return Promise.reject('No proxy API');
 
-  return fetch(`${proxyAPI}/support`, {
-    method: 'POST',
-    body: JSON.stringify({ name, email, tx_url: txURL, comment }),
-  }).then((response) => {
-    if (!response.ok) {
-      throw Error(response.statusText);
-    }
-
-    return response.json();
+  const { data } = await request.post(`/support`, {
+    name,
+    email,
+    tx_url: txURL,
+    comment,
   });
+
+  return data;
 }

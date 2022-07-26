@@ -1,4 +1,3 @@
-import { getAddress } from '@ethersproject/address';
 import { BigNumber } from '@ethersproject/bignumber';
 import { hexValue } from '@ethersproject/bytes';
 
@@ -7,14 +6,9 @@ export function shortenAccount(account, startLength = 6, endLength = 4) {
     return;
   }
 
-  try {
-    const _account = getAddress(account);
-    const startStr = _account.substring(0, startLength);
-    const endStr = _account.substring(_account.length - endLength);
-    return startStr + '...' + endStr;
-  } catch {
-    throw new TypeError('Invalid account format');
-  }
+  const startStr = account.substring(0, startLength);
+  const endStr = account.substring(account.length - endLength);
+  return startStr + '...' + endStr;
 }
 
 export function shortenBalance(balance, length = 4) {

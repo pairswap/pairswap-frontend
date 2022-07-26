@@ -1,88 +1,55 @@
-import { createContext, useState, useCallback, useEffect, useMemo } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+
+import useToken from 'hooks/useToken';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 export const ChainContext = createContext();
 export const ChainContextUpdate = createContext();
 
 function ChainProvider({ children }) {
-  const [supportedChains, setSupportedChains] = useState([]);
-  const [srcChainId, setSrcChainId] = useState(null);
-  const [destChainId, setDestChainId] = useState(null);
-  const [tokenSymbol, setTokenSymbol] = useState(null);
+  const [chains, setChains] = useState(null);
+  const [chainInfos, setChainInfos] = useState(null);
+  const [srcChain, setSrcChain] = useLocalStorage('srcChain', null);
+  const [destChain, setDestChain] = useLocalStorage('destChain', null);
+  const { tokenInfos, token } = useToken();
 
-  const srcChain = useMemo(
-    () => supportedChains.find((chain) => chain.chainId === srcChainId),
-    [srcChainId, supportedChains]
-  );
+  const swapChain = useCallback(() => {
+    if (!srcChain || !destChain) return;
 
-  const destChain = useMemo(
-    () => supportedChains.find((chain) => chain.chainId === destChainId),
-    [destChainId, supportedChains]
-  );
-
-  const srcToken = useMemo(() => {
-    if (srcChain?.tokens) {
-      return srcChain.tokens.find((token) => token.symbol === tokenSymbol);
-    }
-  }, [srcChain, tokenSymbol]);
-
-  const destToken = useMemo(() => {
-    if (destChain?.tokens) {
-      return destChain.tokens.find((token) => token.symbol === tokenSymbol);
-    }
-  }, [destChain, tokenSymbol]);
-
-  const sync = useCallback(
-    (chainId) => {
-      if (chainId) {
-        if (chainId === srcChainId) return;
-
-        setSrcChainId(chainId);
-
-        if (chainId !== destChainId) return;
-
-        const destChain = supportedChains.find((chain) => chain.chainId !== chainId);
-
-        if (!destChain) return;
-
-        setDestChainId(destChain.chainId);
-      }
-    },
-    [supportedChains, srcChainId, destChainId]
-  );
-
-  const swap = useCallback(() => {
-    setSrcChainId(destChainId);
-    setDestChainId(srcChainId);
-  }, [srcChainId, destChainId]);
+    setSrcChain(destChain);
+    setDestChain(srcChain);
+  }, [srcChain, destChain, setSrcChain, setDestChain]);
 
   useEffect(() => {
-    const chains = window?.config?.supportedChains;
+    if (tokenInfos && token) {
+      const { chains: newChains } = tokenInfos[token];
+      setChains(newChains);
 
-    if (chains) {
-      setSupportedChains(chains);
-      setSrcChainId(chains[0].chainId);
-      setDestChainId(chains[1].chainId);
-      setTokenSymbol(chains[0].tokens[0].symbol);
+      let newSrcChain = srcChain;
+
+      if (!srcChain || !newChains.includes(srcChain)) {
+        newSrcChain = newChains[0];
+        setSrcChain(newSrcChain);
+      }
+
+      if (!destChain || destChain === newSrcChain || !newChains.includes(destChain)) {
+        let newDestChain = newChains.find((chain) => chain !== newSrcChain);
+        setDestChain(newDestChain);
+      }
+    }
+  }, [tokenInfos, token, srcChain, destChain, setSrcChain, setDestChain]);
+
+  useEffect(() => {
+    if (window?.config) {
+      const { chainInfos } = window.config;
+      setChainInfos(chainInfos);
     }
   }, []);
 
   return (
-    <ChainContextUpdate.Provider
-      value={{ setSrcChainId, setDestChainId, setTokenSymbol, sync, swap }}
-    >
-      <ChainContext.Provider
-        value={{
-          supportedChains,
-          srcChain,
-          destChain,
-          srcToken,
-          destToken,
-          srcChainId,
-          destChainId,
-          tokenSymbol,
-        }}
-      >
+    <ChainContextUpdate.Provider value={{ setSrcChain, setDestChain, swapChain }}>
+      <ChainContext.Provider value={{ chains, chainInfos, srcChain, destChain }}>
         {children}
       </ChainContext.Provider>
     </ChainContextUpdate.Provider>
