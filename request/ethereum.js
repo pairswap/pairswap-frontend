@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
@@ -9,6 +10,7 @@ import {
   convertBigNumberToString,
   convertHexStringToNumber,
   convertHexStringToString,
+  convertStringToBigNumber,
 } from 'utils/transform';
 import { getProvider } from 'utils/provider';
 
@@ -47,7 +49,7 @@ class EthereumLibrary {
   async getTokenBalance({ account, tokenAddress }) {
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
-      const contract = new Contract(tokenAddress, SampleERC20.abi, web3Provider);
+      const contract = new Contract(tokenAddress, SampleERC20, web3Provider);
       const balance = await contract.balanceOf(account);
 
       return convertBigNumberToString(balance);
@@ -98,37 +100,39 @@ class EthereumLibrary {
 
   getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
     const web3Provider = new Web3Provider(this.provider, 'any');
-    const contract = new Contract(tokenAddress, SampleERC20.abi, web3Provider);
+    const contract = new Contract(tokenAddress, SampleERC20, web3Provider);
 
     return contract.allowance(account, gatewayAddress);
   }
 
   async checkApproval({ gatewayAddress, tokenAddress, account }) {
-    // TODO: Remove this with valid gatewayAddress
-    return Promise.resolve(true);
-    // const currentAllowance = await this.getCurrentAllowance({
-    //   gatewayAddress,
-    //   tokenAddress,
-    //   account,
-    // });
-    //
-    // return currentAllowance.gt(BigNumber.from('0'));
+    const currentAllowance = await this.getCurrentAllowance({
+      gatewayAddress,
+      tokenAddress,
+      account,
+    });
+
+    return currentAllowance.gt(BigNumber.from('0'));
   }
 
   approve({ gatewayAddress, tokenAddress, account }) {
     const web3Provider = new Web3Provider(this.provider, 'any');
     const signer = web3Provider.getSigner(account);
-    const contract = new Contract(tokenAddress, SampleERC20.abi, signer);
+    const contract = new Contract(tokenAddress, SampleERC20, signer);
 
     return contract.approve(gatewayAddress, this.allowance);
   }
 
-  async transfer({ gatewayAddress, account, destChain, tokenOut, tokenIn, amount }) {
+  async transfer({ gatewayAddress, account, recipient, destChain, tokenOut, tokenIn, amount }) {
+    const _recipient = recipient ?? account;
+    // gatewayAddress as tokenIn to bypass type cast
+    const _tokenIn = recipient ? gatewayAddress : tokenIn;
+
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
-      const contract = new Contract(gatewayAddress, ERC20Gateway.abi, signer);
-      const tx = contract.transferOut(destChain, account, tokenOut, tokenIn, amount);
+      const contract = new Contract(gatewayAddress, ERC20Gateway, signer);
+      const tx = await contract.transferOut(destChain, _recipient, tokenOut, _tokenIn, amount);
       return tx.hash;
     } catch (error) {
       throw error;

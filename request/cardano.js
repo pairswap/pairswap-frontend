@@ -1,4 +1,5 @@
 import {
+  encode_json_str_to_metadatum,
   AuxiliaryData,
   Address,
   AssetName,
@@ -6,7 +7,9 @@ import {
   BigNum,
   GeneralTransactionMetadata,
   LinearFee,
+  MetadataJsonSchema,
   MultiAsset,
+  ScriptHash,
   Transaction,
   TransactionMetadatum,
   TransactionBuilder,
@@ -123,7 +126,7 @@ class CardanoLibrary {
     }
   }
 
-  async transfer({ gatewayAddress, account, recipient, destChain, tokenOut, tokenIn, amount }) {
+  async transfer({ gatewayAddress, account, recipient, destChain, tokenOut, amount }) {
     const splits = tokenOut.split(':');
     if (splits.length < 2) return;
 
@@ -156,12 +159,14 @@ class CardanoLibrary {
     let multiAsset = MultiAsset.new();
     let assets = Assets.new();
 
-    assets.insert(AssetName.new(Buffer.from(assetName, 'utf8')), BigNum.from_str(amount));
+    // TODO: replace with amount
+    assets.insert(AssetName.new(Buffer.from(assetName, 'utf8')), BigNum.from_str('1'));
+
     multiAsset.insert(ScriptHash.from_bytes(Buffer.from(assetPolicy, 'hex')), assets);
 
     txOutputBuilder = txOutputBuilder.with_asset_and_min_required_coin(
       multiAsset,
-      BigNum.from_str('34482')
+      BigNum.from_str(protocolParams.coinsPerUtxoWord)
     );
     const txOutput = txOutputBuilder.build();
     txBuilder.add_output(txOutput);
@@ -185,8 +190,16 @@ class CardanoLibrary {
 
     const auxiliary = AuxiliaryData.new();
     const metadata = GeneralTransactionMetadata.new();
-    metadata.insert(BigNum.from_str('chain'), TransactionMetadatum.new_text(destChain));
-    metadata.insert(BigNum.from_str('recipient'), TransactionMetadatum.new_text(recipient));
+    metadata.insert(
+      BigNum.from_str('0'),
+      encode_json_str_to_metadatum(
+        JSON.stringify({
+          chain: destChain,
+          recipient,
+        }),
+        MetadataJsonSchema.BasicConversions
+      )
+    );
     auxiliary.set_metadata(metadata);
 
     const tx = Transaction.new(txBody, witness, auxiliary);
@@ -201,11 +214,12 @@ class CardanoLibrary {
 
     const signedTx = Transaction.new(tx.body(), transactionWitnessSet);
 
-    const submittedTxHash = await this.provider.submitTx(
+    const txHash = await this.provider.submitTx(
       Buffer.from(signedTx.to_bytes(), 'utf8').toString('hex')
     );
+    console.log({ txHash });
 
-    return submittedTxHash;
+    return txHash;
   }
 }
 
