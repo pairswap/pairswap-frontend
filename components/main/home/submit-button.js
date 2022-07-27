@@ -39,7 +39,7 @@ function SubmitButton({
       const hash = await library.transfer({
         gatewayAddress,
         account,
-        recipient: isSameChainType ? '' : recipient,
+        recipient: isSameChainType ? null : recipient,
         destChain,
         tokenOut,
         tokenIn,
