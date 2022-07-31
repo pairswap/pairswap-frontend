@@ -1,36 +1,19 @@
-import {
-  encode_json_str_to_metadatum,
-  AuxiliaryData,
-  Address,
-  AssetName,
-  Assets,
-  BigNum,
-  GeneralTransactionMetadata,
-  LinearFee,
-  MetadataJsonSchema,
-  MultiAsset,
-  ScriptHash,
-  Transaction,
-  TransactionMetadatum,
-  TransactionBuilder,
-  TransactionBuilderConfigBuilder,
-  TransactionOutputBuilder,
-  TransactionUnspentOutput,
-  TransactionWitnessSet,
-  TransactionUnspentOutputs,
-  Value,
-} from '@emurgo/cardano-serialization-lib-asmjs';
-import { getProvider } from 'utils/provider';
+import * as CSL from '@emurgo/cardano-serialization-lib-asmjs';
 
-// https://github.com/input-output-hk/cardano-node/blob/master/configuration/cardano/testnet-shelley-genesis.json
-const protocolParams = {
-  minFeeA: '44',
-  minFeeB: '155381',
-  poolDeposit: '500000000',
-  keyDeposit: '2000000',
+import { getProvider } from 'utils/provider';
+import CoinSelection from 'utils/cardano';
+
+const protocolParameter = {
+  linearFee: {
+    minFeeA: '44',
+    minFeeB: '155381',
+  },
+  minUtxo: 1000000,
+  poolDeposit: 500000000,
+  keyDeposit: 2000000,
+  maxTxSize: 16384,
+  maxValueSize: 5000,
   coinsPerUtxoWord: '34482',
-  maxValSize: 5000,
-  maxTxSize: '16384',
 };
 
 class CardanoLibrary {
@@ -59,7 +42,7 @@ class CardanoLibrary {
   async getBalance() {
     try {
       const hexBalance = await this.provider.getBalance();
-      const balance = Value.from_bytes(Buffer.from(hexBalance, 'hex'));
+      const balance = CSL.Value.from_bytes(Buffer.from(hexBalance, 'hex'));
 
       return (Number(balance.coin().to_str()) / 1000000).toString();
     } catch (error) {
@@ -74,7 +57,7 @@ class CardanoLibrary {
     const [policyIdHex, assetNameString] = splits;
 
     const hexBalance = await this.provider.getBalance();
-    const balance = Value.from_bytes(Buffer.from(hexBalance, 'hex'));
+    const balance = CSL.Value.from_bytes(Buffer.from(hexBalance, 'hex'));
 
     const multiasset = balance.multiasset();
     const keys = multiasset.keys();
@@ -111,7 +94,7 @@ class CardanoLibrary {
   async getAccount() {
     try {
       const account = await this.provider.getChangeAddress();
-      return Address.from_bytes(Buffer.from(account, 'hex')).to_bech32();
+      return CSL.Address.from_bytes(Buffer.from(account, 'hex')).to_bech32();
     } catch (error) {
       throw error;
     }
@@ -131,95 +114,103 @@ class CardanoLibrary {
     if (splits.length < 2) return;
 
     const [assetPolicy, assetName] = splits;
+    const paymentAddress = CSL.Address.from_bech32(account);
 
-    const txBuilderConfig = TransactionBuilderConfigBuilder.new()
+    const rawUtxos = await this.provider.getUtxos();
+    const utxos = rawUtxos.map((e) =>
+      CSL.TransactionUnspentOutput.from_bytes(Buffer.from(e, 'hex'))
+    );
+    const receiveAddress = CSL.Address.from_bech32(gatewayAddress);
+
+    let multiAsset = CSL.MultiAsset.new();
+    let assets = CSL.Assets.new();
+
+    assets.insert(
+      CSL.AssetName.new(Buffer.from(assetName, 'utf8')),
+      CSL.BigNum.from_str(amount.toString())
+    );
+
+    multiAsset.insert(CSL.ScriptHash.from_bytes(Buffer.from(assetPolicy, 'hex')), assets);
+
+    const outputValue = CSL.Value.new(CSL.BigNum.from_str('0'));
+    outputValue.set_multiasset(multiAsset);
+    outputValue.set_coin(CSL.BigNum.from_str('1600000'));
+
+    const outputs = CSL.TransactionOutputs.new();
+    outputs.add(CSL.TransactionOutput.new(receiveAddress, outputValue));
+
+    const totalAssets = 0;
+    CoinSelection.setLoader(CSL);
+    CoinSelection.setProtocolParameters(
+      protocolParameter.minUtxo.toString(),
+      protocolParameter.linearFee.minFeeA.toString(),
+      protocolParameter.linearFee.minFeeB.toString(),
+      protocolParameter.maxTxSize.toString()
+    );
+
+    const selection = CoinSelection.randomImprove(utxos, outputs, 20 + totalAssets);
+    const inputs = selection.input;
+    const txBuilderConfig = CSL.TransactionBuilderConfigBuilder.new()
       .fee_algo(
-        LinearFee.new(
-          BigNum.from_str(protocolParams.minFeeA),
-          BigNum.from_str(protocolParams.minFeeB)
+        CSL.LinearFee.new(
+          CSL.BigNum.from_str(protocolParameter.linearFee.minFeeA),
+          CSL.BigNum.from_str(protocolParameter.linearFee.minFeeB)
         )
       )
-      .pool_deposit(BigNum.from_str(protocolParams.poolDeposit))
-      .key_deposit(BigNum.from_str(protocolParams.keyDeposit))
-      .coins_per_utxo_word(BigNum.from_str(protocolParams.coinsPerUtxoWord))
-      .max_value_size(protocolParams.maxValSize)
-      .max_tx_size(protocolParams.maxTxSize)
+      .pool_deposit(CSL.BigNum.from_str(protocolParameter.poolDeposit.toString()))
+      .key_deposit(CSL.BigNum.from_str(protocolParameter.keyDeposit.toString()))
+      .coins_per_utxo_word(CSL.BigNum.from_str(protocolParameter.coinsPerUtxoWord))
+      .max_value_size(protocolParameter.maxValueSize)
+      .max_tx_size(protocolParameter.maxTxSize.toString())
       .prefer_pure_change(true)
       .build();
+    const txBuilder = CSL.TransactionBuilder.new(txBuilderConfig);
 
-    const txBuilder = TransactionBuilder.new(txBuilderConfig);
-
-    const outputAddress = Address.from_bech32(gatewayAddress);
-    const changeAddress = Address.from_bech32(account);
-
-    let txOutputBuilder = TransactionOutputBuilder.new();
-    txOutputBuilder = txOutputBuilder.with_address(outputAddress);
-    txOutputBuilder = txOutputBuilder.next();
-
-    let multiAsset = MultiAsset.new();
-    let assets = Assets.new();
-
-    // TODO: replace with amount
-    assets.insert(AssetName.new(Buffer.from(assetName, 'utf8')), BigNum.from_str('1'));
-
-    multiAsset.insert(ScriptHash.from_bytes(Buffer.from(assetPolicy, 'hex')), assets);
-
-    txOutputBuilder = txOutputBuilder.with_asset_and_min_required_coin(
-      multiAsset,
-      BigNum.from_str(protocolParams.coinsPerUtxoWord)
-    );
-    const txOutput = txOutputBuilder.build();
-    txBuilder.add_output(txOutput);
-
-    const txUnspentOutputs = TransactionUnspentOutputs.new();
-    const rawUtxos = await this.provider.getUtxos();
-
-    for (const rawUtxo of rawUtxos) {
-      const utxo = TransactionUnspentOutput.from_bytes(Buffer.from(rawUtxo, 'hex'));
-      txUnspentOutputs.add(utxo);
+    for (let i = 0; i < inputs.length; i++) {
+      const utxo = inputs[i];
+      txBuilder.add_input(utxo.output().address(), utxo.input(), utxo.output().amount());
     }
 
-    txBuilder.add_inputs_from(txUnspentOutputs, 3);
-
-    txBuilder.add_change_if_needed(changeAddress);
-
-    const txBody = txBuilder.build();
-
-    const transactionWitnessSet = TransactionWitnessSet.new();
-    const witness = TransactionWitnessSet.from_bytes(transactionWitnessSet.to_bytes());
-
-    const auxiliary = AuxiliaryData.new();
-    const metadata = GeneralTransactionMetadata.new();
+    const metadata = CSL.GeneralTransactionMetadata.new();
     metadata.insert(
-      BigNum.from_str('0'),
-      encode_json_str_to_metadatum(
+      CSL.BigNum.from_str('0'),
+      CSL.encode_json_str_to_metadatum(
         JSON.stringify({
           chain: destChain,
           recipient,
         }),
-        MetadataJsonSchema.BasicConversions
+        0
       )
     );
-    auxiliary.set_metadata(metadata);
+    const auxiliaryData = CSL.AuxiliaryData.new();
+    auxiliaryData.set_metadata(metadata);
+    txBuilder.set_auxiliary_data(auxiliaryData);
 
-    const tx = Transaction.new(txBody, witness, auxiliary);
+    for (let i = 0; i < outputs.len(); i++) {
+      txBuilder.add_output(outputs.get(i));
+    }
 
-    let txVkeyWitnesses = await this.provider.signTx(
-      Buffer.from(tx.to_bytes(), 'utf8').toString('hex'),
-      true
+    txBuilder.add_change_if_needed(paymentAddress);
+
+    const transaction = CSL.Transaction.new(
+      txBuilder.build(),
+      CSL.TransactionWitnessSet.new(),
+      auxiliaryData
     );
-    txVkeyWitnesses = TransactionWitnessSet.from_bytes(Buffer.from(txVkeyWitnesses, 'hex'));
 
-    transactionWitnessSet.set_vkeys(txVkeyWitnesses.vkeys());
-
-    const signedTx = Transaction.new(tx.body(), transactionWitnessSet);
-
-    const txHash = await this.provider.submitTx(
-      Buffer.from(signedTx.to_bytes(), 'utf8').toString('hex')
+    const witneses = await this.provider.signTx(
+      Buffer.from(transaction.to_bytes()).toString('hex')
     );
-    console.log({ txHash });
 
-    return txHash;
+    const signedTx = CSL.Transaction.new(
+      transaction.body(),
+      CSL.TransactionWitnessSet.from_bytes(Buffer.from(witneses, 'hex')),
+      transaction.auxiliary_data()
+    );
+
+    const txhash = await this.provider.submitTx(Buffer.from(signedTx.to_bytes()).toString('hex'));
+
+    return txhash;
   }
 }
 

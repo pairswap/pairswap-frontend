@@ -124,6 +124,7 @@ class EthereumLibrary {
   }
 
   async transfer({ gatewayAddress, account, recipient, destChain, tokenOut, tokenIn, amount }) {
+    const _amount = convertStringToBigNumber(amount.toString());
     const _recipient = recipient ?? account;
     // gatewayAddress as tokenIn to bypass type cast
     const _tokenIn = recipient ? gatewayAddress : tokenIn;
@@ -132,7 +133,7 @@ class EthereumLibrary {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
       const contract = new Contract(gatewayAddress, ERC20Gateway, signer);
-      const tx = await contract.transferOut(destChain, _recipient, tokenOut, _tokenIn, amount);
+      const tx = await contract.transferOut(destChain, _recipient, tokenOut, _tokenIn, _amount);
       return tx.hash;
     } catch (error) {
       throw error;

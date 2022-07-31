@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { ETHEREUM } from 'constants/wallet';
@@ -8,7 +8,6 @@ import useWalletModal from 'hooks/useWalletModal';
 import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
-import { convertStringToBigNumber } from 'utils/transform';
 
 function SubmitButton({
   isSameChainType,
@@ -43,7 +42,7 @@ function SubmitButton({
         destChain,
         tokenOut,
         tokenIn,
-        amount: convertStringToBigNumber(amount.toString()),
+        amount,
       });
 
       setTxHash(hash);
@@ -101,17 +100,16 @@ function SubmitButton({
 
   useEffect(() => {
     if (
-      Number.isInteger(chainId) &&
       account &&
-      wallet &&
-      library &&
-      tokenInfos &&
-      token &&
+      Number.isInteger(chainId) &&
       chainInfos &&
-      srcChain
+      library &&
+      srcChain &&
+      token &&
+      tokenInfos &&
+      wallet
     ) {
-      const isRequiredApproval = !!library?.checkApproval;
-      if (isRequiredApproval) {
+      if (chainInfos[srcChain].id === chainId && !!library.checkApproval) {
         const { gatewayAddress } = chainInfos[srcChain];
         const { addresses } = tokenInfos[token];
         const tokenAddress = addresses[srcChain];
@@ -122,7 +120,7 @@ function SubmitButton({
           .then(setIsApproved)
           .catch((error) => {
             setIsFailed(true);
-            setError(error);
+            setError(error, { slient: true });
           })
           .finally(() => setIsLoading(false));
       } else {
@@ -140,7 +138,12 @@ function SubmitButton({
   }
 
   if (wallet) {
-    if (Number.isInteger(chainId)) {
+    if (
+      chainInfos &&
+      srcChain &&
+      Number.isInteger(chainId) &&
+      chainInfos[srcChain].id === chainId
+    ) {
       if (isFailed) {
         return (
           <button onClick={() => window.location.reload()} className="btn-swap">

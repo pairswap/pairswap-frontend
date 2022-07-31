@@ -4,11 +4,11 @@ import { shortenBalance } from 'utils/transform';
 
 function TokenBalance() {
   const { token } = useToken();
-  const { chainId, tokenBalance, wallet } = useWeb3();
+  const { tokenBalance } = useWeb3();
 
   return (
     <div>
-      {Number.isInteger(chainId) && tokenBalance && wallet ? (
+      {tokenBalance ? (
         <span>
           Balance: <strong>{`${shortenBalance(tokenBalance)} ${token}`}</strong>
         </span>
