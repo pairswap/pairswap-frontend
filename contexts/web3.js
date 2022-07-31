@@ -50,6 +50,7 @@ function Web3Provider({ children }) {
     setWallet(null);
     setAccount(null);
     setBalance(null);
+    setTokenBalance(null);
     setChainId(null);
   }, [setWallet]);
 
@@ -80,15 +81,11 @@ function Web3Provider({ children }) {
 
     try {
       const chainId = await library.getChainId();
-      if (chainInfos[srcChain].id === chainId) {
-        setChainId(chainId);
-      } else {
-        setChainId(null);
-      }
+      setChainId(chainId);
     } catch (error) {
       setError(error, { silent: true });
     }
-  }, [library, setError, chainInfos, srcChain]);
+  }, [library, setError]);
 
   const getTokenBalance = useCallback(async () => {
     if (!library || !account || !tokenInfos || !token || !srcChain) return;
@@ -104,15 +101,25 @@ function Web3Provider({ children }) {
   }, [account, library, srcChain, tokenInfos, token, setError]);
 
   const reloadBalance = useCallback(async () => {
-    await getBalance();
-    await getTokenBalance();
-  }, [getBalance, getTokenBalance]);
+    if (
+      Number.isInteger(chainId) &&
+      srcChain &&
+      chainInfos &&
+      chainInfos[srcChain].id === chainId
+    ) {
+      await getBalance();
+      await getTokenBalance();
+    } else {
+      setBalance(null);
+      setTokenBalance(null);
+    }
+  }, [chainId, chainInfos, srcChain, getBalance, getTokenBalance]);
 
   useEffect(() => {
-    if (wallet && account && Number.isInteger(chainId)) {
+    if (wallet && account) {
       reloadBalance();
     }
-  }, [account, chainId, wallet, reloadBalance]);
+  }, [account, wallet, reloadBalance]);
 
   useEffect(() => {
     if (wallet) {
@@ -137,18 +144,10 @@ function Web3Provider({ children }) {
   }, [wallet, chainInfos, srcChain, logout]);
 
   useEffect(() => {
-    if (chainInfos && srcChain && chainInfos[srcChain].id !== chainId) {
-      setChainId(null);
-    }
-  }, [chainId, chainInfos, srcChain]);
-
-  useEffect(() => {
     if (library?.provider && wallet && WALLETS[ETHEREUM].includes(wallet)) {
       function onChainChanged(hexChainId) {
         const chainId = convertHexStringToNumber(hexChainId);
-        if (chainInfos[srcChain].id === chainId) {
-          setChainId(chainId);
-        }
+        setChainId(chainId);
       }
 
       function onAccountsChanged(accounts) {
@@ -170,11 +169,7 @@ function Web3Provider({ children }) {
   useEffect(() => {
     if (library?.provider && wallet && WALLETS[CARDANO].includes(wallet)) {
       function onChainChanged(chainId) {
-        if (chainInfos[srcChain].id === chainId) {
-          setChainId(chainId);
-        } else {
-          setChainId(null);
-        }
+        setChainId(chainId);
       }
 
       function onAccountsChanged(accounts) {
@@ -203,7 +198,15 @@ function Web3Provider({ children }) {
   return (
     <Web3ContextUpdate.Provider value={{ connect, logout, reloadBalance, setGasPrice }}>
       <Web3Context.Provider
-        value={{ account, balance, chainId, gasPrice, library, tokenBalance, wallet }}
+        value={{
+          account,
+          balance,
+          chainId,
+          gasPrice,
+          library,
+          tokenBalance,
+          wallet,
+        }}
       >
         {children}
       </Web3Context.Provider>

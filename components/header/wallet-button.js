@@ -7,20 +7,16 @@ import Dropdown from './dropdown';
 function WalletButton() {
   const { chainInfos, srcChain } = useChain();
   const { setIsOpen } = useWalletModal();
-  const { account, balance, chainId, wallet } = useWeb3();
+  const { account, balance, wallet } = useWeb3();
 
   if (wallet) {
     return (
       <div className="account">
         <div className="account-detail">
-          {Number.isInteger(chainId) ? (
+          {balance ? (
             <>
               <div className="account-balance">
-                {balance ? (
-                  `${shortenBalance(balance)} ${chainInfos?.[srcChain]?.nativeCurrency?.symbol}`
-                ) : (
-                  <div className="spiner" />
-                )}
+                {shortenBalance(balance)} {chainInfos?.[srcChain]?.nativeCurrency?.symbol}
               </div>
               <div className="account-detail__provider" />
             </>

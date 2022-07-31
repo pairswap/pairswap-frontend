@@ -9,14 +9,21 @@ import { getGasFeeInToken } from 'request/rest';
 import { convertNumberToString } from 'utils/transform';
 
 function GasFee() {
-  const { destChain } = useChain();
+  const { chainInfos, srcChain, destChain } = useChain();
   const { token } = useToken();
   const setError = useError();
   const { chainId, gasPrice, wallet } = useWeb3();
   const { setGasPrice } = useWeb3Update();
 
   useEffect(() => {
-    if (wallet && Number.isInteger(chainId) && token) {
+    if (
+      chainInfos &&
+      srcChain &&
+      Number.isInteger(chainId) &&
+      chainInfos[srcChain].id === chainId &&
+      token &&
+      wallet
+    ) {
       getGasFeeInToken({ chain: destChain, tokenId: token })
         .then(({ data }) => {
           if (data?.gas_cost) {
@@ -31,7 +38,7 @@ function GasFee() {
     } else {
       setGasPrice(null);
     }
-  }, [chainId, destChain, token, wallet, setError, setGasPrice]);
+  }, [chainId, chainInfos, srcChain, destChain, token, wallet, setError, setGasPrice]);
 
   return (
     <div>
