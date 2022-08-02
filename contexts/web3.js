@@ -1,12 +1,12 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Address } from '@emurgo/cardano-serialization-lib-asmjs';
 
 import { WALLETS, ETHEREUM, CARDANO } from 'constants/wallet';
 import useToken from 'hooks/useToken';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { CSL } from 'utils/cardano';
 import { hasProvider, getLibrary } from 'utils/provider';
 import { convertHexStringToNumber } from 'utils/transform';
 
@@ -124,14 +124,18 @@ function Web3Provider({ children }) {
   useEffect(() => {
     if (wallet) {
       if (library) {
-        getAccount();
-        getChainId();
+        if (library.isEnabled) {
+          getAccount();
+          getChainId();
+        } else {
+          logout();
+        }
       } else {
         const library = getLibrary(wallet);
         library.init().then(() => setLibrary(library));
       }
     }
-  }, [account, wallet, library, getAccount, getChainId]);
+  }, [account, wallet, library, getAccount, getChainId, logout]);
 
   useEffect(() => {
     if (chainInfos && srcChain) {
@@ -174,7 +178,7 @@ function Web3Provider({ children }) {
 
       function onAccountsChanged(accounts) {
         if (accounts && accounts.length > 0) {
-          setAccount(Address.from_bytes(Buffer.from(accounts[0], 'hex')).to_bech32());
+          setAccount(CSL.Address.from_bytes(Buffer.from(accounts[0], 'hex')).to_bech32());
         }
       }
 
