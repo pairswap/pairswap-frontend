@@ -5,7 +5,11 @@ import ErrorModal from 'components/modal/error';
 
 export const ErrorContext = createContext();
 
-const errorMessages = {
+const cardanoMessages = {
+  2: 'User rejected the request.',
+};
+
+const ethereumMessages = {
   '-32001': 'Resource not found.',
   '-32002': 'Have a pending request from metamask',
   '-32003': 'Transaction rejected.',
@@ -17,6 +21,8 @@ const errorMessages = {
   4900: 'The provider is disconnected from all chains.',
   4901: 'The provider is disconnected from the specified chain.',
 };
+
+const errorMessages = { ...ethereumMessages, ...cardanoMessages };
 
 function getErrorMessage(error) {
   if (!error.code) {

@@ -636,6 +636,15 @@ input[type='number'] {
   color: #ffffffb3;
 }
 
+.success-modal__message {
+  color: #ffffffb3;
+}
+
+.success-modal__link {
+  text-decoration: underline;
+  color: #fff;
+}
+
 .modal-message__link {
   display: block;
   margin-top: 2rem;

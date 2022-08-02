@@ -16,6 +16,7 @@ import { getProvider } from 'utils/provider';
 
 class EthereumLibrary {
   provider;
+  isEnabled;
 
   constructor(name) {
     this.name = name;
@@ -24,11 +25,23 @@ class EthereumLibrary {
   async init() {
     this.provider = getProvider(this.name);
     this.allowance = parseEther('1000000000'); // 1 * 10^9 * 10*18
+    this.isEnabled = await this.enable();
+  }
+
+  async enable() {
+    try {
+      const [account] = await this.provider.request({ method: 'eth_accounts' });
+
+      return account ? true : false;
+    } catch (error) {
+      return false;
+    }
   }
 
   async connect() {
     try {
       await this.provider.request({ method: 'eth_requestAccounts' });
+      this.isEnabled = true;
     } catch (error) {
       throw error;
     }
@@ -123,17 +136,14 @@ class EthereumLibrary {
     return contract.approve(gatewayAddress, this.allowance);
   }
 
-  async transfer({ gatewayAddress, account, recipient, destChain, tokenOut, tokenIn, amount }) {
+  async transfer({ gatewayAddress, account, recipient, destChain, srcToken, destToken, amount }) {
     const _amount = convertStringToBigNumber(amount.toString());
-    const _recipient = recipient ?? account;
-    // gatewayAddress as tokenIn to bypass type cast
-    const _tokenIn = recipient ? gatewayAddress : tokenIn;
 
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
       const contract = new Contract(gatewayAddress, ERC20Gateway, signer);
-      const tx = await contract.transferOut(destChain, _recipient, tokenOut, _tokenIn, _amount);
+      const tx = await contract.transferOut(destChain, recipient, srcToken, destToken, _amount);
       return tx.hash;
     } catch (error) {
       throw error;

@@ -3,12 +3,12 @@ import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Address } from '@emurgo/cardano-serialization-lib-asmjs';
 import { isAddress } from '@ethersproject/address';
 
 import { ETHEREUM, CARDANO } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useWeb3 from 'hooks/useWeb3';
+import { CSL } from 'utils/cardano';
 import SrcChainInput from './chain-input/src-chain-input';
 import DestChainInput from './chain-input/dest-chain-input';
 import PendingModal from './pending-modal';
@@ -27,7 +27,7 @@ function isValidAddress(type, address) {
       return isAddress(address);
     case CARDANO:
       try {
-        Address.from_bech32(address);
+        CSL.Address.from_bech32(address);
         return true;
       } catch (error) {
         return false;
@@ -41,6 +41,7 @@ function Main() {
   const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [txHash, setTxHash] = useState(null);
+  const [links, setLinks] = useState(null);
   const { gasPrice, tokenBalance } = useWeb3();
   const { chainInfos, srcChain, destChain } = useChain();
 
@@ -125,6 +126,7 @@ function Main() {
           setIsPending={setIsPending}
           setIsSuccess={setIsSuccess}
           setTxHash={setTxHash}
+          setLinks={setLinks}
           onSubmit={handleSubmit}
           isSameChainType={chainTypeInfos.isTheSame}
           onSuccess={() => reset({ amount: 0, recipient: '' })}
@@ -132,7 +134,7 @@ function Main() {
         <PendingModal open={isPending} txHash={txHash} />
         <SuccessModal
           open={isSuccess}
-          txHash={txHash}
+          links={links}
           onClose={() => {
             setIsSuccess(false);
             setTxHash(null);

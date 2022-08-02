@@ -1,13 +1,38 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { ETHEREUM } from 'constants/wallet';
+import { CARDANO, ETHEREUM } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWalletModal from 'hooks/useWalletModal';
 import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
+
+function generateLinks({ chainInfos, srcChain, destChain, recipient, txHash }) {
+  const { explorers: srcExplorers, type: srcType } = chainInfos[srcChain];
+  const { explorers: destExplorers, type: destType } = chainInfos[destChain];
+
+  let srcLink, destLink;
+
+  if (srcType === CARDANO) {
+    srcLink = `${srcExplorers[0]}/transaction/${txHash}`;
+  }
+
+  if (srcType === ETHEREUM) {
+    srcLink = `${srcExplorers[0]}/tx/${txHash}`;
+  }
+
+  if (destType === CARDANO) {
+    destLink = `${destExplorers[0]}/address/${recipient}`;
+  }
+
+  if (destType === ETHEREUM) {
+    destLink = `${destExplorers[0]}/address/${recipient}#tokentxns`;
+  }
+
+  return { srcLink, destLink };
+}
 
 function SubmitButton({
   isSameChainType,
@@ -16,6 +41,7 @@ function SubmitButton({
   setIsPending,
   setIsSuccess,
   setTxHash,
+  setLinks,
 }) {
   const [isApproved, setIsApproved] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
@@ -27,25 +53,35 @@ function SubmitButton({
   const { chainInfos, srcChain, destChain } = useChain();
   const setError = useError();
 
-  async function submit({ amount, recipient }) {
+  async function submit(data) {
     setIsLoading(true);
     try {
       const { gatewayAddress } = chainInfos[srcChain];
       const { addresses } = tokenInfos[token];
-      const tokenOut = addresses[srcChain];
-      const tokenIn = addresses[destChain];
+      const srcToken = addresses[srcChain];
+      const destToken = addresses[destChain];
+      const recipient = isSameChainType ? account : data.recipient;
 
-      const hash = await library.transfer({
+      const txHash = await library.transfer({
         gatewayAddress,
         account,
-        recipient: isSameChainType ? null : recipient,
+        recipient,
         destChain,
-        tokenOut,
-        tokenIn,
-        amount,
+        srcToken,
+        // gatewayAddress as destToken to bypass type cast
+        destToken: isSameChainType ? destToken : gatewayAddress,
+        amount: data.amount,
       });
 
-      setTxHash(hash);
+      const links = generateLinks({
+        chainInfos,
+        srcChain,
+        destChain,
+        recipient,
+        txHash,
+      });
+
+      setLinks(links);
       setIsSuccess(true);
       onSuccess();
     } catch (error) {
@@ -196,6 +232,7 @@ SubmitButton.propTypes = {
   setIsPending: PropTypes.func,
   setIsSuccess: PropTypes.func,
   setTxHash: PropTypes.func,
+  setLinks: PropTypes.func,
 };
 
 export default SubmitButton;
