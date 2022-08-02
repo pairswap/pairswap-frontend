@@ -1,5 +1,5 @@
 window.config = {
-  proxyAPI: 'https://be.talon-1.network',
+  proxyAPI: 'http://159.223.86.120:8080',
   tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
   tokenInfos: {
     TIGER: {
@@ -7,13 +7,11 @@ window.config = {
       name: 'Tiger Token',
       decimals: 18,
       icon: '/images/tiger.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'ganache1', 'ganache2'],
+      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet'],
       addresses: {
         'polygon-testnet': '0xE5216E1f485A209aaf5D8FfD36E9e499f1FDDFA9',
         'binance-testnet': '0xEae73C6e2eD79231A238230a2a1967e96aE2708b',
         'fantom-testnet': '0x8E00081e4A6F68e554b470908c4f6758bEc144d2',
-        ganache1: '0x7A23568c583483E9f7e13ae34A533A01D76213b9',
-        ganache2: '0x7A23568c583483E9f7e13ae34A533A01D76213b9',
       },
     },
     KANGAROO: {
@@ -26,8 +24,6 @@ window.config = {
         'polygon-testnet': '0x85463E352D14C9087c69cd700322554E5C06831b',
         'binance-testnet': '0x0415c3F9078525CF448b647D1f4370c81968a38c',
         'fantom-testnet': '0xcb96eBFB38E8E6f998f981f864666C608fa2Eea6',
-        ganache1: '0xD876383cdA551B5D6159f0fa7805b04Db1eaaf57',
-        ganache2: '0xD876383cdA551B5D6159f0fa7805b04Db1eaaf57',
       },
     },
     MOUSE: {
@@ -40,8 +36,6 @@ window.config = {
         'polygon-testnet': '0xC392c9239Da4079C777cf9074e42543EB47a6545',
         'binance-testnet': '0x1ee9A5D2546718958d2E3F5A252E320F03621dfE',
         'fantom-testnet': '0xD47AF82eb8B7209cc2dAcE94856D83492b9ed0FE',
-        ganache1: '0x1537Ed04fA536D2098cC4e319dF5218DF442f188',
-        ganache2: '0x1537Ed04fA536D2098cC4e319dF5218DF442f188',
       },
     },
     MONKEY: {
@@ -54,8 +48,6 @@ window.config = {
         'polygon-testnet': '0xfeF1B365e7b4260406421c29b5F4C4C8621473d1',
         'binance-testnet': '0x64E668B1AE7f67858d270879d5a6dC9d86e6e162',
         'fantom-testnet': '0x7a31ac89BCDeb78A1De360a87E8041B48b5C3490',
-        ganache1: '0x6Fd1d4A852946E6526deDe229961e4Fda4DC7b5B',
-        ganache2: '0x6Fd1d4A852946E6526deDe229961e4Fda4DC7b5B',
       },
     },
     BUNNY: {
@@ -68,8 +60,6 @@ window.config = {
         'polygon-testnet': '0x3a216D9f8E39349e30c9E5619c38AdDb43bAf70c',
         'binance-testnet': '0x8d39809294C4130b1A5Bf0476601b6912D57aBA4',
         'fantom-testnet': '0x3f58cE2EFB053CbA709CE526e01A727513Ab985c',
-        ganache1: '0x8Ea0442D850B9ed11264F16A05507bcE11dC8Fba',
-        ganache2: '0x8Ea0442D850B9ed11264F16A05507bcE11dC8Fba',
       },
     },
     ADA: {
@@ -77,62 +67,24 @@ window.config = {
       name: 'Ada Token',
       decimals: 18,
       icon: '/images/ada.png',
-      chains: [
-        'polygon-testnet',
-        'binance-testnet',
-        'fantom-testnet',
-        'cardano-testnet',
-        'ganache1',
-        'ganache2',
-      ],
+      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'cardano-testnet'],
       addresses: {
         'polygon-testnet': '0x895eA49304d0365e71375d5125728ccB593B2812',
         'binance-testnet': '0x082c111286c778835fD09EA3C80115c2dC744cC4',
         'fantom-testnet': '0x37dF5Bf01eF8512e875a292813AAb5B62dDD9e05',
         'cardano-testnet': 'dc89700b3adf88f6b520aba2f3cfa4c26fa7a19bd8eadf430d73b9d4:WRAP_ADA',
-        ganache1: '0x8E00081e4A6F68e554b470908c4f6758bEc144d2',
-        ganache2: '0x8E00081e4A6F68e554b470908c4f6758bEc144d2',
       },
     },
   },
   chainInfos: {
-    ganache1: {
-      id: 189985,
-      name: 'KO Chain',
-      rpcs: ['http://147.182.250.229:6544'],
-      explorers: [],
-      gatewayAddress: '',
-      icon: '/images/eth.png',
-      type: 'ethereum',
-      wallets: ['coinbase', 'metamask'],
-      nativeCurrency: {
-        symbol: 'ETH',
-        decimals: 18,
-      },
-    },
-    ganache2: {
-      id: 189986,
-      name: 'Mazze Chain',
-      rpcs: ['http://147.182.250.229:6545'],
-      explorers: [],
-      gatewayAddress: '',
-      icon: '/images/eth.png',
-      type: 'ethereum',
-      wallets: ['coinbase', 'metamask'],
-      nativeCurrency: {
-        symbol: 'ETH',
-        decimals: 18,
-      },
-    },
     'polygon-testnet': {
       id: 80001,
       name: 'Polygon Testnet',
       rpcs: ['https://rpc.ankr.com/polygon_mumbai'],
       explorers: ['https://mumbai.polygonscan.com'],
-      gatewayAddress: '',
+      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
       icon: '/images/matic.png',
       type: 'ethereum',
-      wallets: ['coinbase', 'metamask'],
       nativeCurrency: {
         symbol: 'MATIC',
         decimals: 18,
@@ -143,10 +95,9 @@ window.config = {
       name: 'BSC Testnet',
       rpcs: ['https://data-seed-prebsc-1-s3.binance.org:8545'],
       explorers: ['https://testnet.bscscan.com'],
-      gatewayAddress: '',
+      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
       icon: '/images/bnb.png',
       type: 'ethereum',
-      wallets: ['coinbase', 'metamask'],
       nativeCurrency: {
         symbol: 'BNB',
         decimals: 18,
@@ -157,10 +108,9 @@ window.config = {
       name: 'Fantom Testnet',
       rpcs: ['https://rpc.testnet.fantom.network'],
       explorers: ['https://testnet.ftmscan.com'],
-      gatewayAddress: '',
+      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
       icon: '/images/ftm.png',
       type: 'ethereum',
-      wallets: ['coinbase', 'metamask'],
       nativeCurrency: {
         symbol: 'FTM',
         decimals: 18,
@@ -169,11 +119,10 @@ window.config = {
     'cardano-testnet': {
       id: 0,
       name: 'Cardano Testnet',
-      explorers: ['https://explorer.cardano-testnet.iohkdev.io/en'],
-      gatewayAddress: '',
+      explorers: ['https://testnet.cardanoscan.io'],
+      gatewayAddress: 'addr_test1vrv79lwv89rzvwdt9kpzgq9seypxed3y3qaq3nxnjsfyaesjkkn9m',
       icon: '/images/ada.png',
       type: 'cardano',
-      wallets: ['nami'],
       nativeCurrency: {
         symbol: 'ADA',
         decimals: 18,
