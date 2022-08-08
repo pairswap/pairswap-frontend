@@ -398,20 +398,16 @@ input[type='number'] {
 }
 
 .form-group__footer {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 0;
   display: flex;
   justify-content: space-between;
-  font-weight: 500;
   font-size: 12px;
   line-height: 23px;
   color: #ffffff;
 }
 
-.token-balance {
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 23px;
-  color: #ffffff;
+.additional-text {
+  font-size: 10px;
 }
 
 .card__divider {

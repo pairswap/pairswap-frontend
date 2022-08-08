@@ -84,6 +84,7 @@ function SubmitButton({
       setLinks(links);
       setIsSuccess(true);
       onSuccess();
+      await reloadBalance();
     } catch (error) {
       setError(error);
     } finally {
