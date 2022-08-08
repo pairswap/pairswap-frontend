@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -42,7 +42,7 @@ function Main() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [txHash, setTxHash] = useState(null);
   const [links, setLinks] = useState(null);
-  const { gasPrice, tokenBalance } = useWeb3();
+  const { wallet, gasPrice, tokenBalance } = useWeb3();
   const { chainInfos, srcChain, destChain } = useChain();
 
   function getChainTypeInfos() {
@@ -67,8 +67,8 @@ function Main() {
       .number()
       .typeError('Amount is invalid')
       .required('Amount is required')
-      .moreThan(0, 'Amount must greater than 0')
-      .test('notEnoughToken', 'Do not have enough tokens', function (value) {
+      .min(1, 'Amount must be greater than or equal to 1')
+      .test('notEnoughToken', 'Do not have enough token', function (value) {
         return value + Number(gasPrice) <= Number(tokenBalance);
       }),
     recipient: yup
@@ -92,6 +92,12 @@ function Main() {
     formState: { errors },
   } = useForm({ defaultValues: { amount: 0, recipient: '' }, resolver: yupResolver(schema) });
 
+  useEffect(() => {
+    if (!wallet) {
+      reset({ amount: 0, recipient: '' });
+    }
+  }, [wallet, reset]);
+
   return (
     <main className="main">
       <div className="card">
@@ -110,8 +116,8 @@ function Main() {
         )}
 
         <div className="form-group__footer">
-          <GasFee />
           <TokenBalance />
+          <GasFee />
         </div>
 
         <div className="card__divider" />

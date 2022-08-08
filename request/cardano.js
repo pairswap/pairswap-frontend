@@ -1,6 +1,9 @@
 import { getProvider } from 'utils/provider';
 import { CoinSelection, CSL, multiAssetCount } from 'utils/cardano';
 
+// 1 token = 1000000 lovelace
+const UNIT = 1000000;
+
 const protocolParameters = {
   linearFee: {
     minFeeA: '44',
@@ -52,7 +55,7 @@ class CardanoLibrary {
       const hexBalance = await this.provider.getBalance();
       const balance = CSL.Value.from_bytes(Buffer.from(hexBalance, 'hex'));
 
-      return (Number(balance.coin().to_str()) / 1000000).toString();
+      return (Number(balance.coin().to_str()) / UNIT).toString();
     } catch (error) {
       throw error;
     }
@@ -96,7 +99,7 @@ class CardanoLibrary {
         tokenBalance.policyIdHex === policyIdHex && tokenBalance.assetNameString === assetNameString
     );
 
-    return foundedToken ? foundedToken.assetAmountString : '0';
+    return foundedToken ? (Number(foundedToken.assetAmountString) / UNIT).toString() : '0';
   }
 
   async getAccount() {
@@ -135,7 +138,7 @@ class CardanoLibrary {
 
     assets.insert(
       CSL.AssetName.new(Buffer.from(assetName, 'utf8')),
-      CSL.BigNum.from_str(amount.toString())
+      CSL.BigNum.from_str((amount * UNIT).toString())
     );
 
     multiAsset.insert(CSL.ScriptHash.from_bytes(Buffer.from(assetPolicy, 'hex')), assets);

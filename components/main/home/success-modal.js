@@ -16,12 +16,12 @@ function SuccessModal({ open, links, onClose }) {
               <a href={srcLink} target="_blank" rel="noreferrer" className="success-modal__link">
                 here
               </a>{' '}
-              to view transaction in source chain.
+              to view your transaction in the source chain.
             </p>
           ) : null}
           {destLink ? (
             <p className="success-modal__message">
-              Please wait and follow your transaction on the destination chain{' '}
+              Please wait and follow your transaction in the destination chain{' '}
               <a href={destLink} target="_blank" rel="noreferrer" className="success-modal__link">
                 here
               </a>

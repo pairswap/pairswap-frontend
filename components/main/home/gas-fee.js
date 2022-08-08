@@ -26,8 +26,10 @@ function GasFee() {
     ) {
       getGasFeeInToken({ chain: destChain, tokenId: token })
         .then(({ data }) => {
-          if (data?.gas_cost) {
-            const gasCost = convertNumberToString(data.gas_cost);
+          const gasPrice = data?.gas_cost;
+
+          if (Number.isInteger(gasPrice)) {
+            const gasCost = gasPrice === 0 ? '0' : convertNumberToString(gasPrice);
             setGasPrice(gasCost);
           }
         })

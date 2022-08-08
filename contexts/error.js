@@ -26,14 +26,18 @@ const errorMessages = { ...ethereumMessages, ...cardanoMessages };
 
 function getErrorMessage(error) {
   if (!error.code) {
-    return error.message;
-  }
+    if (error.message) {
+      return error.message;
+    }
 
-  if (errorMessages[error.code]) {
-    return errorMessages[error.code];
-  }
+    return 'An unknown error occurred. Please retry or reload the browser.';
+  } else {
+    if (errorMessages[error.code]) {
+      return errorMessages[error.code];
+    }
 
-  return 'An unknown error occurred. Please retry or reload the browser.';
+    return 'An unknown error occurred. Please retry or reload the browser.';
+  }
 }
 
 function ErrorProvider({ children }) {
