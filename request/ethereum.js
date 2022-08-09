@@ -136,14 +136,14 @@ class EthereumLibrary {
     return contract.approve(gatewayAddress, this.allowance);
   }
 
-  async transfer({ gatewayAddress, account, recipient, destChain, srcToken, destToken, amount }) {
+  async transfer({ gatewayAddress, account, recipient, destChain, srcToken, amount }) {
     const _amount = convertStringToBigNumber(amount.toString());
 
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
       const contract = new Contract(gatewayAddress, ERC20Gateway, signer);
-      const tx = await contract.transferOut(destChain, recipient, srcToken, destToken, _amount);
+      const tx = await contract.transferOut(destChain, recipient, srcToken, _amount);
       return tx.hash;
     } catch (error) {
       throw error;

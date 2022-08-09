@@ -59,7 +59,6 @@ function SubmitButton({
       const { gatewayAddress } = chainInfos[srcChain];
       const { addresses } = tokenInfos[token];
       const srcToken = addresses[srcChain];
-      const destToken = addresses[destChain];
       const recipient = isSameChainType ? account : data.recipient;
 
       const txHash = await library.transfer({
@@ -68,8 +67,6 @@ function SubmitButton({
         recipient,
         destChain,
         srcToken,
-        // gatewayAddress as destToken to bypass type cast
-        destToken: isSameChainType ? destToken : gatewayAddress,
         amount: data.amount,
       });
 
