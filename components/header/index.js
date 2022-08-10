@@ -35,6 +35,14 @@ function Header() {
               </a>
             </Link>
           ))}
+          <a
+            href="http://159.223.84.201:4000"
+            rel="noreferrer"
+            target="_blank"
+            className="nav__link"
+          >
+            Faucet
+          </a>
         </nav>
 
         <div className="header__item">
