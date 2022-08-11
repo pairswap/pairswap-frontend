@@ -15,6 +15,7 @@ const ethereumMessages = {
   '-32003': 'Transaction rejected.',
   '-32004': 'Method not supported.',
   '-32005': 'Request limit exceeded.',
+  '-32603': 'Internal JSON-RPC error. Please change the RPC URL.',
   4001: 'User rejected the request.',
   4100: 'The requested account and/or method has not been authorized.',
   4200: 'The requested method is not supported by this Ethereum provider.',

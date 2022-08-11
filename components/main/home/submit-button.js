@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { serializeError } from 'eth-rpc-errors';
 
 import { CARDANO, ETHEREUM } from 'constants/wallet';
 import useChain from 'hooks/useChain';
@@ -126,7 +127,7 @@ function SubmitButton({
       setIsPending(false);
       setIsApproved(true);
     } catch (error) {
-      setError(error);
+      setError(serializeError(error));
     } finally {
       setIsLoading(false);
     }
@@ -153,8 +154,9 @@ function SubmitButton({
           .checkApproval({ gatewayAddress, tokenAddress, account })
           .then(setIsApproved)
           .catch((error) => {
+            const e = serializeError(error);
+            setError(e, { silent: e.code !== -32603 });
             setIsFailed(true);
-            setError(error, { slient: true });
           })
           .finally(() => setIsLoading(false));
       } else {
