@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 import classname from 'utils/classname';
 
@@ -13,7 +14,14 @@ const routes = [
 ];
 
 function Header() {
+  const [faucetURL, setFaucetURL] = useState(null);
   const { pathname } = useRouter();
+
+  useEffect(() => {
+    if (window?.config?.faucetURL) {
+      setFaucetURL(window.config.faucetURL);
+    }
+  }, []);
 
   return (
     <>
@@ -35,14 +43,11 @@ function Header() {
               </a>
             </Link>
           ))}
-          <a
-            href="http://159.223.84.201:4000"
-            rel="noreferrer"
-            target="_blank"
-            className="nav__link"
-          >
-            Faucet
-          </a>
+          {faucetURL ? (
+            <a href={faucetURL} rel="noreferrer" target="_blank" className="nav__link">
+              Faucet
+            </a>
+          ) : null}
         </nav>
 
         <div className="header__item">

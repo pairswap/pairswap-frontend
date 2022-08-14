@@ -1,5 +1,6 @@
 window.config = {
   proxyAPI: 'http://159.223.86.120:8080',
+  faucetURL: 'http://159.223.84.201:4000',
   tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
   tokenInfos: {
     TIGER: {
@@ -7,11 +8,19 @@ window.config = {
       name: 'Tiger Token',
       decimals: 18,
       icon: '/images/tiger.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0xE5216E1f485A209aaf5D8FfD36E9e499f1FDDFA9',
         'binance-testnet': '0xEae73C6e2eD79231A238230a2a1967e96aE2708b',
         'fantom-testnet': '0x8E00081e4A6F68e554b470908c4f6758bEc144d2',
+        'avaxc-testnet': '0x7a23568c583483e9f7e13ae34a533a01d76213b9',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uTIGER',
       },
     },
     KANGAROO: {
@@ -19,11 +28,19 @@ window.config = {
       name: 'Kangaroo Token',
       decimals: 18,
       icon: '/images/kangooro.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'ganache1', 'ganache2'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0x85463E352D14C9087c69cd700322554E5C06831b',
         'binance-testnet': '0x0415c3F9078525CF448b647D1f4370c81968a38c',
         'fantom-testnet': '0xcb96eBFB38E8E6f998f981f864666C608fa2Eea6',
+        'avaxc-testnet': '0xd876383cda551b5d6159f0fa7805b04db1eaaf57',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uKANGAROO',
       },
     },
     MOUSE: {
@@ -31,11 +48,19 @@ window.config = {
       name: 'Mouse Token',
       decimals: 18,
       icon: '/images/mouse.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'ganache1', 'ganache2'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0xC392c9239Da4079C777cf9074e42543EB47a6545',
         'binance-testnet': '0x1ee9A5D2546718958d2E3F5A252E320F03621dfE',
         'fantom-testnet': '0xD47AF82eb8B7209cc2dAcE94856D83492b9ed0FE',
+        'avaxc-testnet': '0x1537ed04fa536d2098cc4e319df5218df442f188',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uMOUSE',
       },
     },
     MONKEY: {
@@ -43,11 +68,19 @@ window.config = {
       name: 'Monkey Token',
       decimals: 18,
       icon: '/images/monkey.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'ganache1', 'ganache2'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0xfeF1B365e7b4260406421c29b5F4C4C8621473d1',
         'binance-testnet': '0x64E668B1AE7f67858d270879d5a6dC9d86e6e162',
         'fantom-testnet': '0x7a31ac89BCDeb78A1De360a87E8041B48b5C3490',
+        'avaxc-testnet': '0x6fd1d4a852946e6526dede229961e4fda4dc7b5b',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uMONKEY',
       },
     },
     BUNNY: {
@@ -55,11 +88,19 @@ window.config = {
       name: 'Bunny Token',
       decimals: 18,
       icon: '/images/bunny.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'ganache1', 'ganache2'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0x3a216D9f8E39349e30c9E5619c38AdDb43bAf70c',
         'binance-testnet': '0x8d39809294C4130b1A5Bf0476601b6912D57aBA4',
         'fantom-testnet': '0x3f58cE2EFB053CbA709CE526e01A727513Ab985c',
+        'avaxc-testnet': '0x8ea0442d850b9ed11264f16a05507bce11dc8fba',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uBUNNY',
       },
     },
     ADA: {
@@ -67,12 +108,19 @@ window.config = {
       name: 'Ada Token',
       decimals: 18,
       icon: '/images/ada.png',
-      chains: ['polygon-testnet', 'binance-testnet', 'fantom-testnet', 'cardano-testnet'],
+      chains: [
+        'polygon-testnet',
+        'binance-testnet',
+        'fantom-testnet',
+        'avaxc-testnet',
+        'cardano-testnet',
+      ],
       addresses: {
         'polygon-testnet': '0x895eA49304d0365e71375d5125728ccB593B2812',
         'binance-testnet': '0x082c111286c778835fD09EA3C80115c2dC744cC4',
         'fantom-testnet': '0x37dF5Bf01eF8512e875a292813AAb5B62dDD9e05',
-        'cardano-testnet': 'dc89700b3adf88f6b520aba2f3cfa4c26fa7a19bd8eadf430d73b9d4:WRAP_ADA',
+        'avaxc-testnet': '0x8e00081e4a6f68e554b470908c4f6758bec144d2',
+        'cardano-testnet': 'ccf1a53e157a7277e717045578a6e9834405730be0b778fd0daab794:uADA',
       },
     },
   },
@@ -82,7 +130,7 @@ window.config = {
       name: 'Polygon Testnet',
       rpcs: ['https://rpc.ankr.com/polygon_mumbai'],
       explorers: ['https://mumbai.polygonscan.com'],
-      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
+      gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/matic.png',
       type: 'ethereum',
       nativeCurrency: {
@@ -95,7 +143,7 @@ window.config = {
       name: 'BSC Testnet',
       rpcs: ['https://data-seed-prebsc-1-s3.binance.org:8545'],
       explorers: ['https://testnet.bscscan.com'],
-      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
+      gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/bnb.png',
       type: 'ethereum',
       nativeCurrency: {
@@ -108,7 +156,7 @@ window.config = {
       name: 'Fantom Testnet',
       rpcs: ['https://rpc.testnet.fantom.network'],
       explorers: ['https://testnet.ftmscan.com'],
-      gatewayAddress: '0x4b6267817F715e172dc68BB687317D9Cdb3d621A',
+      gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/ftm.png',
       type: 'ethereum',
       nativeCurrency: {
@@ -116,11 +164,24 @@ window.config = {
         decimals: 18,
       },
     },
+    'avaxc-testnet': {
+      id: 43113,
+      name: 'Avalanche Testnet',
+      rpcs: ['https://api.avax-test.network/ext/bc/C/rpc'],
+      explorers: ['https://testnet.snowtrace.io'],
+      gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
+      icon: '/images/avax.png',
+      type: 'ethereum',
+      nativeCurrency: {
+        symbol: 'AVAX',
+        decimals: 18,
+      },
+    },
     'cardano-testnet': {
       id: 0,
       name: 'Cardano Testnet',
       explorers: ['https://testnet.cardanoscan.io'],
-      gatewayAddress: 'addr_test1vrv79lwv89rzvwdt9kpzgq9seypxed3y3qaq3nxnjsfyaesjkkn9m',
+      gatewayAddress: 'addr_test1vqz2y3p6m50cvalalhjvuj70kzrkap9rrlard6rc6qakc5qeed60s',
       icon: '/images/ada.png',
       type: 'cardano',
       nativeCurrency: {
