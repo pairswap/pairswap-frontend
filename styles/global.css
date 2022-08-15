@@ -209,6 +209,7 @@ input[type='number'] {
 .dropdown__button {
   padding: 0 1rem;
   height: 41px;
+  min-width: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1004,6 +1005,12 @@ input[type='number'] {
   display: flex;
   align-items: center;
   column-gap: 1rem;
+}
+
+.wallet__guide {
+  text-align: center;
+  margin-top: 50px;
+  color: #fff;
 }
 
 @media (max-width: 640px) {

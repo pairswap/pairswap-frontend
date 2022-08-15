@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
-import { Web3Provider } from '@ethersproject/providers';
+import { Web3Provider, JsonRpcProvider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 
 import SampleERC20 from 'abis/SampleERC20.json';
@@ -59,10 +59,11 @@ class EthereumLibrary {
     }
   }
 
-  async getTokenBalance({ account, tokenAddress }) {
+  async getTokenBalance({ account, tokenAddress, rpcUrl, chainId }) {
     try {
-      const web3Provider = new Web3Provider(this.provider, 'any');
-      const contract = new Contract(tokenAddress, SampleERC20, web3Provider);
+      const provider = new JsonRpcProvider(rpcUrl, chainId);
+      const contract = new Contract(tokenAddress, SampleERC20, provider);
+
       const balance = await contract.balanceOf(account);
 
       return convertBigNumberToString(balance);

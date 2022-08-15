@@ -88,25 +88,26 @@ function Web3Provider({ children }) {
   }, [library, setError]);
 
   const getTokenBalance = useCallback(async () => {
-    if (!library || !account || !tokenInfos || !token || !srcChain) return;
+    if (!library || !account || !chainInfos || !tokenInfos || !token || !srcChain) return;
 
     try {
       const { addresses } = tokenInfos[token];
       const tokenAddress = addresses[srcChain];
-      const tokenBalance = await library.getTokenBalance({ account, tokenAddress });
+      const { id, rpcs } = chainInfos[srcChain];
+      const tokenBalance = await library.getTokenBalance({
+        account,
+        tokenAddress,
+        rpcUrl: rpcs?.[0],
+        chainId: id,
+      });
       setTokenBalance(tokenBalance);
     } catch (error) {
       setError(error, { silent: true });
     }
-  }, [account, library, srcChain, tokenInfos, token, setError]);
+  }, [account, library, srcChain, chainInfos, tokenInfos, token, setError]);
 
   const reloadBalance = useCallback(async () => {
-    if (
-      Number.isInteger(chainId) &&
-      srcChain &&
-      chainInfos &&
-      chainInfos[srcChain].id === chainId
-    ) {
+    if (Number.isInteger(chainId) && srcChain && chainInfos) {
       await getBalance();
       await getTokenBalance();
     } else {

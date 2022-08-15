@@ -1,6 +1,5 @@
 window.config = {
   proxyAPI: 'http://159.223.86.120:8080',
-  faucetURL: 'http://159.223.84.201:4000',
   tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
   tokenInfos: {
     TIGER: {
@@ -133,6 +132,7 @@ window.config = {
       gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/matic.png',
       type: 'ethereum',
+      tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
       nativeCurrency: {
         symbol: 'MATIC',
         decimals: 18,
@@ -146,6 +146,7 @@ window.config = {
       gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/bnb.png',
       type: 'ethereum',
+      tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
       nativeCurrency: {
         symbol: 'BNB',
         decimals: 18,
@@ -159,6 +160,7 @@ window.config = {
       gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/ftm.png',
       type: 'ethereum',
+      tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
       nativeCurrency: {
         symbol: 'FTM',
         decimals: 18,
@@ -172,6 +174,7 @@ window.config = {
       gatewayAddress: '0xa12792c52F5700828C9B2262d5aec4E3819fF2B1',
       icon: '/images/avax.png',
       type: 'ethereum',
+      tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
       nativeCurrency: {
         symbol: 'AVAX',
         decimals: 18,
@@ -184,6 +187,7 @@ window.config = {
       gatewayAddress: 'addr_test1vqz2y3p6m50cvalalhjvuj70kzrkap9rrlard6rc6qakc5qeed60s',
       icon: '/images/ada.png',
       type: 'cardano',
+      tokens: ['TIGER', 'KANGAROO', 'MOUSE', 'MONKEY', 'BUNNY', 'ADA'],
       nativeCurrency: {
         symbol: 'ADA',
         decimals: 18,

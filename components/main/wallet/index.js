@@ -1,21 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
+import { WALLETS } from 'constants/wallet';
 import useWeb3 from 'hooks/useWeb3';
 import useChain from 'hooks/useChain';
-import { shortenBalance, convertBigNumberToString } from 'utils/transform';
+import useToken from 'hooks/useToken';
+import { shortenBalance } from 'utils/transform';
 import ChainSelect from './chain-select';
 
-async function getTokenBalanceByChain({ account, chain, library }) {
-  const promises = chain.tokens.map(async (token) => {
+async function getTokenBalanceByChain({ account, srcChain, library, tokenInfos, chainInfos }) {
+  const { id, rpcs, tokens } = chainInfos[srcChain];
+  const promises = tokens.map(async (token) => {
+    const tokenAddress = tokenInfos[token].addresses[srcChain];
+
     return library
-      .getTokenBalanceByChain({
+      .getTokenBalance({
         account,
-        tokenAddress: token.address,
-        rpcUrls: chain.rpcUrls,
-        chainId: chain.chainId,
+        tokenAddress,
+        rpcUrl: rpcs?.[0],
+        chainId: id,
       })
       .then((balance) => ({
-        ...token,
+        ...tokenInfos[token],
         balance,
       }));
   });
@@ -25,58 +30,54 @@ async function getTokenBalanceByChain({ account, chain, library }) {
 
 function Main() {
   const [loading, setLoading] = useState(false);
-  const { account, connected, library } = useWeb3();
-  const { supportedChains } = useChain();
-  const [selectedChain, setSelectedChain] = useState(null);
-  const [selectedTokens, setSelectedTokens] = useState([]);
-
-  const changeSelectedChain = useCallback(
-    (chain) => {
-      setSelectedChain(chain);
-      setLoading(true);
-      getTokenBalanceByChain({ account, chain, library }).then((tokens) => {
-        setSelectedTokens(tokens);
-        setLoading(false);
-      });
-    },
-    [account, library]
-  );
+  const { account, library, wallet } = useWeb3();
+  const { chainInfos, srcChain } = useChain();
+  const { tokenInfos } = useToken();
+  const [selectedTokens, setSelectedTokens] = useState(null);
 
   useEffect(() => {
-    if (connected && account) {
-      changeSelectedChain(supportedChains[0]);
-    }
-  }, [account, connected, changeSelectedChain, supportedChains]);
+    if (account && library && chainInfos && tokenInfos && srcChain && wallet) {
+      const { type } = chainInfos[srcChain];
 
-  if (!connected) {
-    return null;
-  }
+      if (WALLETS[type].includes(wallet)) {
+        setLoading(true);
+        getTokenBalanceByChain({ account, srcChain, library, tokenInfos, chainInfos }).then(
+          (tokens) => {
+            setSelectedTokens(tokens);
+            setLoading(false);
+          }
+        );
+      } else {
+        setSelectedTokens(null);
+      }
+    } else {
+      setSelectedTokens(null);
+    }
+  }, [account, library, wallet, srcChain, tokenInfos, chainInfos]);
 
   return (
     <main className="main">
       <div className="wallet">
         <div className="wallet__header">
-          <ChainSelect
-            chains={supportedChains}
-            selectedChain={selectedChain}
-            setSelectedChain={changeSelectedChain}
-          />
+          <ChainSelect />
         </div>
         <div>
           {loading ? (
             <div className="loader" />
-          ) : (
-            selectedTokens.map(({ iconSrc, symbol, balance }, index) => (
+          ) : selectedTokens ? (
+            selectedTokens.map(({ icon, symbol, balance }, index) => (
               <div key={index} className="wallet__row">
                 <div className="wallet__token">
-                  <img src={iconSrc} alt="token" className="wallet-token__img" />
+                  <img src={icon} alt="token" className="wallet-token__img" />
                   <span className="wallet-token__text">{symbol}</span>
                 </div>
                 <span className="wallet-token__text">
-                  {balance ? shortenBalance(convertBigNumberToString(balance)) : null}
+                  {balance ? shortenBalance(balance) : null}
                 </span>
               </div>
             ))
+          ) : (
+            <div className="wallet__guide">Please connect wallet to load your tokens</div>
           )}
         </div>
       </div>

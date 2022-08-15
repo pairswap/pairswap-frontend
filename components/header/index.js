@@ -9,7 +9,7 @@ const WalletButton = dynamic(() => import('./wallet-button'), { ssr: false });
 
 const routes = [
   { href: '/', title: 'Swap' },
-  // { href: '/wallet', title: 'Wallet' },
+  { href: '/wallet', title: 'Wallet' },
   { href: '/support', title: 'Support' },
 ];
 
