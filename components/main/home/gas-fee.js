@@ -18,7 +18,7 @@ function GasFee() {
   useEffect(() => {
     if (chainInfos && srcChain && Number.isInteger(chainId) && token && wallet) {
       getGasFeeInToken({ chain: destChain, tokenId: token })
-        .then((data) => {
+        .then(({ data }) => {
           const gasPrice = data?.gas_cost;
 
           if (Number.isInteger(gasPrice)) {

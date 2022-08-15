@@ -1,19 +1,13 @@
 export async function getGasFeeInToken({ chain, tokenId }) {
-  try {
-    const response = await fetch(
-      `${window.config.proxyAPI}/getGasFeeInToken?chain=${chain}&token_id=${tokenId}`
-    );
-
+  return fetch(
+    `${window.config.proxyAPI}/getGasFeeInToken?chain=${chain}&token_id=${tokenId}`
+  ).then((response) => {
     if (!response.ok) {
       throw Error(response.statusText);
     }
 
-    const { data } = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
+    return response.json();
+  });
 }
 
 export async function support({ name, email, txURL, comment }) {
