@@ -1,11 +1,13 @@
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import { Controller } from 'react-hook-form';
 import SelectTokenModal from 'components/modal/select-token';
+import NumberFormat from 'react-number-format';
 import useToken from 'hooks/useToken';
 import useTokenUpdate from 'hooks/useTokenUpdate';
 
-const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
+function TokenInput({ control }) {
   const [isOpen, setIsOpen] = useState(false);
   const { tokenInfos, token } = useToken();
   const { setToken } = useTokenUpdate();
@@ -16,14 +18,25 @@ const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
         <label htmlFor="amount" className="input__label">
           Amount
         </label>
-        <input
-          ref={ref}
-          name={name}
-          id="amount"
-          type="number"
-          className="input"
-          onChange={onChange}
-          onBlur={onBlur}
+        <Controller
+          render={({ field }) => {
+            const { name, ref, onChange, onBlur } = field;
+
+            return (
+              <NumberFormat
+                ref={ref}
+                name={name}
+                onBlur={onBlur}
+                onValueChange={(c) => onChange(c.floatValue)}
+                allowEmptyFormatting
+                thousandSeparator
+                className="input"
+                autoComplete="off"
+              />
+            );
+          }}
+          name="amount"
+          control={control}
         />
       </div>
       {tokenInfos && token ? (
@@ -50,14 +63,10 @@ const TokenInput = forwardRef(({ name, onChange, onBlur }, ref) => {
       )}
     </div>
   );
-});
-
-TokenInput.displayName = 'TokenInput';
+}
 
 TokenInput.propTypes = {
-  name: PropTypes.string,
-  onChange: PropTypes.func,
-  onBlur: PropTypes.func,
+  control: PropTypes.shape({}),
 };
 
 export default TokenInput;

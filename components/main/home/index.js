@@ -62,48 +62,51 @@ function Main() {
 
   const chainTypeInfos = getChainTypeInfos();
 
-  const schema = yup.object({
-    amount: yup
-      .number()
-      .typeError('Amount is invalid')
-      .required('Amount is required')
-      .min(1, 'Amount must be greater than or equal to 1')
-      .test('notEnoughToken', 'Do not have enough token', function (value) {
-        return value + Number(gasPrice) <= Number(tokenBalance);
-      }),
-    recipient: yup
-      .string()
-      .test('required', "Recipient's address is required", function (value) {
-        const { isTheSame } = chainTypeInfos;
+  const schema = wallet
+    ? yup.object({
+        amount: yup
+          .number()
+          .required('Amount is required')
+          .min(1, 'Amount must be greater than or equal to 1')
+          .test('notEnoughToken', 'Do not have enough token', function (value) {
+            return value + Number(gasPrice) <= Number(tokenBalance);
+          }),
+        recipient: yup
+          .string()
+          .test('required', "Recipient's address is required", function (value) {
+            const { isTheSame } = chainTypeInfos;
 
-        return isTheSame ? true : Boolean(value);
+            return isTheSame ? true : Boolean(value);
+          })
+          .test('valid', "Recipient's address is invalid", function (value) {
+            const { isTheSame, destType } = chainTypeInfos;
+
+            return isTheSame ? true : isValidAddress(destType, value);
+          }),
       })
-      .test('valid', "Recipient's address is invalid", function (value) {
-        const { isTheSame, destType } = chainTypeInfos;
-
-        return isTheSame ? true : isValidAddress(destType, value);
-      }),
-  });
+    : yup.object({});
 
   const {
+    control,
     register,
-    reset,
+    resetField,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: { amount: 0, recipient: '' }, resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(schema) });
 
   useEffect(() => {
     if (!wallet) {
-      reset({ amount: 0, recipient: '' });
+      resetField('amount');
+      resetField('recipient');
     }
-  }, [wallet, reset]);
+  }, [wallet, resetField]);
 
   return (
     <main className="main">
       <div className="card">
         <div className="form-group">
           <div className="form-group__title">Select a token</div>
-          <TokenInput {...register('amount')} />
+          <TokenInput control={control} />
           <p className="validation">{errors.amount?.message}</p>
         </div>
 
@@ -135,7 +138,6 @@ function Main() {
           setLinks={setLinks}
           onSubmit={handleSubmit}
           isSameChainType={chainTypeInfos.isTheSame}
-          onSuccess={() => reset({ amount: 0, recipient: '' })}
         />
         <PendingModal open={isPending} txHash={txHash} />
         <SuccessModal

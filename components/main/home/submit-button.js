@@ -38,7 +38,6 @@ function generateLinks({ chainInfos, srcChain, destChain, recipient, txHash }) {
 function SubmitButton({
   isSameChainType,
   onSubmit,
-  onSuccess,
   setIsPending,
   setIsSuccess,
   setTxHash,
@@ -81,8 +80,6 @@ function SubmitButton({
 
       setLinks(links);
       setIsSuccess(true);
-      onSuccess();
-      await reloadBalance();
     } catch (error) {
       setError(error);
     } finally {
@@ -228,7 +225,6 @@ function SubmitButton({
 SubmitButton.propTypes = {
   isSameChainType: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
   setIsPending: PropTypes.func,
   setIsSuccess: PropTypes.func,
   setTxHash: PropTypes.func,
