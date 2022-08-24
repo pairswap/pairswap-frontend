@@ -965,10 +965,12 @@ input[type='number'] {
 }
 
 .wallet {
+  display: flex;
+  flex-direction: column;
   padding: 1rem 2rem;
   margin-top: 3rem;
   width: 600px;
-  min-height: 200px;
+  min-height: 410px;
   border-radius: 24px;
   background: linear-gradient(
     123.31deg,
@@ -990,6 +992,13 @@ input[type='number'] {
 .wallet-header__text {
   font-weight: 600;
   color: #fff;
+}
+
+.wallet__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .wallet__row {
@@ -1029,6 +1038,69 @@ input[type='number'] {
 .wallet-token__text {
   color: #ffffffb3;
   font-weight: 600;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  margin-top: 6rem;
+  width: 1200px;
+  border-radius: 24px;
+  background: linear-gradient(
+    123.31deg,
+    rgba(48, 87, 254, 0.5) -20.75%,
+    rgba(91, 158, 255, 0.5) 38.69%,
+    rgba(161, 103, 255, 0.5) 98.13%
+  );
+  box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 1px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 1200px) {
+  .history {
+    width: calc(100% - 2rem);
+    border-radius: 10px;
+    overflow: auto;
+  }
+
+  .history__row {
+    column-gap: 2rem;
+  }
+
+  .history__row-item {
+    min-width: 200px;
+  }
+}
+
+.history__header {
+  height: 40px;
+  margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.history__row {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.history__row-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.history__name {
+  margin-left: 0.5rem;
+}
+
+.history__link {
+  text-decoration: underline;
+  color: #fff;
 }
 
 .toast {

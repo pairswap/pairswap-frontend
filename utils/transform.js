@@ -11,6 +11,16 @@ export function shortenAccount(account, startLength = 6, endLength = 4) {
   return startStr + '...' + endStr;
 }
 
+export function shortenHash(hash, startLength = 10, endLength = 6) {
+  if (!hash) {
+    return;
+  }
+
+  const startStr = hash.substring(0, startLength);
+  const endStr = hash.substring(hash.length - endLength);
+  return startStr + '...' + endStr;
+}
+
 export function shortenBalance(balance, length = 4) {
   if (!balance) {
     return;
@@ -19,6 +29,17 @@ export function shortenBalance(balance, length = 4) {
   const exponent = 10 ** length;
 
   return Math.floor(Number(balance) * exponent) / exponent;
+}
+
+export function formatDate(date) {
+  const d = new Date(date);
+  const dd = String(d.getDate()).padStart(2, '0');
+  const MM = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+
+  return `${dd}/${MM}/${yyyy} ${hh}:${mm}`;
 }
 
 export function convertStringToBigNumber(str, exponent = 18) {
