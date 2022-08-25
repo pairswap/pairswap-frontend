@@ -143,6 +143,7 @@ function Main() {
         <SuccessModal
           open={isSuccess}
           links={links}
+          txHash={txHash}
           onClose={() => {
             setIsSuccess(false);
             setTxHash(null);

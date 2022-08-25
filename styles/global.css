@@ -2,10 +2,6 @@
   box-sizing: border-box;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-  background: #19123c;
-}
 ::-webkit-scrollbar-thumb {
   background: #4742ff;
 }
@@ -1145,4 +1141,23 @@ input[type='number'] {
   font-size: 18px;
   font-weight: 700;
   color: #4ade80;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page {
+  color: #fff;
+  font-size: 18px;
+}
+
+.page--active {
+  font-size: 20px;
+  text-decoration: underline;
+  color: #a167ff;
 }

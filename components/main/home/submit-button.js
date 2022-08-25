@@ -91,6 +91,7 @@ function SubmitButton({
       });
 
       setLinks(links);
+      setTxHash(txHash);
       setIsSuccess(true);
     } catch (error) {
       setError(error);

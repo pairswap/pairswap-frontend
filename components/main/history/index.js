@@ -5,9 +5,13 @@ import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import { getHistory } from 'request/rest';
 import { formatDate, shortenHash } from 'utils/transform';
+import classname from 'utils/classname';
+
+const limit = 10;
 
 function History() {
   const [histories, setHistories] = useState(null);
+  const [offset, setOffset] = useState(0);
   const { chainInfos } = useChain();
   const { tokenInfos } = useToken();
   const { account } = useWeb3();
@@ -36,56 +40,70 @@ function History() {
           </div>
         </div>
         <div className="history__body">
-          {histories.map(
-            (
-              {
-                address,
-                token_symbol: tokenSymbol,
-                src_chain: srcChain,
-                dest_chain: destChain,
-                amount,
-                src_hash: srcHash,
-                src_link: srcLink,
-                created_at: createdAt,
-              },
-              index
-            ) => (
-              <div key={index} className="history__row">
-                <div className="history__row-item">
-                  <img
-                    src={tokenInfos[tokenSymbol].icon}
-                    alt="token"
-                    className="wallet-token__img"
-                  />
-                  <span className="history__name">{tokenSymbol}</span>
+          {histories
+            .slice(limit * offset, limit * offset + limit)
+            .map(
+              (
+                {
+                  token_symbol: tokenSymbol,
+                  src_chain: srcChain,
+                  dest_chain: destChain,
+                  amount,
+                  src_hash: srcHash,
+                  src_link: srcLink,
+                  created_at: createdAt,
+                },
+                index
+              ) => (
+                <div key={index} className="history__row">
+                  <div className="history__row-item">
+                    <img
+                      src={tokenInfos[tokenSymbol].icon}
+                      alt="token"
+                      className="wallet-token__img"
+                    />
+                    <span className="history__name">{tokenSymbol}</span>
+                  </div>
+                  <div className="history__row-item">
+                    <img
+                      src={chainInfos[srcChain].icon}
+                      alt="source chain"
+                      className="wallet-token__img"
+                    />
+                    <span className="history__name">{chainInfos[srcChain].name}</span>
+                  </div>
+                  <div className="history__row-item">
+                    <img
+                      src={chainInfos[destChain].icon}
+                      alt="source chain"
+                      className="wallet-token__img"
+                    />
+                    <span className="history__name">{chainInfos[destChain].name}</span>
+                  </div>
+                  <div className="history__row-item">{amount}</div>
+                  <div className="history__row-item">
+                    <a href={srcLink} target="_blank" rel="noreferrer" className="history__link">
+                      {shortenHash(srcHash)}
+                    </a>
+                  </div>
+                  <div className="history__row-item">{formatDate(createdAt)}</div>
                 </div>
-                <div className="history__row-item">
-                  <img
-                    src={chainInfos[srcChain].icon}
-                    alt="source chain"
-                    className="wallet-token__img"
-                  />
-                  <span className="history__name">{chainInfos[srcChain].name}</span>
-                </div>
-                <div className="history__row-item">
-                  <img
-                    src={chainInfos[destChain].icon}
-                    alt="source chain"
-                    className="wallet-token__img"
-                  />
-                  <span className="history__name">{chainInfos[destChain].name}</span>
-                </div>
-                <div className="history__row-item">{amount}</div>
-                <div className="history__row-item">
-                  <a href={srcLink} target="_blank" rel="noreferrer" className="history__link">
-                    {shortenHash(srcHash)}
-                  </a>
-                </div>
-                <div className="history__row-item">{formatDate(createdAt)}</div>
-              </div>
-            )
-          )}
+              )
+            )}
         </div>
+      </div>
+      <div className="pagination">
+        {Math.floor(histories.length / limit) > 0
+          ? new Array(Math.ceil(histories.length / limit)).fill().map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setOffset(index)}
+                className={classname('page', index === offset && 'page--active')}
+              >
+                {index + 1}
+              </button>
+            ))
+          : null}
       </div>
     </main>
   );
