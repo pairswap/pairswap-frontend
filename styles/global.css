@@ -1039,7 +1039,7 @@ input[type='number'] {
 .history {
   display: flex;
   flex-direction: column;
-  padding: 1rem 0;
+  padding: 1rem 2rem;
   margin-top: 6rem;
   width: 1200px;
   border-radius: 24px;
@@ -1088,6 +1088,14 @@ input[type='number'] {
   justify-content: center;
   align-items: center;
   color: #fff;
+}
+
+.history__row-item--left {
+  justify-content: flex-start;
+}
+
+.history__row-item--small {
+  flex: 0.5;
 }
 
 .history__name {
@@ -1147,17 +1155,9 @@ input[type='number'] {
   display: flex;
   justify-content: center;
   align-items: center;
-  column-gap: 0.5rem;
   margin-top: 2rem;
 }
 
-.page {
-  color: #fff;
-  font-size: 18px;
-}
-
-.page--active {
-  font-size: 20px;
-  text-decoration: underline;
-  color: #a167ff;
+.page--disabled {
+  opacity: 0.4;
 }
