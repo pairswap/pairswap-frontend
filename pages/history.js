@@ -1,8 +1,5 @@
-import dynamic from 'next/dynamic';
-
 import Header from 'components/header';
-
-const Main = dynamic(() => import('components/main/history'), { ssr: false });
+import Main from 'components/main/history';
 
 function Wallet() {
   return (
