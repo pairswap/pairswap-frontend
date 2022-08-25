@@ -61,7 +61,7 @@ function Main() {
         <div className="wallet__header">
           <ChainSelect />
         </div>
-        <div>
+        <div className="wallet__body">
           {loading ? (
             <div className="loader" />
           ) : selectedTokens ? (

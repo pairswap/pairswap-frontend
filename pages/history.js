@@ -1,5 +1,5 @@
 import Header from 'components/header';
-import Main from 'components/main/wallet';
+import Main from 'components/main/history';
 
 function Wallet() {
   return (

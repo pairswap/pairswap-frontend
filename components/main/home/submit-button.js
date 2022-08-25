@@ -9,6 +9,7 @@ import useWalletModal from 'hooks/useWalletModal';
 import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import useWeb3Update from 'hooks/useWeb3Update';
+import { createHistory } from 'request/rest';
 
 function generateLinks({ chainInfos, srcChain, destChain, recipient, txHash }) {
   const { explorers: srcExplorers, type: srcType } = chainInfos[srcChain];
@@ -78,7 +79,19 @@ function SubmitButton({
         txHash,
       });
 
+      await createHistory({
+        address: account,
+        recipient,
+        tokenSymbol: token,
+        srcChain,
+        destChain,
+        amount: String(data.amount),
+        srcHash: txHash,
+        srcLink: links.srcLink,
+      });
+
       setLinks(links);
+      setTxHash(txHash);
       setIsSuccess(true);
     } catch (error) {
       setError(error);

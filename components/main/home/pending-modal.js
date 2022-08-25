@@ -4,8 +4,7 @@ import Modal from 'components/modal';
 import useChain from 'hooks/useChain';
 
 function PendingModal({ open, txHash }) {
-  const { srcChain } = useChain();
-  const blockExplorerUrl = srcChain?.blockExplorerUrls?.[0];
+  const { chainInfos, srcChain } = useChain();
 
   return (
     <Modal open={open} onClose={() => {}}>
@@ -13,9 +12,9 @@ function PendingModal({ open, txHash }) {
         <div className="loader" />
         <p className="modal__message">You have a pending transaction. Please wait for a while.</p>
         <p className="modal__note">Do not reload or close the browser.</p>
-        {txHash && blockExplorerUrl ? (
+        {chainInfos && srcChain ? (
           <a
-            href={`${blockExplorerUrl}/tx/${txHash}`}
+            href={`${chainInfos[srcChain].explorers[0]}/tx/${txHash}`}
             target="_blank"
             rel="noreferrer"
             className="modal-message__link"

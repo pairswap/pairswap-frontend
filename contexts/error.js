@@ -6,6 +6,7 @@ import ErrorModal from 'components/modal/error';
 export const ErrorContext = createContext();
 
 const cardanoMessages = {
+  '-3': 'User rejected the request.',
   2: 'User rejected the request.',
 };
 

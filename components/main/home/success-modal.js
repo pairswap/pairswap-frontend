@@ -2,8 +2,9 @@ import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
+import { shortenHash } from 'utils/transform';
 
-function SuccessModal({ open, links, onClose }) {
+function SuccessModal({ open, links, txHash, onClose }) {
   const renderLinks = useCallback(() => {
     if (links) {
       const { srcLink, destLink } = links;
@@ -12,11 +13,9 @@ function SuccessModal({ open, links, onClose }) {
         <div>
           {srcLink ? (
             <p className="success-modal__message">
-              Click{' '}
               <a href={srcLink} target="_blank" rel="noreferrer" className="success-modal__link">
-                here
-              </a>{' '}
-              to view your transaction in the source chain.
+                {shortenHash(txHash)}
+              </a>
             </p>
           ) : null}
           {destLink ? (
@@ -32,7 +31,7 @@ function SuccessModal({ open, links, onClose }) {
     }
 
     return null;
-  }, [links]);
+  }, [links, txHash]);
 
   return (
     <Modal open={open} onClose={onClose}>

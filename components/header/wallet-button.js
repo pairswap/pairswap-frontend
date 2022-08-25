@@ -13,7 +13,7 @@ function WalletButton() {
     return (
       <div className="account">
         <div className="account-detail">
-          {balance ? (
+          {Number(balance) > 0 ? (
             <>
               <div className="account-balance">
                 {shortenBalance(balance)} {chainInfos?.[srcChain]?.nativeCurrency?.symbol}
