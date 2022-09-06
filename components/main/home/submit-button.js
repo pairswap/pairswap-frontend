@@ -57,13 +57,15 @@ function SubmitButton({
   async function submit(data) {
     setIsLoading(true);
     try {
-      const { gatewayAddress } = chainInfos[srcChain];
+      const { vaultAddress } = chainInfos[srcChain];
+      const { id } = chainInfos[destChain];
       const { addresses } = tokenInfos[token];
       const srcToken = addresses[srcChain];
       const recipient = isSameChainType ? account : data.recipient;
 
       const txHash = await library.transfer({
-        gatewayAddress,
+        id,
+        vaultAddress,
         account,
         recipient,
         destChain,
@@ -121,12 +123,12 @@ function SubmitButton({
   async function handleApprove() {
     setIsLoading(true);
     try {
-      const { gatewayAddress } = chainInfos[srcChain];
+      const { vaultAddress } = chainInfos[srcChain];
       const { addresses } = tokenInfos[token];
       const tokenAddress = addresses[srcChain];
 
       const tx = await library.approve({
-        gatewayAddress,
+        vaultAddress,
         tokenAddress,
         account,
       });
@@ -155,13 +157,13 @@ function SubmitButton({
       wallet
     ) {
       if (chainInfos[srcChain].id === chainId && !!library.checkApproval) {
-        const { gatewayAddress } = chainInfos[srcChain];
+        const { vaultAddress } = chainInfos[srcChain];
         const { addresses } = tokenInfos[token];
         const tokenAddress = addresses[srcChain];
 
         setIsLoading(true);
         library
-          .checkApproval({ gatewayAddress, tokenAddress, account })
+          .checkApproval({ vaultAddress, tokenAddress, account })
           .then(setIsApproved)
           .catch((error) => {
             const e = serializeError(error);

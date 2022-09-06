@@ -4,7 +4,7 @@ import { Web3Provider, JsonRpcProvider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 
 import SampleERC20 from 'abis/SampleERC20.json';
-import ERC20Gateway from 'abis/ERC20Gateway.json';
+import Vault from 'abis/Vault.json';
 import {
   converNumberToHexString,
   convertBigNumberToString,
@@ -112,16 +112,16 @@ class EthereumLibrary {
     });
   }
 
-  getCurrentAllowance({ gatewayAddress, tokenAddress, account }) {
+  getCurrentAllowance({ vaultAddress, tokenAddress, account }) {
     const web3Provider = new Web3Provider(this.provider, 'any');
     const contract = new Contract(tokenAddress, SampleERC20, web3Provider);
 
-    return contract.allowance(account, gatewayAddress);
+    return contract.allowance(account, vaultAddress);
   }
 
-  async checkApproval({ gatewayAddress, tokenAddress, account }) {
+  async checkApproval({ vaultAddress, tokenAddress, account }) {
     const currentAllowance = await this.getCurrentAllowance({
-      gatewayAddress,
+      vaultAddress,
       tokenAddress,
       account,
     });
@@ -129,22 +129,22 @@ class EthereumLibrary {
     return currentAllowance.gt(BigNumber.from('0'));
   }
 
-  approve({ gatewayAddress, tokenAddress, account }) {
+  approve({ vaultAddress, tokenAddress, account }) {
     const web3Provider = new Web3Provider(this.provider, 'any');
     const signer = web3Provider.getSigner(account);
     const contract = new Contract(tokenAddress, SampleERC20, signer);
 
-    return contract.approve(gatewayAddress, this.allowance);
+    return contract.approve(vaultAddress, this.allowance);
   }
 
-  async transfer({ gatewayAddress, account, recipient, destChain, srcToken, amount }) {
+  async transfer({ id, vaultAddress, account, recipient, srcToken, amount }) {
     const _amount = convertStringToBigNumber(amount.toString());
 
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
-      const contract = new Contract(gatewayAddress, ERC20Gateway, signer);
-      const tx = await contract.transferOut(destChain, recipient, srcToken, _amount);
+      const contract = new Contract(vaultAddress, Vault, signer);
+      const tx = await contract.transferOut(srcToken, id, recipient, _amount);
       return tx.hash;
     } catch (error) {
       throw error;
