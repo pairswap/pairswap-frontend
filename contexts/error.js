@@ -45,10 +45,12 @@ function getErrorMessage(error) {
 function ErrorProvider({ children }) {
   const [openModal, setOpenModal] = useState(false);
   const [message, setMessage] = useState(null);
+  const [canClose, setCanClose] = useState(true);
 
-  const setError = useCallback((error, options = { silent: false }) => {
-    const { silent } = options;
+  const setError = useCallback((error, options = {}) => {
+    const { silent = false, canClose = true } = options;
     console.error(error);
+    setCanClose(canClose);
 
     if (!silent) {
       setOpenModal(true);
@@ -62,6 +64,7 @@ function ErrorProvider({ children }) {
       <ErrorModal
         open={openModal}
         message={message}
+        canClose={canClose}
         onClose={() => {
           setOpenModal(false);
           setMessage(null);

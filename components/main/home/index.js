@@ -7,6 +7,7 @@ import { isAddress } from '@ethersproject/address';
 
 import { ETHEREUM, CARDANO } from 'constants/wallet';
 import useChain from 'hooks/useChain';
+import useError from 'hooks/useError';
 import useWeb3 from 'hooks/useWeb3';
 import { CSL } from 'utils/cardano';
 import SrcChainInput from './chain-input/src-chain-input';
@@ -44,6 +45,7 @@ function Main() {
   const [links, setLinks] = useState(null);
   const { wallet, gasPrice, tokenBalance } = useWeb3();
   const { chainInfos, srcChain, destChain } = useChain();
+  const setError = useError();
 
   function getChainTypeInfos() {
     let srcType, destType;
@@ -100,6 +102,14 @@ function Main() {
       resetField('recipient');
     }
   }, [wallet, resetField]);
+
+  useEffect(() => {
+    if (window?.config?.isUpdating) {
+      setError(new Error('We are working on an update. Please come back later'), {
+        canClose: false,
+      });
+    }
+  }, [setError]);
 
   return (
     <main className="main">

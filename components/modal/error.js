@@ -2,14 +2,23 @@ import PropTypes from 'prop-types';
 
 import Modal from 'components/modal';
 
-function ErrorModal({ open, message, onClose }) {
+function ErrorModal({ open, message, canClose, onClose }) {
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={() => {
+        if (canClose) {
+          onClose();
+        }
+      }}
+    >
       <div className="modal">
         <div className="modal__header modal__header--end">
-          <button onClick={onClose} className="btn-close-modal">
-            <img src="/images/close.png" alt="close" />
-          </button>
+          {canClose ? (
+            <button onClick={onClose} className="btn-close-modal">
+              <img src="/images/close.png" alt="close" />
+            </button>
+          ) : null}
         </div>
         <img src="/images/error.svg" alt="error" className="modal__img" />
         <div className="modal__message">{message}</div>
@@ -21,6 +30,7 @@ function ErrorModal({ open, message, onClose }) {
 ErrorModal.propTypes = {
   open: PropTypes.bool,
   message: PropTypes.string,
+  canClose: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
