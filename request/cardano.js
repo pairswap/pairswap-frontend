@@ -120,13 +120,13 @@ class CardanoLibrary {
     }
   }
 
-  async transfer({ gatewayAddress, account, recipient, destChain, srcToken, amount }) {
+  async transfer({ vaultAddress, account, recipient, destChain, srcToken, amount }) {
     const splits = srcToken.split(':');
     if (splits.length < 2) throw new Error('Invalid token address');
 
     const [assetPolicy, assetName] = splits;
     const paymentAddress = CSL.Address.from_bech32(account);
-    const receiveAddress = CSL.Address.from_bech32(gatewayAddress);
+    const receiveAddress = CSL.Address.from_bech32(vaultAddress);
 
     const rawUtxos = await this.provider.getUtxos();
     const utxos = rawUtxos.map((e) =>
