@@ -21,7 +21,7 @@ function Web3Provider({ children }) {
   const [chainId, setChainId] = useState(null);
   const [gasPrice, setGasPrice] = useState(null);
   const [tokenBalance, setTokenBalance] = useState(null);
-  const { chainInfos, srcChain } = useChain();
+  const { chainInfos, srcChain, destChain } = useChain();
   const { tokenInfos, token } = useToken();
   const setError = useError();
 
@@ -117,10 +117,10 @@ function Web3Provider({ children }) {
   }, [chainId, chainInfos, srcChain, getBalance, getTokenBalance]);
 
   useEffect(() => {
-    if (wallet && account) {
+    if (wallet && account && srcChain && destChain) {
       reloadBalance();
     }
-  }, [account, wallet, reloadBalance]);
+  }, [account, wallet, srcChain, destChain, reloadBalance]);
 
   useEffect(() => {
     if (wallet) {
