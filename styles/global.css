@@ -396,8 +396,6 @@ input[type='number'] {
 
 .form-group__footer {
   padding: 0.5rem 0;
-  display: flex;
-  justify-content: space-between;
   font-size: 12px;
   line-height: 23px;
   color: #ffffff;

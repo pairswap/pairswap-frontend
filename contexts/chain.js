@@ -2,16 +2,20 @@ import { createContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import useToken from 'hooks/useToken';
-import useLocalStorage from 'hooks/useLocalStorage';
 
 export const ChainContext = createContext();
 export const ChainContextUpdate = createContext();
 
+function randomChain(chains) {
+  const index = Math.floor(Math.random() * chains.length);
+  return chains[index];
+}
+
 function ChainProvider({ children }) {
   const [chains, setChains] = useState(null);
   const [chainInfos, setChainInfos] = useState(null);
-  const [srcChain, setSrcChain] = useLocalStorage('srcChain', null);
-  const [destChain, setDestChain] = useLocalStorage('destChain', null);
+  const [srcChain, setSrcChain] = useState(null);
+  const [destChain, setDestChain] = useState(null);
   const { tokenInfos, token } = useToken();
 
   const swapChain = useCallback(() => {
@@ -29,7 +33,7 @@ function ChainProvider({ children }) {
       let newSrcChain = srcChain;
 
       if (!srcChain || !newChains.includes(srcChain)) {
-        newSrcChain = newChains[0];
+        newSrcChain = randomChain(newChains);
         setSrcChain(newSrcChain);
       }
 
