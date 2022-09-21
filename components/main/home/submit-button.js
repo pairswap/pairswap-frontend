@@ -71,6 +71,7 @@ function SubmitButton({
         destChain,
         srcToken,
         amount: data.amount,
+        isSameChainType,
       });
 
       const links = generateLinks({
@@ -103,14 +104,14 @@ function SubmitButton({
   }
 
   async function switchChain() {
-    const { id, name, rpcs, explorers, nativeCurrency } = chainInfos[srcChain];
+    const { chainId, name, rpcs, explorers, nativeCurrency } = chainInfos[srcChain];
 
     try {
-      await library.changeChain({ id });
+      await library.changeChain({ chainId });
     } catch (error) {
       if (error.code === 4902) {
         try {
-          await library.addChain({ id, name, rpcs, explorers, nativeCurrency });
+          await library.addChain({ chainId, name, rpcs, explorers, nativeCurrency });
         } catch (error) {
           setError(error);
         }
@@ -156,7 +157,7 @@ function SubmitButton({
       tokenInfos &&
       wallet
     ) {
-      if (chainInfos[srcChain].id === chainId && !!library.checkApproval) {
+      if (chainInfos[srcChain].chainId === chainId && !!library.checkApproval) {
         const { vaultAddress } = chainInfos[srcChain];
         const { addresses } = tokenInfos[token];
         const tokenAddress = addresses[srcChain];
@@ -190,7 +191,7 @@ function SubmitButton({
       chainInfos &&
       srcChain &&
       Number.isInteger(chainId) &&
-      chainInfos[srcChain].id === chainId
+      chainInfos[srcChain].chainId === chainId
     ) {
       if (isFailed) {
         return (

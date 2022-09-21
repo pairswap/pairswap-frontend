@@ -90,12 +90,12 @@ class EthereumLibrary {
     }
   }
 
-  addChain({ id, name, nativeCurrency, rpcs, explorers }) {
+  addChain({ chainId, name, nativeCurrency, rpcs, explorers }) {
     return this.provider.request({
       method: 'wallet_addEthereumChain',
       params: [
         {
-          chainId: converNumberToHexString(id),
+          chainId: converNumberToHexString(chainId),
           chainName: name,
           nativeCurrency,
           rpcUrls: rpcs,
@@ -105,10 +105,10 @@ class EthereumLibrary {
     });
   }
 
-  changeChain({ id }) {
+  changeChain({ chainId }) {
     return this.provider.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: converNumberToHexString(id) }],
+      params: [{ chainId: converNumberToHexString(chainId) }],
     });
   }
 
@@ -137,15 +137,21 @@ class EthereumLibrary {
     return contract.approve(vaultAddress, this.allowance);
   }
 
-  async transfer({ id, vaultAddress, account, recipient, srcToken, amount }) {
-    const _amount = convertStringToBigNumber(amount.toString());
+  async transfer({ id, vaultAddress, account, recipient, isSameChainType, srcToken, amount }) {
+    const bignumberAmount = convertStringToBigNumber(amount.toString());
 
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
       const contract = new Contract(vaultAddress, Vault, signer);
-      const tx = await contract.transferOut(srcToken, id, recipient, _amount);
-      return tx.hash;
+
+      if (isSameChainType) {
+        const tx = await contract.transferOut(srcToken, id, recipient, bignumberAmount);
+        return tx.hash;
+      } else {
+        const tx = await contract.transferOutNonEvm(srcToken, id, recipient, bignumberAmount);
+        return tx.hash;
+      }
     } catch (error) {
       throw error;
     }

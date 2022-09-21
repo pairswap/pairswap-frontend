@@ -93,12 +93,12 @@ function Web3Provider({ children }) {
     try {
       const { addresses } = tokenInfos[token];
       const tokenAddress = addresses[srcChain];
-      const { id, rpcs } = chainInfos[srcChain];
+      const { chainId, rpcs } = chainInfos[srcChain];
       const tokenBalance = await library.getTokenBalance({
         account,
         tokenAddress,
         rpcUrl: rpcs?.[0],
-        chainId: id,
+        chainId,
       });
       setTokenBalance(tokenBalance);
     } catch (error) {
@@ -183,16 +183,20 @@ function Web3Provider({ children }) {
         }
       }
 
-      if (library.provider.experimental?.on) {
+      if (library.provider?.experimental?.on) {
         library.provider.experimental.on('networkChange', onChainChanged);
         library.provider.experimental.on('accountChange', onAccountsChanged);
       } else {
-        library.provider.onNetworkChange(onChainChanged);
-        library.provider.onAccountChange(onAccountsChanged);
+        if (library.provider?.onNetworkChange) {
+          library.provider.onNetworkChange(onChainChanged);
+        }
+        if (library.provider?.onAccountChange) {
+          library.provider.onAccountChange(onAccountsChanged);
+        }
       }
 
       return () => {
-        if (library.provider?.experimental.off) {
+        if (library.provider?.experimental?.off) {
           library.provider.experimental.off('networkChange', onChainChanged);
           library.provider.experimental.off('accountChange', onAccountsChanged);
         }

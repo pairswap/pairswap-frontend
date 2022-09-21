@@ -1,4 +1,4 @@
-import { METAMASK, COINBASE, NAMI, FLINT } from 'constants/wallet';
+import { METAMASK, COINBASE, NAMI, FLINT, ETERNL, TYPHON } from 'constants/wallet';
 import EthereumLibrary from 'request/ethereum';
 import CardanoLibrary from 'request/cardano';
 
@@ -34,6 +34,18 @@ function hasFlint() {
   return Boolean(window.cardano.flint);
 }
 
+function hasEternl() {
+  if (!window.cardano) return false;
+
+  return Boolean(window.cardano.eternl);
+}
+
+function hasTyphon() {
+  if (!window.cardano) return false;
+
+  return Boolean(window.cardano.typhon);
+}
+
 function hasProvider(providerName) {
   switch (providerName) {
     case METAMASK:
@@ -44,6 +56,10 @@ function hasProvider(providerName) {
       return hasNami();
     case FLINT:
       return hasFlint();
+    case ETERNL:
+      return hasEternl();
+    case TYPHON:
+      return hasTyphon();
     default:
       return false;
   }
@@ -73,6 +89,16 @@ function getFlint() {
   return window.cardano.flint.enable();
 }
 
+function getEternl() {
+  return window.cardano.eternl.enable();
+}
+
+async function getTyphon() {
+  await window.cardano.typhon.enable();
+
+  return window.cardano.typhon;
+}
+
 function getProvider(providerName) {
   switch (providerName) {
     case METAMASK:
@@ -83,6 +109,10 @@ function getProvider(providerName) {
       return getNami();
     case FLINT:
       return getFlint();
+    case ETERNL:
+      return getEternl();
+    case TYPHON:
+      return getTyphon();
     default:
       return null;
   }
@@ -98,6 +128,10 @@ function getLibrary(name) {
       return new CardanoLibrary(NAMI);
     case FLINT:
       return new CardanoLibrary(FLINT);
+    case ETERNL:
+      return new CardanoLibrary(ETERNL);
+    case TYPHON:
+      return new CardanoLibrary(TYPHON);
   }
 }
 
