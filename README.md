@@ -14,9 +14,17 @@ Can change config at runtime
 yarn dev
 ```
 
-#### Production
+#### Production (use Docker Registry)
+
+In local machine:
 
 ```
-yarn build
-yarn start
+docker build -t froggy000/ko-exchange .
+docker push froggy000/ko-exchange
+```
+
+In remote server:
+
+```
+./scripts/build.sh
 ```
