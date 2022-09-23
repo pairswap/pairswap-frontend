@@ -72,6 +72,7 @@ function SubmitButton({
         srcToken,
         amount: data.amount,
         isSameChainType,
+        tokenSymbol: token,
       });
 
       const links = generateLinks({

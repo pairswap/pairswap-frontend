@@ -9,7 +9,7 @@ import { shortenBalance } from 'utils/transform';
 function TokenBalance() {
   const { chainInfos, srcChain, destChain } = useChain();
   const { tokenInfos, token } = useToken();
-  const { tokenBalance } = useWeb3();
+  const { balance, tokenBalance } = useWeb3();
 
   const assetName = useMemo(() => {
     if (chainInfos && tokenInfos && srcChain && destChain && token) {
@@ -42,11 +42,17 @@ function TokenBalance() {
   if (tokenBalance) {
     return (
       <div>
-        <span>
-          Balance: <strong>{`${shortenBalance(tokenBalance)} ${token}`}</strong>
-        </span>
+        {srcChain === 'cardano-testnet' && token === 'ADA' ? (
+          <span>
+            Balance: <strong>{`${shortenBalance(balance)} ADA`}</strong>
+          </span>
+        ) : (
+          <span>
+            Balance: <strong>{`${shortenBalance(tokenBalance)} ${token}`}</strong>
+          </span>
+        )}
         <br />
-        {assetName ? (
+        {token !== 'ADA' && assetName ? (
           <span className="additional-text">{`1 ${token} = 1000000 ${assetName}`}</span>
         ) : null}
       </div>

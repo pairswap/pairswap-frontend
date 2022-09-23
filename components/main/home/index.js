@@ -8,6 +8,7 @@ import { isAddress } from '@ethersproject/address';
 import { ETHEREUM, CARDANO } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
+import useToken from 'hooks/useToken';
 import useWeb3 from 'hooks/useWeb3';
 import { CSL } from 'utils/cardano';
 import SrcChainInput from './chain-input/src-chain-input';
@@ -43,7 +44,8 @@ function Main() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [txHash, setTxHash] = useState(null);
   const [links, setLinks] = useState(null);
-  const { wallet, gasPrice, tokenBalance } = useWeb3();
+  const { wallet, gasPrice, balance, tokenBalance } = useWeb3();
+  const { token } = useToken();
   const { chainInfos, srcChain, destChain } = useChain();
   const setError = useError();
 
@@ -71,7 +73,11 @@ function Main() {
           .required('Amount is required')
           .min(1, 'Amount must be greater than or equal to 1')
           .test('notEnoughToken', 'Do not have enough token', function (value) {
-            return value + Number(gasPrice) <= Number(tokenBalance);
+            if (srcChain === 'cardano-testnet' && token === 'ADA') {
+              return value + Number(gasPrice) <= Number(balance);
+            } else {
+              return value + Number(gasPrice) <= Number(tokenBalance);
+            }
           }),
         recipient: yup
           .string()

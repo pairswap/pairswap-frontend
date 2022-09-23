@@ -120,7 +120,86 @@ class CardanoLibrary {
     }
   }
 
-  async transfer({ vaultAddress, account, recipient, destChain, srcToken, amount }) {
+  async transferNativeToken({ vaultAddress, account, recipient, destChain, amount }) {
+    const paymentAddress = CSL.Address.from_bech32(account);
+    const receiveAddress = CSL.Address.from_bech32(vaultAddress);
+
+    const rawUtxos = await this.provider.getUtxos();
+    const utxos = rawUtxos.map((e) =>
+      CSL.TransactionUnspentOutput.from_bytes(Buffer.from(e, 'hex'))
+    );
+
+    const txBuilderConfig = CSL.TransactionBuilderConfigBuilder.new()
+      .coins_per_utxo_word(CSL.BigNum.from_str(protocolParameters.coinsPerUtxoWord))
+      .fee_algo(
+        CSL.LinearFee.new(
+          CSL.BigNum.from_str(protocolParameters.linearFee.minFeeA),
+          CSL.BigNum.from_str(protocolParameters.linearFee.minFeeB)
+        )
+      )
+      .key_deposit(CSL.BigNum.from_str(protocolParameters.keyDeposit))
+      .pool_deposit(CSL.BigNum.from_str(protocolParameters.poolDeposit))
+      .max_tx_size(protocolParameters.maxTxSize)
+      .max_value_size(protocolParameters.maxValueSize)
+      .prefer_pure_change(true)
+      .build();
+
+    const txBuilder = CSL.TransactionBuilder.new(txBuilderConfig);
+
+    txBuilder.add_output(
+      CSL.TransactionOutput.new(
+        receiveAddress,
+        CSL.Value.new(CSL.BigNum.from_str((amount * UNIT).toString()))
+      )
+    );
+
+    const txUnspentOutputs = CSL.TransactionUnspentOutputs.new();
+    for (const utxo of utxos) {
+      txUnspentOutputs.add(utxo);
+    }
+
+    txBuilder.add_inputs_from(txUnspentOutputs, 1);
+
+    const metadata = CSL.GeneralTransactionMetadata.new();
+    metadata.insert(
+      CSL.BigNum.from_str('0'),
+      CSL.encode_json_str_to_metadatum(
+        JSON.stringify({
+          chain: destChain,
+          recipient,
+          native_ada: 1,
+        }),
+        0
+      )
+    );
+    const auxiliaryData = CSL.AuxiliaryData.new();
+    auxiliaryData.set_metadata(metadata);
+    txBuilder.set_auxiliary_data(auxiliaryData);
+
+    txBuilder.add_change_if_needed(paymentAddress);
+
+    const transaction = CSL.Transaction.new(
+      txBuilder.build(),
+      CSL.TransactionWitnessSet.new(),
+      txBuilder.get_auxiliary_data()
+    );
+
+    const witneses = await this.provider.signTx(
+      Buffer.from(transaction.to_bytes()).toString('hex')
+    );
+
+    const signedTx = CSL.Transaction.new(
+      transaction.body(),
+      CSL.TransactionWitnessSet.from_bytes(Buffer.from(witneses, 'hex')),
+      transaction.auxiliary_data()
+    );
+
+    const txhash = await this.provider.submitTx(Buffer.from(signedTx.to_bytes()).toString('hex'));
+
+    return txhash;
+  }
+
+  async transferToken({ vaultAddress, account, recipient, destChain, srcToken, amount }) {
     const splits = srcToken.split(':');
     if (splits.length < 2) throw new Error('Invalid token address');
 
@@ -221,6 +300,14 @@ class CardanoLibrary {
     const txhash = await this.provider.submitTx(Buffer.from(signedTx.to_bytes()).toString('hex'));
 
     return txhash;
+  }
+
+  async transfer({ vaultAddress, account, recipient, destChain, srcToken, amount, tokenSymbol }) {
+    if (tokenSymbol === 'ADA') {
+      return this.transferNativeToken({ vaultAddress, account, recipient, destChain, amount });
+    } else {
+      return this.transferToken({ vaultAddress, account, recipient, destChain, amount, srcToken });
+    }
   }
 }
 
