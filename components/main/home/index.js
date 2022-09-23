@@ -71,7 +71,7 @@ function Main() {
         amount: yup
           .number()
           .required('Amount is required')
-          .min(1, 'Amount must be greater than or equal to 1')
+          .min(2, 'Amount must be greater than or equal to 2')
           .test('notEnoughToken', 'Do not have enough token', function (value) {
             if (srcChain === 'cardano-testnet' && token === 'ADA') {
               return value + Number(gasPrice) <= Number(balance);
