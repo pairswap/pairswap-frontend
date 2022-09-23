@@ -19,12 +19,15 @@ yarn dev
 In local machine:
 
 ```
-docker build -t froggy000/ko-exchange .
-docker push froggy000/ko-exchange
+docker build -t devsisunetwork/ko-exchange .
+docker push devsisunetwork/ko-exchange
 ```
 
 In remote server:
 
 ```
-./scripts/build.sh
+docker rm -vf $(docker ps -aq)
+docker rmi -f $(docker images -aq)
+docker pull devsisunetwork/ko-exchange
+docker run -p 3000:3000 devsisunetwork/ko-exchange
 ```
