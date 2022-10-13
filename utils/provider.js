@@ -1,6 +1,7 @@
-import { METAMASK, COINBASE, NAMI, ETERNL, TYPHON } from 'constants/wallet';
+import { METAMASK, COINBASE, NAMI, ETERNL, TYPHON, PHANTOM } from 'constants/wallet';
 import EthereumLibrary from 'request/ethereum';
 import CardanoLibrary from 'request/cardano';
+import SolanaLibrary from 'request/solana';
 
 function hasMetamask() {
   if (!window.ethereum) return false;
@@ -28,12 +29,6 @@ function hasNami() {
   return Boolean(window.cardano.nami);
 }
 
-function hasFlint() {
-  if (!window.cardano) return false;
-
-  return Boolean(window.cardano.flint);
-}
-
 function hasEternl() {
   if (!window.cardano) return false;
 
@@ -44,6 +39,12 @@ function hasTyphon() {
   if (!window.cardano) return false;
 
   return Boolean(window.cardano.typhon);
+}
+
+function hasPhantom() {
+  if (!window.phantom) return false;
+
+  return Boolean(window.phantom?.solana?.isPhantom);
 }
 
 function hasProvider(providerName) {
@@ -58,6 +59,8 @@ function hasProvider(providerName) {
       return hasEternl();
     case TYPHON:
       return hasTyphon();
+    case PHANTOM:
+      return hasPhantom();
     default:
       return false;
   }
@@ -83,16 +86,16 @@ function getNami() {
   return window.cardano.nami.enable();
 }
 
-function getFlint() {
-  return window.cardano.flint.enable();
-}
-
 function getEternl() {
   return window.cardano.eternl.enable();
 }
 
 async function getTyphon() {
   return window.cardano.typhoncip30.enable();
+}
+
+function getPhantom() {
+  return window.phantom.solana;
 }
 
 function getProvider(providerName) {
@@ -107,6 +110,8 @@ function getProvider(providerName) {
       return getEternl();
     case TYPHON:
       return getTyphon();
+    case PHANTOM:
+      return getPhantom();
     default:
       return null;
   }
@@ -124,6 +129,8 @@ function getLibrary(name) {
       return new CardanoLibrary(ETERNL);
     case TYPHON:
       return new CardanoLibrary(TYPHON);
+    case PHANTOM:
+      return new SolanaLibrary(PHANTOM);
   }
 }
 

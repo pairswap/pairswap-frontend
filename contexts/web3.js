@@ -1,7 +1,7 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { WALLETS, ETHEREUM, CARDANO } from 'constants/wallet';
+import { WALLETS, ETHEREUM, CARDANO, SOLANA } from 'constants/wallet';
 import useToken from 'hooks/useToken';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
@@ -123,7 +123,10 @@ function Web3Provider({ children }) {
   }, [account, wallet, srcChain, destChain, reloadBalance]);
 
   useEffect(() => {
-    if (wallet && (WALLETS[ETHEREUM].includes(wallet) || WALLETS[CARDANO].includes(wallet))) {
+    if (
+      wallet &&
+      [...WALLETS[ETHEREUM], ...WALLETS[CARDANO], ...WALLETS[SOLANA]].includes(wallet)
+    ) {
       if (library) {
         if (library.isEnabled) {
           getAccount();
