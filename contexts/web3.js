@@ -123,7 +123,7 @@ function Web3Provider({ children }) {
   }, [account, wallet, srcChain, destChain, reloadBalance]);
 
   useEffect(() => {
-    if (wallet) {
+    if (wallet && (WALLETS[ETHEREUM].includes(wallet) || WALLETS[CARDANO].includes(wallet))) {
       if (library) {
         if (library.isEnabled) {
           getAccount();

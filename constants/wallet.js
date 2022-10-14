@@ -4,13 +4,12 @@ export const CARDANO = 'cardano';
 export const METAMASK = 'metamask';
 export const COINBASE = 'coinbase';
 export const NAMI = 'nami';
-export const FLINT = 'flint';
 export const ETERNL = 'eternl';
 export const TYPHON = 'typhon';
 
 export const WALLETS = {
   [ETHEREUM]: [METAMASK, COINBASE],
-  [CARDANO]: [ETERNL],
+  [CARDANO]: [NAMI, ETERNL, TYPHON],
 };
 
 export const WALLET_INFOS = {
@@ -21,6 +20,10 @@ export const WALLET_INFOS = {
   [COINBASE]: {
     name: 'Coinbase',
     icon: '/images/coinbase.png',
+  },
+  [NAMI]: {
+    name: 'Nami',
+    icon: '/images/nami.png',
   },
   [ETERNL]: {
     name: 'Eternl',

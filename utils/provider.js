@@ -94,9 +94,7 @@ function getEternl() {
 }
 
 async function getTyphon() {
-  await window.cardano.typhon.enable();
-
-  return window.cardano.typhon;
+  return window.cardano.typhoncip30.enable();
 }
 
 function getProvider(providerName) {
