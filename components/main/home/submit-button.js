@@ -169,8 +169,20 @@ function SubmitButton({
           .then(setIsApproved)
           .catch((error) => {
             const e = serializeError(error);
-            setError(e, { silent: e.code !== -32603 });
-            setIsFailed(true);
+            // Retry
+            if (e.code === -32603) {
+              library
+                .checkApproval({ vaultAddress, tokenAddress, account })
+                .then(setIsApproved)
+                .catch((error) => {
+                  const e = serializeError(error);
+                  setError(e, { silent: true });
+                  setIsFailed(true);
+                });
+            } else {
+              setError(e, { silent: true });
+              setIsFailed(true);
+            }
           })
           .finally(() => setIsLoading(false));
       } else {
