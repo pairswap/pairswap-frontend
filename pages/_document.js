@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
+import Script from 'next/script';
 
 function Document() {
   return (
@@ -17,6 +18,7 @@ function Document() {
       <body>
         <Main />
         <NextScript />
+        <Script type="text/javascript" src="config.js" strategy="beforeInteractive" />
       </body>
     </Html>
   );

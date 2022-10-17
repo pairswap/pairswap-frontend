@@ -2,7 +2,6 @@ import 'styles/global.css';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import Script from 'next/script';
 
 import { WalletModal, WalletModalContext } from 'components/modal/select-wallet';
 import ChainProvider from 'contexts/chain';
@@ -18,8 +17,6 @@ function App({ Component, pageProps }) {
       <Head>
         <title>KO Exchange</title>
       </Head>
-
-      <Script type="text/javascript" src="config.js" strategy="beforeInteractive" />
 
       <ErrorProvider>
         <TokenProvider>
