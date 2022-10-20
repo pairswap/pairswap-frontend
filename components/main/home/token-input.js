@@ -24,6 +24,7 @@ function TokenInput({ control }) {
 
             return (
               <NumberFormat
+                id="amount"
                 ref={ref}
                 name={name}
                 onBlur={onBlur}
@@ -46,7 +47,7 @@ function TokenInput({ control }) {
             <span className="select-token__token-text">{token}</span>
           </div>
 
-          <img src="/images/chevron-down.svg" alt="dropdown" />
+          <img src="images/chevron-down.svg" alt="dropdown icon" width={14} height={8} />
 
           <SelectTokenModal
             isOpen={isOpen}

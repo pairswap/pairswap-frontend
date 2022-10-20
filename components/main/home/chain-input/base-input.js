@@ -30,7 +30,7 @@ function ChainInput({ label, chain, setChain, excludedChain }) {
             />
           </div>
           <div className="select-dropdown-icon">
-            <img src="/images/chevron-down.svg" alt="dropdown" />
+            <img src="images/chevron-down.svg" alt="dropdown icon" width={14} height={8} />
           </div>
         </button>
       ) : (

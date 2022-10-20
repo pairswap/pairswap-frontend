@@ -106,14 +106,14 @@ function History() {
               disabled={page === 0}
               className={classname(page === 0 && 'page--disabled')}
             >
-              <img src="/images/chevron-left.svg" alt="previous" />
+              <img src="/images/chevron-left.svg" alt="previous" width={32} heitht={32} />
             </button>
             <button
               onClick={() => setPage((prevState) => prevState + 1)}
               disabled={page + 1 >= pages}
               className={classname(page + 1 >= pages && 'page--disabled')}
             >
-              <img src="/images/chevron-right.svg" alt="next" />
+              <img src="/images/chevron-right.svg" alt="next" width={32} heitht={32} />
             </button>
           </>
         ) : null}

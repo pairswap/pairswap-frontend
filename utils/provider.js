@@ -1,4 +1,4 @@
-import { METAMASK, COINBASE, NAMI, FLINT, ETERNL, TYPHON } from 'constants/wallet';
+import { METAMASK, COINBASE, NAMI, ETERNL, TYPHON } from 'constants/wallet';
 import EthereumLibrary from 'request/ethereum';
 import CardanoLibrary from 'request/cardano';
 
@@ -54,8 +54,6 @@ function hasProvider(providerName) {
       return hasCoinbase();
     case NAMI:
       return hasNami();
-    case FLINT:
-      return hasFlint();
     case ETERNL:
       return hasEternl();
     case TYPHON:
@@ -105,8 +103,6 @@ function getProvider(providerName) {
       return getCoinbase();
     case NAMI:
       return getNami();
-    case FLINT:
-      return getFlint();
     case ETERNL:
       return getEternl();
     case TYPHON:
@@ -124,8 +120,6 @@ function getLibrary(name) {
       return new EthereumLibrary(COINBASE);
     case NAMI:
       return new CardanoLibrary(NAMI);
-    case FLINT:
-      return new CardanoLibrary(FLINT);
     case ETERNL:
       return new CardanoLibrary(ETERNL);
     case TYPHON:

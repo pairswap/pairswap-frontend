@@ -15,7 +15,7 @@ function ChainSelect() {
           <Menu.Button className="dropdown__button">
             <img src={chainInfos[srcChain].icon} alt="wallet" className="dropdown__img" />
             <span>{chainInfos[srcChain].name}</span>
-            <img src="images/chevron-down.svg" alt="dropdown icon" />
+            <img src="images/chevron-down.svg" alt="dropdown icon" width={14} height={8} />
           </Menu.Button>
           <Transition
             as={Fragment}

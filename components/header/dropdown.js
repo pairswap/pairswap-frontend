@@ -15,7 +15,7 @@ function Dropdown() {
       <Menu.Button className="dropdown__button">
         <img src={icon} alt={name} className="dropdown__img" />
         <span>{name}</span>
-        <img src="images/chevron-down.svg" alt="dropdown icon" />
+        <img src="images/chevron-down.svg" alt="dropdown icon" width={14} height={8} />
       </Menu.Button>
       <Transition
         as={Fragment}

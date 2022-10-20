@@ -4,6 +4,10 @@ function Document() {
   return (
     <Html>
       <Head>
+        <meta
+          name="description"
+          content="The KO Exchange blockchain and product ecosystem enable development of high-performance blockchain projects. An array of original features and protocol is designed to support speed, privacy, usability, and liquidity needs all in one platform."
+        />
         <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
