@@ -1,6 +1,7 @@
 import BN from 'bn.js';
 import { serialize } from 'borsh';
 import {
+  clusterApiUrl,
   Connection,
   PublicKey,
   Transaction,
@@ -10,15 +11,12 @@ import {
 import {
   TOKEN_PROGRAM_ID,
   createApproveCheckedInstruction,
-  createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
-  getAccount,
 } from '@solana/spl-token';
 
 import { getProvider } from 'utils/provider';
 
-const connection = new Connection('http://127.0.0.1:8899');
-const bridgeProgramId = new PublicKey('2dc6zmDnqEScoBi8SZTHgG6fKgC8fcLYwk8DTu6Gxc8T');
+const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 class TransferOutData {
   amount = new BN(0);
@@ -37,7 +35,7 @@ const TransferOutDataSchema = new Map([
     {
       kind: 'struct',
       fields: [
-        ['amount', 'u128'],
+        ['amount', 'u64'],
         ['tokenAddress', 'string'],
         ['chainId', 'u64'],
         ['recipient', 'string'],
@@ -81,24 +79,23 @@ class SolanaLibrary {
     }
   }
 
-  async hasTokenAccount(tokenAccount) {
-    try {
-      await getAccount(connection, tokenAccount);
+  async accountExisted(ata) {
+    let account = await connection.getAccountInfo(ata, 'confirmed');
+
+    if (account) {
       return true;
-    } catch (error) {
-      return false;
     }
+
+    return false;
   }
 
   async getTokenBalance({ tokenAddress }) {
     try {
-      const tokenAccount = await getAssociatedTokenAddress(
-        new PublicKey(tokenAddress),
-        this.provider.publicKey
-      );
+      const mintPubkey = new PublicKey(tokenAddress);
+      const ownerAta = await getAssociatedTokenAddress(mintPubkey, this.provider.publicKey);
 
-      if (await this.hasTokenAccount(tokenAccount)) {
-        const tokenBalance = await connection.getTokenAccountBalance(tokenAccount);
+      if (await this.accountExisted(ownerAta)) {
+        const tokenBalance = await connection.getTokenAccountBalance(ownerAta);
         return tokenBalance.value.uiAmountString;
       } else {
         return String(0);
@@ -116,48 +113,33 @@ class SolanaLibrary {
     return 0;
   }
 
-  async transfer({ vaultAddress, amount }) {
+  async transfer({ chainInfo, amount, srcToken }) {
+    const { bridgeProgramId, bridgePda } = chainInfo;
+
     try {
-      const mint = new PublicKey(tokenAddress);
-      const vault = new PublicKey(vaultAddress);
-      const tokenAccount = await getAssociatedTokenAddress(mint, this.provider.publicKey);
-
-      const result = await PublicKey.findProgramAddress(
-        [Buffer.from('SisuBridge', 'utf8')],
-        bridgeProgramId
-      );
-
-      const bridgePda = result[0];
+      const mintPubkey = new PublicKey(srcToken);
+      const bridgePdaPubkey = new PublicKey(bridgePda);
+      const ownerAta = await getAssociatedTokenAddress(mintPubkey, this.provider.publicKey, true);
+      const bridgeAta = await getAssociatedTokenAddress(mintPubkey, bridgePdaPubkey, true);
 
       const data = new TransferOutData({
-        amount: new BN(900),
-        tokenAddress: '0x1234',
-        chainId: 123,
-        recipient: 'someone',
+        amount: new BN(10),
+        tokenAddress: srcToken,
+        chainId: 189985, // ganache1
+        recipient: '0x8095f5b69F2970f38DC6eBD2682ed71E4939f988',
       });
 
       const payload = serialize(TransferOutDataSchema, data);
 
       let instructions = [];
 
-      if (await this.hasTokenAccount(tokenAccount)) {
-        instructions.push(
-          createAssociatedTokenAccountInstruction(
-            this.provider.publicKey,
-            tokenAccount,
-            this.provider.publicKey,
-            mint
-          )
-        );
-      }
-
       instructions.push(
         createApproveCheckedInstruction(
-          tokenAccount,
-          mint,
-          vault,
+          ownerAta,
+          mintPubkey,
+          bridgePdaPubkey,
           this.provider.publicKey,
-          amount * 1e8,
+          1e8,
           8
         )
       );
@@ -176,22 +158,17 @@ class SolanaLibrary {
               isWritable: false,
             },
             {
-              pubkey: mint,
-              isSigner: false,
-              isWritable: false,
-            },
-            {
-              pubkey: tokenAccount,
+              pubkey: ownerAta,
               isSigner: false,
               isWritable: true,
             },
             {
-              pubkey: vault,
+              pubkey: bridgeAta,
               isSigner: false,
               isWritable: true,
             },
             {
-              pubkey: bridgePda,
+              pubkey: bridgePdaPubkey,
               isSigner: false,
               isWritable: true,
             },
@@ -203,11 +180,10 @@ class SolanaLibrary {
 
       const transaction = new Transaction().add(...instructions);
 
-      transaction.feePayer = provider.publicKey;
+      transaction.feePayer = this.provider.publicKey;
       transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
       const { signature } = await this.provider.signAndSendTransaction(transaction);
-
-      await connection.getSignatureStatus(signature);
+      return signature;
     } catch (error) {
       throw error;
     }
