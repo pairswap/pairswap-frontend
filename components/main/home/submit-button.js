@@ -66,9 +66,10 @@ function SubmitButton({
       const recipient = isSameChainType ? account : data.recipient;
 
       const txHash = await library.transfer({
-        chainInfo: chainInfos[srcChain],
+        chainInfos,
         account,
         recipient,
+        srcChain,
         destChain,
         srcToken,
         amount: data.amount,

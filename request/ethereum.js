@@ -137,8 +137,8 @@ class EthereumLibrary {
     return contract.approve(vaultAddress, this.allowance);
   }
 
-  async transfer({ account, recipient, isSameChainType, srcToken, amount }) {
-    const { id, vaultAddress } = chainInfo;
+  async transfer({ chainInfos, account, recipient, srcChain, isSameChainType, srcToken, amount }) {
+    const { id, vaultAddress } = chainInfos[srcChain];
     const bignumberAmount = convertStringToBigNumber(amount.toString());
 
     try {

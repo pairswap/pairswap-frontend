@@ -113,8 +113,9 @@ class SolanaLibrary {
     return 0;
   }
 
-  async transfer({ chainInfo, amount, srcToken }) {
-    const { bridgeProgramId, bridgePda } = chainInfo;
+  async transfer({ chainInfos, recipient, amount, srcToken, srcChain, destChain }) {
+    const { bridgeProgramId, bridgePda } = chainInfos[srcChain];
+    const { id } = chainInfos[destChain];
 
     try {
       const mintPubkey = new PublicKey(srcToken);
@@ -123,10 +124,10 @@ class SolanaLibrary {
       const bridgeAta = await getAssociatedTokenAddress(mintPubkey, bridgePdaPubkey, true);
 
       const data = new TransferOutData({
-        amount: new BN(10),
+        amount: new BN(amount * 1e8),
         tokenAddress: srcToken,
-        chainId: 189985, // ganache1
-        recipient: '0x8095f5b69F2970f38DC6eBD2682ed71E4939f988',
+        chainId: id,
+        recipient,
       });
 
       const payload = serialize(TransferOutDataSchema, data);
@@ -139,7 +140,7 @@ class SolanaLibrary {
           mintPubkey,
           bridgePdaPubkey,
           this.provider.publicKey,
-          1e8,
+          amount * 1e8,
           8
         )
       );
