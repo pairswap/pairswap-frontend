@@ -11,6 +11,10 @@ function randomChain(chains) {
   return chains[index];
 }
 
+function filterChain(chains, chainInfos) {
+  return chains.filter((chain) => (chainInfos[chain].disabled ? false : true));
+}
+
 function ChainProvider({ children }) {
   const [chains, setChains] = useState(null);
   const [chainInfos, setChainInfos] = useState(null);
@@ -26,23 +30,24 @@ function ChainProvider({ children }) {
   }, [srcChain, destChain, setSrcChain, setDestChain]);
 
   useEffect(() => {
-    if (tokenInfos && token) {
+    if (chainInfos && tokenInfos && token) {
       const { chains: newChains } = tokenInfos[token];
-      setChains(newChains);
+      const filteredChains = filterChain(newChains, chainInfos);
+      setChains(filteredChains);
 
       let newSrcChain = srcChain;
 
-      if (!srcChain || !newChains.includes(srcChain)) {
-        newSrcChain = randomChain(newChains);
+      if (!srcChain || !filteredChains.includes(srcChain)) {
+        newSrcChain = randomChain(filteredChains);
         setSrcChain(newSrcChain);
       }
 
-      if (!destChain || destChain === newSrcChain || !newChains.includes(destChain)) {
-        let newDestChain = newChains.find((chain) => chain !== newSrcChain);
+      if (!destChain || destChain === newSrcChain || !filteredChains.includes(destChain)) {
+        let newDestChain = filteredChains.find((chain) => chain !== newSrcChain);
         setDestChain(newDestChain);
       }
     }
-  }, [tokenInfos, token, srcChain, destChain, setSrcChain, setDestChain]);
+  }, [chainInfos, tokenInfos, token, srcChain, destChain, setSrcChain, setDestChain]);
 
   useEffect(() => {
     if (window?.config) {
