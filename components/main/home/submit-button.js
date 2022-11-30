@@ -37,6 +37,10 @@ function generateLinks({ chainInfos, srcChain, destChain, recipient, txHash }) {
     destLink = `${destExplorers[0]}/address/${recipient}#tokentxns`;
   }
 
+  if (destType === SOLANA) {
+    destLink = `${destExplorers[0]}/address/${recipient}?cluster=devnet`;
+  }
+
   return { srcLink, destLink };
 }
 
@@ -63,6 +67,7 @@ function SubmitButton({
     try {
       const { addresses } = tokenInfos[token];
       const srcToken = addresses[srcChain];
+      const destToken = addresses[destChain];
       const recipient = isSameChainType ? account : data.recipient;
 
       const txHash = await library.transfer({
@@ -72,6 +77,7 @@ function SubmitButton({
         srcChain,
         destChain,
         srcToken,
+        destToken,
         amount: data.amount,
         isSameChainType,
         tokenSymbol: token,
