@@ -13,6 +13,7 @@ import {
   convertStringToBigNumber,
 } from 'utils/transform';
 import { getProvider } from 'utils/provider';
+import { createTokenAccount } from 'utils/solana';
 
 class EthereumLibrary {
   provider;
@@ -137,21 +138,39 @@ class EthereumLibrary {
     return contract.approve(vaultAddress, this.allowance);
   }
 
-  async transfer({ id, vaultAddress, account, recipient, isSameChainType, srcToken, amount }) {
+  async transfer({
+    chainInfos,
+    account,
+    recipient,
+    srcChain,
+    destChain,
+    isSameChainType,
+    srcToken,
+    destToken,
+    amount,
+  }) {
+    const { vaultAddress } = chainInfos[srcChain];
+    const { id } = chainInfos[destChain];
     const bignumberAmount = convertStringToBigNumber(amount.toString());
 
     try {
       const web3Provider = new Web3Provider(this.provider, 'any');
       const signer = web3Provider.getSigner(account);
       const contract = new Contract(vaultAddress, Vault, signer);
+      let tx;
 
       if (isSameChainType) {
-        const tx = await contract.transferOut(srcToken, id, recipient, bignumberAmount);
-        return tx.hash;
+        tx = await contract.transferOut(srcToken, id, recipient, bignumberAmount);
       } else {
-        const tx = await contract.transferOutNonEvm(srcToken, id, recipient, bignumberAmount);
-        return tx.hash;
+        if (destChain === 'solana-devnet') {
+          const ata = await createTokenAccount(destToken, recipient);
+          tx = await contract.transferOutNonEvm(srcToken, id, ata.toString(), bignumberAmount);
+        } else {
+          tx = await contract.transferOutNonEvm(srcToken, id, recipient, bignumberAmount);
+        }
       }
+
+      return tx.hash;
     } catch (error) {
       throw error;
     }

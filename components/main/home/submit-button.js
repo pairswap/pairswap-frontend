@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { serializeError } from 'eth-rpc-errors';
 
-import { CARDANO, ETHEREUM } from 'constants/wallet';
+import { CARDANO, ETHEREUM, SOLANA } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useWalletModal from 'hooks/useWalletModal';
@@ -25,12 +25,20 @@ function generateLinks({ chainInfos, srcChain, destChain, recipient, txHash }) {
     srcLink = `${srcExplorers[0]}/tx/${txHash}`;
   }
 
+  if (srcType === SOLANA) {
+    srcLink = `${srcExplorers[0]}/tx/${txHash}?cluster=devnet`;
+  }
+
   if (destType === CARDANO) {
     destLink = `${destExplorers[0]}/address/${recipient}`;
   }
 
   if (destType === ETHEREUM) {
     destLink = `${destExplorers[0]}/address/${recipient}#tokentxns`;
+  }
+
+  if (destType === SOLANA) {
+    destLink = `${destExplorers[0]}/address/${recipient}?cluster=devnet`;
   }
 
   return { srcLink, destLink };
@@ -57,19 +65,19 @@ function SubmitButton({
   async function submit(data) {
     setIsLoading(true);
     try {
-      const { vaultAddress } = chainInfos[srcChain];
-      const { id } = chainInfos[destChain];
       const { addresses } = tokenInfos[token];
       const srcToken = addresses[srcChain];
+      const destToken = addresses[destChain];
       const recipient = isSameChainType ? account : data.recipient;
 
       const txHash = await library.transfer({
-        id,
-        vaultAddress,
+        chainInfos,
         account,
         recipient,
+        srcChain,
         destChain,
         srcToken,
+        destToken,
         amount: data.amount,
         isSameChainType,
         tokenSymbol: token,

@@ -120,7 +120,17 @@ class CardanoLibrary {
     }
   }
 
-  async transfer({ vaultAddress, account, recipient, destChain, srcToken, amount, tokenSymbol }) {
+  async transfer({
+    chainInfos,
+    account,
+    recipient,
+    srcChain,
+    destChain,
+    srcToken,
+    amount,
+    tokenSymbol,
+  }) {
+    const { vaultAddress } = chainInfos[srcChain];
     const paymentAddress = CSL.Address.from_bech32(account);
     const receiveAddress = CSL.Address.from_bech32(vaultAddress);
     const rawUtxos = await this.provider.getUtxos();
