@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { isAddress } from '@ethersproject/address';
+import { PublicKey } from '@solana/web3.js';
 
-import { ETHEREUM, CARDANO } from 'constants/wallet';
+import { ETHEREUM, CARDANO, SOLANA } from 'constants/wallet';
 import useChain from 'hooks/useChain';
 import useError from 'hooks/useError';
 import useToken from 'hooks/useToken';
@@ -31,6 +32,12 @@ function isValidAddress(type, address) {
       try {
         CSL.Address.from_bech32(address);
         return true;
+      } catch (error) {
+        return false;
+      }
+    case SOLANA:
+      try {
+        return PublicKey.isOnCurve(address);
       } catch (error) {
         return false;
       }
